@@ -1,0 +1,274 @@
+{
+    "title": "虚拟展馆",
+    "subtitle": "走进电影感的 3Dsfera。在漂浮展台间穿行、放大供应商展柜，在霓虹奢华的空间里发现下一笔交易。",
+    "launch_tour": "开始体验",
+    "learn_more": "了解更多",
+    "live": "直播",
+    "features": {
+        "floating": {
+            "title": "漂浮平台",
+            "body": "精选产品展台，带有沉浸灯光与悬停提示。"
+        },
+        "lighting": {
+            "title": "电影级灯光",
+            "body": "霓虹渐变、玻璃质感和柔和的光晕，营造奢华氛围。"
+        },
+        "guided": {
+            "title": "引导式参观",
+            "body": "轨道控制、缩放和信息覆盖层，探索每件产品。"
+        }
+    },
+    "cta": "想接入自己的目录？连接数据、放入 GLB 模型，即刻上线实时聊天。",
+    "hub": {
+        "title": "展馆枢纽",
+        "tagline": "穿行各馆",
+        "instructions": "点击画布锁定 Aú WASD / 方向键行走 Aú 按 E 互动",
+        "approaching": "接近中",
+        "press": "按",
+        "enter": "进入 {{room}}",
+        "exit": "退出枢纽",
+        "pavilion_label": "展馆",
+        "center_label": "中心"
+    },
+    "rooms": {
+        "techno": {
+            "name": "科技演示",
+            "blurb": "霓虹原型与沉浸控制台。"
+        },
+        "lux": {
+            "name": "奢品馆",
+            "blurb": "玻璃展台呈现高端配饰与穿戴。"
+        },
+        "mobility": {
+            "name": "移动枢纽",
+            "blurb": "电驱、航空无人机与智能交通。"
+        },
+        "industrial": {
+            "name": "工业核心",
+            "blurb": "机器人、气动设备与精密工具。"
+        },
+        "sustain": {
+            "name": "可持续实验室",
+            "blurb": "清洁科技、再生复材与生物材料。"
+        }
+    },
+    "auth": {
+        "login": "登录",
+        "logout": "登出",
+        "signup": "注册",
+        "email": "邮箱",
+        "password": "密码",
+        "loading": "加载中...",
+        "buyer": "我是买家",
+        "seller": "我是卖家",
+        "role_legend": "选择你的角色：",
+        "welcome": "欢迎",
+        "error": "错误"
+    },
+    "seller_dashboard": {
+        "title": "卖家面板",
+        "subtitle": "管理你的虚拟形象。",
+        "deploy_new": "部署新展馆",
+        "pavilion_title": "展馆名称",
+        "pavilion_title_placeholder": "如：Future Tech Hub",
+        "blurb": "简介（标语）",
+        "blurb_placeholder": "简短标语...",
+        "theme_color": "主题色",
+        "initial_products": "初始产品",
+        "product_name_placeholder": "产品名称",
+        "product_price_placeholder": "价格（如 $500）",
+        "upload_glb": "上传 GLB",
+        "select_glb": "选择 GLB",
+        "add_product_btn": "添加产品到列表",
+        "deploy_btn": "立即部署",
+        "deploying_btn": "部署中...",
+        "edit_pavilion": "编辑展馆",
+        "manage_products": "管理产品",
+        "add_functionality": "添加功能",
+        "add_btn": "添加",
+        "save_changes": "保存更改",
+        "cancel": "取消",
+        "messages": "消息",
+        "no_messages": "暂无消息。",
+        "you": "你",
+        "user": "用户",
+        "delete_confirm": "确定要删除此展馆？",
+        "no_pavilions": "还没有展馆。",
+        "products_catalog": "产品目录",
+        "view_messages_title": "查看消息",
+        "edit_pavilion_title": "编辑展馆",
+        "delete_pavilion_title": "删除展馆",
+        "products_alert": "请至少添加一个产品。",
+        "inbox": "收件箱",
+        "conversation_empty": "暂无会话",
+        "select_conversation": "选择会话以查看",
+        "reply_placeholder": "输入回复...",
+        "ai_generate": "用 AI 生成 3D",
+        "replying_to": "回复买家 {{id}}",
+        "buyer_label": "买家 {{id}}",
+        "verified_demo_title": "验证展馆（演示）",
+        "verified_demo_blurb": "验证场景集成。",
+        "uploading": "上传中...",
+        "custom_product_label": "自定义产品",
+        "ai_generated_name": "AI 生成模型",
+        "ai_generated_via": "由 Meshy 生成",
+        "deploy_success": "展馆部署成功！",
+        "deploy_failed": "部署失败",
+        "upload_failed": "上传失败，请重试。"
+    },
+    "pavilion_ui": {
+        "live_chat": "实时聊天",
+        "close": "关闭",
+        "start_conversation": "开始对话...",
+        "you": "你",
+        "user": "用户",
+        "message_placeholder": "消息...",
+        "login_to_chat": "登录后聊天",
+        "send": "发送",
+        "default_title": "展馆",
+        "default_blurb": "互动展区",
+        "controls_hint": "滚轮缩放 Aú 拖拽旋转 Aú 点击查看",
+        "hide_chat": "隐藏聊天",
+        "chat_with_supplier": "与供应商聊天",
+        "exit": "退出",
+        "view_details": "查看详情",
+        "back": "返回"
+    },
+    "verified_pavilion": {
+        "test_btn": "测试进入验证展馆",
+        "ui": {
+            "exit": "退出场景",
+            "connection_est": "连接已建立",
+            "connect_vendor": "联系供应商",
+            "vendor_link": "供应商链接",
+            "back": "返回",
+            "system_integrity": "系统完整性",
+            "secure_v3": "SECURE.V.3",
+            "establishing": "正在建立通道...",
+            "seller_chat_hint": "买家在此发起聊天，卖家请在后台回复。"
+        },
+        "ui_nav": {
+            "nav_title": "导航",
+            "nav_forward": "W / ↑ - 前进",
+            "nav_backward": "S / ↓ - 后退",
+            "nav_orbit": "A / ← - 左旋 | D / → - 右旋",
+            "nav_inspect": "点击产品 - 查看 - 打开信息与聊天",
+            "nav_hint": "A / ← 与 D / → 旋转 | W / ↑ 与 S / ↓ 移动"
+        },
+        "loader": {
+            "title": "正在初始化验证展馆",
+            "asset": "加载工业模型与霓虹灯光...",
+            "chat": "同步聊天链路——买家可实时联系。",
+            "standby": "请稍候：{{state}}",
+            "state_streaming": "模型流式传输中",
+            "state_priming": "场景预备中",
+            "controls": "操作提示",
+            "forward": "前进",
+            "backward": "后退",
+            "orbit_left": "左旋",
+            "orbit_right": "右旋",
+            "inspect_hint": "点击产品进行查看，然后打开信息 + 聊天。",
+            "exit_inspection": "退出查看"
+        },
+        "items": {
+            "crane": {
+                "title": "液压起重机",
+                "desc": "重型移动吊车，支持 360° 旋转。",
+                "stat_lift": "起重量",
+                "stat_boom": "臂长",
+                "stat_power": "动力"
+            },
+            "valve": {
+                "title": "工业阀门",
+                "desc": "高压流量控制阀，适用于管线基础设施。",
+                "stat_pressure": "压力",
+                "stat_material": "材质",
+                "stat_life": "寿命"
+            },
+            "hq": {
+                "title": "3DSFERA 总部",
+                "desc": "全球工业采购与 AI 驱动供应链物流的领导者。",
+                "stat_reach": "全球覆盖",
+                "stat_skus": "验证 SKU",
+                "stat_reliability": "AI 可靠性"
+            },
+            "platform": {
+                "title": "3DSFERA 平台",
+                "desc": "AI 采购看板，实时可视化全链路供应。",
+                "stat_users": "用户",
+                "stat_uptime": "在线率",
+                "stat_integration": "集成"
+            },
+            "aero": {
+                "title": "AERO DYNAMICS",
+                "desc": "航空级推进系统与涡轮技术。",
+                "stat_thrust": "推力",
+                "stat_efficiency": "效率",
+                "stat_maintenance": "维护"
+            },
+            "turbine_valve": {
+                "title": "涡轮阀",
+                "desc": "高推力涡轮的精密合金阀门。",
+                "stat_temp": "温度等级",
+                "stat_alloy": "合金",
+                "stat_warranty": "质保"
+            },
+            "heavy": {
+                "title": "HEAVY LIFT INC.",
+                "desc": "面向大型项目的工业吊装与重载方案。",
+                "stat_load": "最大载荷",
+                "stat_reach": "臂展",
+                "stat_safety": "安全等级"
+            },
+            "robotic_arm": {
+                "title": "机器人臂 M-2000",
+                "desc": "高载荷工业机械臂，支持自动化重型装配。",
+                "stat_payload": "负载",
+                "stat_axis": "轴数",
+                "stat_repeatability": "重复精度"
+            }
+        },
+        "objects": {
+            "drone_a1": {
+                "title": "侦察无人机 A-1",
+                "type": "巡检单元",
+                "description": "高速自主侦察无人机，用于周界安全与人群分析。"
+            },
+            "drone_b2": {
+                "title": "重载 B-2",
+                "type": "物流单元",
+                "description": "重型货运无人机，可自主搬运展品与物料。"
+            },
+            "drone_c3": {
+                "title": "拦截 C-3",
+                "type": "安保单元",
+                "description": "快速响应无人机，用于资产防护和阻止未授权访问。"
+            },
+            "hq": {
+                "title": "3DSFERA HQ",
+                "type": "白金赞助商",
+                "description": "3D 创新中心。展示体积渲染与全息显示的未来。"
+            },
+            "crane": {
+                "title": "重型起重机 X200",
+                "type": "施工资产",
+                "description": "工业级液压起重机，用于重载吊装模拟。"
+            },
+            "arcade": {
+                "title": "街机单元",
+                "type": "娱乐资产",
+                "description": "复古抓娃娃机，带全息奖品展示。"
+            },
+            "agri": {
+                "title": "农技展台",
+                "type": "金牌赞助商",
+                "description": "新一代农业机器人与自动化种植解决方案。"
+            },
+            "pneumatic": {
+                "title": "工业气动",
+                "type": "银牌赞助商",
+                "description": "先进的气压系统，适用于大规模自动化。"
+            }
+        }
+    }
+}

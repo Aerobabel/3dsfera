@@ -1,0 +1,274 @@
+{
+    "title": "Virtual Pavilions",
+    "subtitle": "Step into the cinematic 3Dsfera. Glide between floating product pods, zoom into supplier showcases, and discover your next deal in a convenient neon-lit, luxury environment.",
+    "launch_tour": "Launch Tour",
+    "learn_more": "Learn More",
+    "live": "Live",
+    "features": {
+        "floating": {
+            "title": "Floating Platforms",
+            "body": "Curated product platforms with immersive lighting and hover cues."
+        },
+        "lighting": {
+            "title": "Cinematic Lighting",
+            "body": "Neon gradients, glassmorphism, and subtle bloom for a luxury feel."
+        },
+        "guided": {
+            "title": "Guided Tour",
+            "body": "Orbit controls, zoom, and info overlays to explore every product."
+        }
+    },
+    "cta": "Ready to integrate your own catalog? Connect your data, drop in GLB models, and go live with realtime chat.",
+    "hub": {
+        "title": "EXPO HUB",
+        "tagline": "Walk the Pavilions",
+        "instructions": "CLICK CANVAS TO LOCK · WASD / ARROWS TO WALK · PRESS E TO INTERACT",
+        "approaching": "Approaching",
+        "press": "PRESS",
+        "enter": "TO ENTER {{room}}",
+        "exit": "EXIT HUB",
+        "pavilion_label": "Pavilion",
+        "center_label": "Hub"
+    },
+    "rooms": {
+        "techno": {
+            "name": "Techno Demo",
+            "blurb": "Neon-lit prototypes and immersive control decks."
+        },
+        "lux": {
+            "name": "Luxury Goods",
+            "blurb": "Glass podiums for premium accessories and wearables."
+        },
+        "mobility": {
+            "name": "Mobility Hub",
+            "blurb": "EV drivetrains, aero drones, and smart transit."
+        },
+        "industrial": {
+            "name": "Industrial Core",
+            "blurb": "Robotics, pneumatics, and precision tooling."
+        },
+        "sustain": {
+            "name": "Sustain Lab",
+            "blurb": "Clean tech, recycled composites, bio materials."
+        }
+    },
+    "auth": {
+        "login": "Login",
+        "logout": "Logout",
+        "signup": "Sign Up",
+        "email": "Email",
+        "password": "Password",
+        "loading": "Loading...",
+        "buyer": "I am a Buyer",
+        "seller": "I am a Seller",
+        "role_legend": "Select your role:",
+        "welcome": "Welcome",
+        "error": "Error"
+    },
+    "seller_dashboard": {
+        "title": "Seller Dashboard",
+        "subtitle": "Manage your virtual presence.",
+        "deploy_new": "Deploy New Pavilion",
+        "pavilion_title": "Pavilion Title",
+        "pavilion_title_placeholder": "e.g. Future Tech Hub",
+        "blurb": "Description (Blurb)",
+        "blurb_placeholder": "Short tagline...",
+        "theme_color": "Theme Color",
+        "initial_products": "Initial Products",
+        "product_name_placeholder": "Product Name",
+        "product_price_placeholder": "Price (e.g. $500)",
+        "upload_glb": "Upload GLB",
+        "select_glb": "Select GLB",
+        "add_product_btn": "Add Product to List",
+        "deploy_btn": "Deploy Now",
+        "deploying_btn": "Deploying...",
+        "edit_pavilion": "Edit Pavilion",
+        "manage_products": "Manage Products",
+        "add_functionality": "Add Functionality",
+        "add_btn": "Add",
+        "save_changes": "Save Changes",
+        "cancel": "Cancel",
+        "messages": "Messages",
+        "no_messages": "No messages yet.",
+        "you": "You",
+        "user": "User",
+        "delete_confirm": "Are you sure you want to delete this pavilion?",
+        "no_pavilions": "No pavilions yet.",
+        "products_catalog": "Products Catalog",
+        "view_messages_title": "View Messages",
+        "edit_pavilion_title": "Edit Pavilion",
+        "delete_pavilion_title": "Delete Pavilion",
+        "products_alert": "Add at least one product.",
+        "inbox": "Inbox",
+        "conversation_empty": "No active conversations",
+        "select_conversation": "Select a conversation to view details",
+        "reply_placeholder": "Type your reply...",
+        "ai_generate": "Generate 3D with AI",
+        "replying_to": "Replying to Buyer {{id}}",
+        "buyer_label": "Buyer {{id}}",
+        "verified_demo_title": "Verified Pavilion (Demo)",
+        "verified_demo_blurb": "Global verified scene integration.",
+        "uploading": "Uploading...",
+        "custom_product_label": "Custom Product",
+        "ai_generated_name": "AI Generated Model",
+        "ai_generated_via": "AI Generated via Meshy",
+        "deploy_success": "Pavilion Deployed Successfully!",
+        "deploy_failed": "Deployment Failed",
+        "upload_failed": "Failed to upload file. Please try again."
+    },
+    "pavilion_ui": {
+        "live_chat": "Live Chat",
+        "close": "Close",
+        "start_conversation": "Start the conversation...",
+        "you": "You",
+        "user": "User",
+        "message_placeholder": "Message...",
+        "login_to_chat": "Login to chat",
+        "send": "Send",
+        "default_title": "PAVILION",
+        "default_blurb": "Interactive Exhibit",
+        "controls_hint": "SCROLL TO ZOOM · DRAG TO ROTATE · CLICK TO INSPECT",
+        "hide_chat": "Hide Chat",
+        "chat_with_supplier": "Chat with Supplier",
+        "exit": "Exit",
+        "view_details": "View details",
+        "back": "Back"
+    },
+    "verified_pavilion": {
+        "test_btn": "TEST VERIFIED PAVILION",
+        "ui": {
+            "exit": "EXIT SCENE",
+            "connection_est": "Live Connection Est.",
+            "connect_vendor": "Connect Vendor",
+            "vendor_link": "Vendor Link",
+            "back": "BACK",
+            "system_integrity": "SYSTEM INTEGRITY",
+            "secure_v3": "SECURE.V.3",
+            "establishing": "ESTABLISHING UPLINK...",
+            "seller_chat_hint": "Buyers start chats here. Reply from your Seller Dashboard."
+        },
+        "ui_nav": {
+            "nav_title": "Navigation",
+            "nav_forward": "W / Up - Move forward",
+            "nav_backward": "S / Down - Move backward",
+            "nav_orbit": "A / Left - Orbit left | D / Right - Orbit right",
+            "nav_inspect": "Click product - Inspect - Open Info + Chat from panel",
+            "nav_hint": "A / Left & D / Right to Orbit | W / Up & S / Down to Move"
+        },
+        "loader": {
+            "title": "Initializing Verified Pavilion",
+            "asset": "Loading industrial assets & neon lighting rig...",
+            "chat": "Syncing chat uplink - buyers can reach sellers live.",
+            "standby": "Stand by: {{state}}",
+            "state_streaming": "streaming models",
+            "state_priming": "priming scene",
+            "controls": "Controls",
+            "forward": "Move forward",
+            "backward": "Move backward",
+            "orbit_left": "Orbit left",
+            "orbit_right": "Orbit right",
+            "inspect_hint": "Click a product to inspect, then open Info + Chat.",
+            "exit_inspection": "Exit inspection"
+        },
+        "items": {
+            "crane": {
+                "title": "HYDRAULIC CRANE",
+                "desc": "Heavy-duty mobile construction crane with 360-degree rotation.",
+                "stat_lift": "Lift Cap",
+                "stat_boom": "Boom",
+                "stat_power": "Power"
+            },
+            "valve": {
+                "title": "INDUSTRIAL VALVE",
+                "desc": "High-pressure flow control valve for pipeline infrastructure.",
+                "stat_pressure": "Pressure",
+                "stat_material": "Material",
+                "stat_life": "Service Life"
+            },
+            "hq": {
+                "title": "3DSFERA HQ",
+                "desc": "Global leader in industrial sourcing and AI-driven procurement logistics.",
+                "stat_reach": "Global Reach",
+                "stat_skus": "Verified SKUs",
+                "stat_reliability": "AI Reliability"
+            },
+            "platform": {
+                "title": "3DSFERA PLATFORM",
+                "desc": "AI-powered procurement dashboard. Visualize entire supply chains in real-time.",
+                "stat_users": "Users",
+                "stat_uptime": "Uptime",
+                "stat_integration": "Integration"
+            },
+            "aero": {
+                "title": "AERO DYNAMICS",
+                "desc": "Aerospace-grade propulsion systems and turbine technology.",
+                "stat_thrust": "Thrust",
+                "stat_efficiency": "Efficiency",
+                "stat_maintenance": "Maintenance"
+            },
+            "turbine_valve": {
+                "title": "TURBINE VALVE",
+                "desc": "Precision-engineered alloy valve for high-thrust turbine engines.",
+                "stat_temp": "Temp Rating",
+                "stat_alloy": "Alloy",
+                "stat_warranty": "Warranty"
+            },
+            "heavy": {
+                "title": "HEAVY LIFT INC.",
+                "desc": "Industrial crane and heavy lifting solutions for mega-projects.",
+                "stat_load": "Max Load",
+                "stat_reach": "Reach",
+                "stat_safety": "Safety Rating"
+            },
+            "robotic_arm": {
+                "title": "ROBOTIC ARM M-2000",
+                "desc": "High-payload industrial robotic arm for automated heavy assembly.",
+                "stat_payload": "Payload",
+                "stat_axis": "Axis",
+                "stat_repeatability": "Repeatability"
+            }
+        },
+        "objects": {
+            "drone_a1": {
+                "title": "SCOUT DRONE A-1",
+                "type": "Surveillance Unit",
+                "description": "High-speed autonomous scout monitoring perimeter security and crowd analysis."
+            },
+            "drone_b2": {
+                "title": "HEAVY LIFTER B-2",
+                "type": "Logistics Unit",
+                "description": "Heavy-duty cargo drone capable of autonomous transport of exhibition materials."
+            },
+            "drone_c3": {
+                "title": "INTERCEPTOR C-3",
+                "type": "Security Unit",
+                "description": "Rapid response drone meant for asset protection and unauthorized access prevention."
+            },
+            "hq": {
+                "title": "3DSFERA HQ",
+                "type": "Platinum Sponsor",
+                "description": "The central hub for 3D innovation. Showcasing the future of volumetric rendering and holographic display tech."
+            },
+            "crane": {
+                "title": "HEAVY CRANE X200",
+                "type": "Construction Asset",
+                "description": "Industrial grade hydraulic crane used for heavy lifting simulations."
+            },
+            "arcade": {
+                "title": "ARCADE UNIT",
+                "type": "Entertainment Asset",
+                "description": "Retro-fitted crane game machine with holographic prize display."
+            },
+            "agri": {
+                "title": "AGRI-TECH BOOTH",
+                "type": "Gold Sponsor",
+                "description": "Next-gen agricultural robotics and automated farming solutions."
+            },
+            "pneumatic": {
+                "title": "INDUSTRIAL PNEUMATICS",
+                "type": "Silver Sponsor",
+                "description": "Advanced air pressure systems for large scale automation."
+            }
+        }
+    }
+}
