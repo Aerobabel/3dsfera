@@ -132,7 +132,17 @@
         "chat_with_supplier": "与供应商聊天",
         "exit": "退出",
         "view_details": "查看详情",
-        "back": "返回"
+        "back": "返回",
+        "inquire_now": "立即询价",
+        "seller_dashboard_only": "卖家请在卖家后台回复。",
+        "buyer_only_here": "此视图仅买家可用聊天。",
+        "products_in_showroom": "展厅内的产品",
+        "company_info": "公司信息",
+        "pavilion_label": "展馆",
+        "enter_pavilion": "进入展馆",
+        "company": "公司",
+        "no_description": "暂无描述。",
+        "exit_showroom": "退出展厅"
     },
     "verified_pavilion": {
         "test_btn": "测试进入验证展馆",
@@ -269,6 +279,51 @@
                 "type": "银牌赞助商",
                 "description": "先进的气压系统，适用于大规模自动化。"
             }
+        }
+    },
+    "pavilion_content": {
+        "pavilions": {
+            "3dsfera": {
+                "description": "领先的数字化采购平台，连接140个国家的买家与认证供应商，专注工业设备、航空航天零件和重型机械。"
+            },
+            "aero": {
+                "description": "专注高性能涡轮发动机与精密阀门的制造商，服务航空和工业应用。"
+            },
+            "heavy": {
+                "description": "重型机械与工业机器人领域的全球领导者，提供吊装与自动化解决方案。"
+            }
+        },
+        "products": {
+            "smart_microwave": {
+                "title": "智能变频微波炉",
+                "description": "AI烹饪传感器，极速解冻，不锈钢外观，适配现代厨房。"
+            },
+            "oled_tv": {
+                "title": "65英寸 4K OLED 电视",
+                "description": "无边框4K OLED面板，极高对比度与影院级色彩。"
+            },
+            "turbine_valve": {
+                "title": "高温涡轮阀",
+                "description": "钛合金精密阀门，专为极端温度与高可靠性而设计。"
+            },
+            "pneumatic_system": {
+                "title": "工业级气动执行器",
+                "description": "重载高压气动控制系统，响应迅速、耐用可靠。"
+            },
+            "robotic_arm": {
+                "title": "六轴工业机器人",
+                "description": "高精度、大负载机械臂，适用于自动化生产线。"
+            },
+            "mobile_crane": {
+                "title": "MC-500 移动起重机",
+                "description": "柴油电混动全地形起重机，适配施工与工业吊装。"
+            }
+        },
+        "stats": {
+            "Global Reach": "全球覆盖",
+            "Product SKUs": "商品SKU",
+            "Platform Uptime": "平台正常运行时间",
+            "Verified Suppliers": "认证供应商"
         }
     }
 }

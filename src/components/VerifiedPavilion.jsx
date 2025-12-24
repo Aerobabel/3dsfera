@@ -126,10 +126,16 @@ export default function VerifiedPavilion({ onBack, user }) {
         // Keep inspect mode active after closing overlay
     };
 
+    const openShowroom = (pavilion) => {
+        // Ensure we carry the real pavilion id for Supabase chat; preserve slug for filtering
+        const resolvedId = pavilionId || pavilion?.id;
+        setShowroomData({ ...pavilion, id: resolvedId, slug: pavilion?.slug || pavilion?.id });
+        setIsShowroomOpen(true);
+    };
+
     const openFullOverlay = () => {
         // Instead of opening another overlay, directly enter the showroom
-        setShowroomData(selectedObject);
-        setIsShowroomOpen(true);
+        openShowroom(selectedObject);
     };
 
     const handleBack = () => {
@@ -475,8 +481,7 @@ export default function VerifiedPavilion({ onBack, user }) {
                     user={user}
                     startMode="info"
                     onEnterRoom={() => {
-                        setShowroomData(selectedObject);
-                        setIsShowroomOpen(true);
+                        openShowroom(selectedObject);
                     }}
                 />
             )}

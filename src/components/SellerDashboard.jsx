@@ -10,11 +10,25 @@ const extractBuyerId = (content = '') => {
     return match ? match[1] : null;
 };
 
+const extractPavilionTag = (content = '') => {
+    const match = content.match(/\[pv:([^\]]+)\]/);
+    return match ? match[1] : null;
+};
+
 const stripBuyerTag = (content = '') => {
     return content
         .replace(/^\[buyer:[^\]]+\]\s*/i, '')
         .replace(/^\[[^\]]+\]\s*/i, '')
         .trim();
+};
+
+const stripPavilionTag = (content = '') => {
+    return content.replace(/^\[pv:[^\]]+\]\s*/i, '').trim();
+};
+
+const parseThreadKey = (key = '') => {
+    const [pavilionKey = '', buyerId = ''] = key.split('::');
+    return { pavilionKey, buyerId };
 };
 
 export default function SellerDashboard({ user }) {
@@ -40,6 +54,11 @@ export default function SellerDashboard({ user }) {
     const [viewingMessages, setViewingMessages] = useState(null); // Pavilion object to view messages for
     const [viewingThread, setViewingThread] = useState(null); // Sender ID of the active conversation
     const [pavilionMessages, setPavilionMessages] = useState([]);
+    const deriveSlug = (title, fallback) => {
+        if (!title) return fallback;
+        const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+        return slug || fallback;
+    };
 
     useEffect(() => {
         fetchPavilions();
@@ -71,9 +90,9 @@ export default function SellerDashboard({ user }) {
         const allPavilions = data || [];
 
         // Filter logic: Keep MY pavilions (non-demo)
-        const realPavilions = allPavilions.filter(p =>
-            p.seller_id === user.id && p.title !== 'Verified Pavilion (Demo)'
-        );
+        const realPavilions = allPavilions
+            .filter(p => p.seller_id === user.id && p.title !== 'Verified Pavilion (Demo)')
+            .map(p => ({ ...p, slug: p.slug || deriveSlug(p.title, p.id) }));
 
         // Resolve the shared Verified Pavilion id (create if missing)
         const demoId = await resolveVerifiedDemoId(supabase, user.id, { createIfMissing: true });
@@ -86,7 +105,8 @@ export default function SellerDashboard({ user }) {
             color: '#00ffff',
             products: [],
             seller_id: user.id,
-            is_demo: true // Flag for UI keys
+            is_demo: true, // Flag for UI keys
+            slug: 'verified-demo'
         };
 
         setPavilions([verifiedMock, ...realPavilions]);
@@ -100,9 +120,16 @@ export default function SellerDashboard({ user }) {
             .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages' }, (payload) => {
                 if (payload.new.pavilion_id === viewingMessages.id) {
                     setPavilionMessages(prev => {
-                        // Dedup
-                        if (prev.find(m => m.id === payload.new.id)) return prev;
-                        return [...prev, payload.new];
+                        const incoming = payload.new;
+                        const strippedIncoming = stripPavilionTag(stripBuyerTag(incoming.content));
+                        const withoutTemp = prev.filter(m => {
+                            const isTemp = (m.id || '').toString().startsWith('temp-');
+                            const sameSender = m.sender_id === incoming.sender_id;
+                            const sameContent = stripPavilionTag(stripBuyerTag(m.content)) === strippedIncoming;
+                            return !(isTemp && sameSender && sameContent);
+                        });
+                        if (withoutTemp.find(m => m.id === incoming.id)) return withoutTemp;
+                        return [...withoutTemp, incoming];
                     });
                 }
             })
@@ -148,11 +175,13 @@ export default function SellerDashboard({ user }) {
             data.forEach(msg => {
                 const buyerId = extractBuyerId(msg.content) || (msg.sender_id !== user.id ? msg.sender_id : null);
                 if (!buyerId) return;
-                if (!threads[buyerId]) threads[buyerId] = [];
-                threads[buyerId].push(msg);
+                const pavilionKey = extractPavilionTag(msg.content) || pavilion.slug || pavilion.id;
+                const threadKey = `${pavilionKey}::${buyerId}`;
+                if (!threads[threadKey]) threads[threadKey] = [];
+                threads[threadKey].push(msg);
             });
-            const threadIds = Object.keys(threads);
-            if (threadIds.length > 0) setViewingThread(threadIds[threadIds.length - 1]); // pick the newest thread
+            const threadKeys = Object.keys(threads);
+            if (threadKeys.length > 0) setViewingThread(threadKeys[threadKeys.length - 1]); // pick the newest thread
         }
     };
 
@@ -288,34 +317,38 @@ export default function SellerDashboard({ user }) {
                             </div>
                             <div className="flex-1 overflow-y-auto">
                                 {(() => {
-                                    // Group threads by buyer id encoded in content; fallback to sender id for legacy messages
+                                    // Group threads by pavilion + buyer
                                     const threads = {};
                                     pavilionMessages.forEach(msg => {
                                         const buyerId = extractBuyerId(msg.content) || (msg.sender_id !== user.id ? msg.sender_id : null);
                                         if (!buyerId) return;
-                                        if (!threads[buyerId]) threads[buyerId] = [];
-                                        threads[buyerId].push(msg);
+                                        const pavilionKey = extractPavilionTag(msg.content) || viewingMessages?.slug || viewingMessages?.id;
+                                        const threadKey = `${pavilionKey}::${buyerId}`;
+                                        if (!threads[threadKey]) threads[threadKey] = [];
+                                        threads[threadKey].push(msg);
                                     });
 
-                                    const senderIds = Object.keys(threads);
+                                    const threadKeys = Object.keys(threads);
 
-                                    if (senderIds.length === 0) return <p className="p-4 text-xs text-slate-500 text-center">{t('seller_dashboard.conversation_empty')}</p>;
+                                    if (threadKeys.length === 0) return <p className="p-4 text-xs text-slate-500 text-center">{t('seller_dashboard.conversation_empty')}</p>;
 
-                                    return senderIds.map(senderId => {
-                                        const thread = threads[senderId];
+                                    return threadKeys.map(threadId => {
+                                        const thread = threads[threadId];
+                                        const { pavilionKey, buyerId } = parseThreadKey(threadId);
                                         const lastMsg = thread[thread.length - 1]; // Naive last message
+                                        const pavilionLabel = pavilionKey ? pavilionKey.toUpperCase() : (viewingMessages?.title || t('seller_dashboard.inbox'));
                                         return (
                                             <button
-                                                key={senderId}
-                                                onClick={() => setViewingThread(senderId)}
-                                                className={`w-full p-4 border-b border-white/5 text-left hover:bg-white/5 transition flex items-start gap-3 ${viewingThread === senderId ? 'bg-cyan-900/20 border-l-2 border-l-cyan-400' : 'border-l-2 border-l-transparent'}`}
+                                                key={threadId}
+                                                onClick={() => setViewingThread(threadId)}
+                                                className={`w-full p-4 border-b border-white/5 text-left hover:bg-white/5 transition flex items-start gap-3 ${viewingThread === threadId ? 'bg-cyan-900/20 border-l-2 border-l-cyan-400' : 'border-l-2 border-l-transparent'}`}
                                             >
-                                                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-500 to-blue-600 flex items-center justify-center text-xs font-bold text-white">
-                                                    {senderId.substr(0, 2).toUpperCase()}
+                                                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-500 to-blue-600 flex items-center justify-center text-[10px] font-bold text-white text-center leading-3">
+                                                    {pavilionLabel.slice(0, 2)}
                                                 </div>
                                                 <div className="flex-1 min-w-0">
                                                     <div className="flex justify-between items-baseline mb-1">
-                                                        <span className="text-sm font-bold text-slate-200 truncate">{t('seller_dashboard.buyer_label', { id: senderId.substr(0, 4) })}...</span>
+                                                        <span className="text-sm font-bold text-slate-200 truncate">{pavilionLabel} · {t('seller_dashboard.buyer_label', { id: buyerId.substr(0, 4) })}...</span>
                                                         <span className="text-[10px] text-slate-500">{new Date(lastMsg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
                                                     </div>
                                                     <p className="text-xs text-slate-400 truncate">{stripBuyerTag(lastMsg.content)}</p>
@@ -334,7 +367,10 @@ export default function SellerDashboard({ user }) {
                                 <div>
                                     <h3 className="font-bold text-sm text-white">{viewingMessages.title}</h3>
                                     {viewingThread ? (
-                                        <span className="text-xs text-cyan-500">{t('seller_dashboard.replying_to', { id: viewingThread.substr(0, 6) })}...</span>
+                                        (() => {
+                                            const { buyerId } = parseThreadKey(viewingThread);
+                                            return <span className="text-xs text-cyan-500">{t('seller_dashboard.replying_to', { id: buyerId.substr(0, 6) })}...</span>;
+                                        })()
                                     ) : (
                                         <span className="text-xs text-slate-500">{t('seller_dashboard.select_conversation')}</span>
                                     )}
@@ -352,9 +388,11 @@ export default function SellerDashboard({ user }) {
                                 ) : (
                                     pavilionMessages
                                         .filter(m => {
-                                            const buyerId = extractBuyerId(m.content);
-                                            const isBuyerMessage = buyerId ? buyerId === viewingThread : m.sender_id === viewingThread;
-                                            const isSellerMessageForThread = m.sender_id === user.id && buyerId === viewingThread;
+                                            const { pavilionKey, buyerId: selectedBuyer } = parseThreadKey(viewingThread);
+                                            const messageBuyer = extractBuyerId(m.content) || (m.sender_id !== user.id ? m.sender_id : null);
+                                            const messagePavilion = extractPavilionTag(m.content) || viewingMessages?.slug || viewingMessages?.id;
+                                            const isBuyerMessage = messageBuyer === selectedBuyer && messagePavilion === pavilionKey;
+                                            const isSellerMessageForThread = m.sender_id === user.id && messageBuyer === selectedBuyer && messagePavilion === pavilionKey;
                                             return isBuyerMessage || isSellerMessageForThread;
                                         })
                                         .sort((a, b) => new Date(a.created_at) - new Date(b.created_at))
@@ -380,10 +418,12 @@ export default function SellerDashboard({ user }) {
                                         const input = e.target.elements.replyInput;
                                         const content = input.value.trim();
                                         if (!content) return;
+                                        const { pavilionKey, buyerId } = parseThreadKey(viewingThread);
+                                        const pvTag = pavilionKey ? `[pv:${pavilionKey}] ` : '';
+                                        const taggedContent = `[buyer:${buyerId}] ${pvTag}${content}`;
 
                                         // Optimistic
-                                        const taggedContent = `[buyer:${viewingThread}] ${content}`;
-                                        const fakeMsg = { id: Date.now(), content: taggedContent, sender_id: user.id, created_at: new Date().toISOString(), pavilion_id: viewingMessages.id };
+                                        const fakeMsg = { id: `temp-${Date.now()}`, content: taggedContent, sender_id: user.id, created_at: new Date().toISOString(), pavilion_id: viewingMessages.id };
                                         setPavilionMessages(prev => [...prev, fakeMsg]);
                                         input.value = '';
 

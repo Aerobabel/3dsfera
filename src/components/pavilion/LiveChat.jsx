@@ -2,11 +2,43 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { supabase } from '../../lib/supabaseClient';
 
-export default function LiveChat({ pavilionId, user }) {
+const extractBuyerId = (content = '') => {
+    const match = content.match(/\[buyer:([^\]]+)\]/);
+    return match ? match[1] : null;
+};
+
+const stripBuyerTag = (content = '') => {
+    return content.replace(/^\[buyer:[^\]]+\]\s*/i, '').trim();
+};
+
+const extractPavilionTag = (content = '') => {
+    const match = content.match(/\[pv:([^\]]+)\]/);
+    return match ? match[1] : null;
+};
+
+const stripPavilionTag = (content = '') => {
+    return content.replace(/^\[pv:[^\]]+\]\s*/i, '').trim();
+};
+
+export default function LiveChat({ pavilionId, pavilionSlug, user }) {
     const { t } = useTranslation();
     const [messages, setMessages] = useState([]);
     const [newMessage, setNewMessage] = useState('');
     const bottomRef = useRef(null);
+    const buyerId = user?.id || null;
+    const isSeller = user?.user_metadata?.role === 'seller';
+
+    const filterForThread = (list = []) => {
+        if (!buyerId || !pavilionId) return [];
+        return list.filter((m) => {
+            const taggedBuyer = extractBuyerId(m.content);
+            const taggedPavilion = extractPavilionTag(m.content);
+            const isBuyerMsg = m.sender_id === buyerId;
+            const isForBuyer = taggedBuyer ? taggedBuyer === buyerId : isBuyerMsg;
+            const isForPavilion = pavilionSlug ? taggedPavilion === pavilionSlug : true;
+            return isForBuyer && isForPavilion;
+        });
+    };
 
     useEffect(() => {
         if (!pavilionId) return;
@@ -22,7 +54,7 @@ export default function LiveChat({ pavilionId, user }) {
                 console.error('Failed to load chat history', error);
                 return;
             }
-            setMessages(data || []);
+            setMessages(filterForThread(data) || []);
         };
 
         fetchMessages();
@@ -34,8 +66,21 @@ export default function LiveChat({ pavilionId, user }) {
                 { event: 'INSERT', schema: 'public', table: 'messages', filter: `pavilion_id=eq.${pavilionId}` },
                 (payload) => {
                     setMessages((prev) => {
-                        if (prev.find((m) => m.id === payload.new.id)) return prev;
-                        return [...prev, payload.new];
+                        const incoming = payload.new;
+                        const scoped = filterForThread([incoming]);
+                        if (scoped.length === 0) return prev;
+                        // Replace optimistic temp message (sender match + stripped content match)
+                        const strippedIncoming = stripPavilionTag(stripBuyerTag(incoming.content));
+                        const withoutTemp = prev.filter(
+                            (m) =>
+                                !(
+                                    (m.id || '').toString().startsWith('temp-') &&
+                                    m.sender_id === incoming.sender_id &&
+                                    stripPavilionTag(stripBuyerTag(m.content)) === strippedIncoming
+                                )
+                        );
+                        if (withoutTemp.find((m) => m.id === incoming.id)) return withoutTemp;
+                        return [...withoutTemp, incoming];
                     });
                 }
             )
@@ -44,25 +89,41 @@ export default function LiveChat({ pavilionId, user }) {
         return () => {
             supabase.removeChannel(channel);
         };
-    }, [pavilionId]);
+    }, [pavilionId, buyerId, pavilionSlug]);
 
     useEffect(() => {
         bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
     }, [messages]);
 
+    if (isSeller) {
+        return (
+            <div className="flex flex-col h-full bg-black/50 rounded-lg overflow-hidden border border-white/10">
+                <div className="bg-white/5 p-4 border-b border-white/10">
+                    <h3 className="text-sm font-bold text-cyan-400">{t('pavilion_ui.live_chat')}</h3>
+                    <p className="text-[11px] text-white/60">{t('pavilion_ui.seller_dashboard_only')}</p>
+                </div>
+                <div className="flex-1 flex items-center justify-center text-sm text-slate-400 px-4 text-center">
+                    {t('pavilion_ui.buyer_only_here')}
+                </div>
+            </div>
+        );
+    }
+
     const handleSend = async () => {
+        if (isSeller) return;
         const content = newMessage.trim();
         if (!content || !pavilionId) return;
         if (!user) {
             alert(t('pavilion_ui.login_to_chat'));
             return;
         }
+        const taggedContent = `[buyer:${buyerId}] ${pavilionSlug ? `[pv:${pavilionSlug}] ` : ''}${content}`;
 
         const optimistic = {
             id: `temp-${Date.now()}`,
             pavilion_id: pavilionId,
             sender_id: user.id,
-            content,
+            content: taggedContent,
             created_at: new Date().toISOString()
         };
 
@@ -72,7 +133,7 @@ export default function LiveChat({ pavilionId, user }) {
         const { error } = await supabase.from('messages').insert({
             pavilion_id: pavilionId,
             sender_id: user.id,
-            content
+            content: taggedContent
         });
 
         if (error) {
@@ -98,6 +159,7 @@ export default function LiveChat({ pavilionId, user }) {
                 {messages.map((m) => {
                     const isMe = m.sender_id === user?.id;
                     const senderLabel = isMe ? t('pavilion_ui.you') : `${t('pavilion_ui.user')} ${m.sender_id?.substr(0, 4) || '----'}`;
+                    const contentText = stripPavilionTag(stripBuyerTag(m.content));
 
                     return (
                         <div key={m.id} className={`flex flex-col ${isMe ? 'items-end' : 'items-start'}`}>
@@ -108,7 +170,7 @@ export default function LiveChat({ pavilionId, user }) {
                                     : 'bg-white/10 text-gray-200 border border-white/10'
                                     }`}
                             >
-                                {m.content}
+                                {contentText}
                                 <div className="text-[10px] text-white/40 mt-1">
                                     {m.created_at ? new Date(m.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : ''}
                                 </div>
@@ -134,7 +196,7 @@ export default function LiveChat({ pavilionId, user }) {
                     disabled={!user}
                     className="px-4 py-2 bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-400 border border-cyan-500/50 rounded text-sm font-bold transition disabled:opacity-40"
                 >
-                    SEND
+                    {t('pavilion_ui.send').toUpperCase()}
                 </button>
             </div>
         </div>

@@ -5,6 +5,7 @@
 import React, { useRef, useEffect } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { Html } from '@react-three/drei';
+import { useTranslation } from 'react-i18next';
 import * as THREE from 'three';
 
 // Lerps camera to target position for smooth "Zoom" effect
@@ -56,6 +57,7 @@ export function CameraSmoother({ controlsRef, targetPosition, cameraPosition, is
 
 // Floating UI Card
 export function FloatingAnnotation({ title, description, stats, pavilionName, visible, position, onDetailsClick }) {
+    const { t } = useTranslation();
     if (!visible) return null;
 
     return (
@@ -65,7 +67,9 @@ export function FloatingAnnotation({ title, description, stats, pavilionName, vi
                 bg-black/80 backdrop-blur-xl border border-white/20 
                 shadow-[0_0_50px_rgba(0,0,0,0.5)] transition-all duration-500 ease-out origin-bottom
                 animate-in fade-in slide-in-from-bottom-4 pointer-events-auto
-            `}>
+            `}
+                style={{ fontFamily: 'Inter, "Segoe UI", Arial, sans-serif' }}
+            >
                 {/* Connection Line */}
                 <div className="absolute -bottom-16 left-1/2 w-px h-16 bg-gradient-to-t from-transparent via-cyan-400/50 to-white/20 pointer-events-none" />
                 <div className="absolute -bottom-16 left-1/2 w-2 h-2 -translate-x-1 rounded-full bg-cyan-400 shadow-[0_0_10px_#22d3ee] pointer-events-none" />
@@ -74,16 +78,20 @@ export function FloatingAnnotation({ title, description, stats, pavilionName, vi
                 <div className="border-b border-white/10 pb-2 mb-2 flex justify-between items-center">
                     <div>
                         {pavilionName && (
-                            <div className="text-[10px] text-cyan-400/80 uppercase tracking-[0.2em] mb-1">Pavilion</div>
+                            <div className="text-[10px] text-cyan-400/80 uppercase tracking-[0.2em] mb-1" style={{ fontFamily: 'Inter, "Segoe UI", Arial, sans-serif' }}>
+                                {t('pavilion_ui.pavilion_label', 'PAVILION')}
+                            </div>
                         )}
-                        <h3 className="text-white font-bold tracking-widest uppercase text-sm">{pavilionName || title}</h3>
+                        <h3 className="text-white font-bold tracking-widest uppercase text-sm" style={{ fontFamily: 'Inter, "Segoe UI", Arial, sans-serif' }}>
+                            {pavilionName || title}
+                        </h3>
                         <div className="h-0.5 w-8 bg-cyan-400 mt-1 shadow-[0_0_8px_#22d3ee]" />
                     </div>
                 </div>
 
                 {/* Description */}
-                <p className="text-gray-300 text-xs leading-relaxed font-light mb-3">
-                    {description}
+                <p className="text-gray-300 text-xs leading-relaxed font-light mb-3" style={{ fontFamily: 'Inter, "Segoe UI", Arial, sans-serif' }}>
+                    {t(`pavilion_content.pavilions.${title?.toLowerCase?.()?.replace(/[^a-z0-9]+/g, '-') || ''}.description`, { defaultValue: description })}
                 </p>
 
                 {/* Stats Grid */}
@@ -91,7 +99,9 @@ export function FloatingAnnotation({ title, description, stats, pavilionName, vi
                     <div className="grid grid-cols-2 gap-2 text-xs mb-3">
                         {Object.entries(stats).map(([label, value]) => (
                             <div key={label} className="bg-white/5 p-2 rounded border border-white/5">
-                                <div className="text-gray-400 text-[10px] uppercase">{label}</div>
+                                <div className="text-gray-400 text-[10px] uppercase" style={{ fontFamily: 'Inter, "Segoe UI", Arial, sans-serif' }}>
+                                    {t(`pavilion_content.stats.${label}`, label)}
+                                </div>
                                 <div className="text-cyan-300 font-mono font-bold">{value}</div>
                             </div>
                         ))}
@@ -101,8 +111,9 @@ export function FloatingAnnotation({ title, description, stats, pavilionName, vi
                 <button
                     onClick={(e) => { e.stopPropagation(); onDetailsClick?.(); }}
                     className="w-full py-2 bg-cyan-500/20 hover:bg-cyan-500/30 border border-cyan-400/30 rounded text-xs font-bold text-white transition flex items-center justify-center gap-2 group"
+                    style={{ fontFamily: 'Inter, "Segoe UI", Arial, sans-serif' }}
                 >
-                    <span>ENTER PAVILION</span>
+                    <span>{t('pavilion_ui.enter_pavilion', 'ENTER PAVILION')}</span>
                     <svg className="w-3 h-3 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
                 </button>
             </div>

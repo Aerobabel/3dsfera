@@ -132,17 +132,7 @@
         "chat_with_supplier": "Chat with Supplier",
         "exit": "Exit",
         "view_details": "View details",
-        "back": "Back",
-        "inquire_now": "Inquire Now",
-        "seller_dashboard_only": "Sellers reply from the dashboard.",
-        "buyer_only_here": "Chat is available to buyers only in this view.",
-        "products_in_showroom": "Products in Showroom",
-        "company_info": "COMPANY INFO",
-        "pavilion_label": "PAVILION",
-        "enter_pavilion": "ENTER PAVILION",
-        "company": "COMPANY",
-        "no_description": "No description available.",
-        "exit_showroom": "Exit Showroom"
+        "back": "Back"
     },
     "verified_pavilion": {
         "test_btn": "TEST VERIFIED PAVILION",
@@ -279,51 +269,6 @@
                 "type": "Silver Sponsor",
                 "description": "Advanced air pressure systems for large scale automation."
             }
-        }
-    },
-    "pavilion_content": {
-        "pavilions": {
-            "3dsfera": {
-                "description": "Leading digital marketplace connecting buyers and verified suppliers across 140 countries. Focused on industrial equipment, aerospace components, and heavy machinery."
-            },
-            "aero": {
-                "description": "Specialized manufacturer of high-performance turbine engines and precision valves for aerospace and industrial applications."
-            },
-            "heavy": {
-                "description": "Global leader in heavy machinery and industrial robotics, delivering lifting and automation solutions worldwide."
-            }
-        },
-        "products": {
-            "smart_microwave": {
-                "title": "Smart Inverter Microwave",
-                "description": "AI cooking sensors, rapid defrost, and stainless finish for modern kitchens."
-            },
-            "oled_tv": {
-                "title": "65\" 4K OLED TV",
-                "description": "Bezel-less 4K OLED panel with infinite contrast and cinematic color accuracy."
-            },
-            "turbine_valve": {
-                "title": "High-Temp Turbine Valve",
-                "description": "Precision titanium-alloy valve engineered for extreme turbine temperatures and durability."
-            },
-            "pneumatic_system": {
-                "title": "Industrial Pneumatic Actuator",
-                "description": "Heavy-duty pneumatic control system for high-pressure airflow with rapid response."
-            },
-            "robotic_arm": {
-                "title": "6-Axis Industrial Robot",
-                "description": "High-precision robotic arm with strong payload capacity for automated manufacturing."
-            },
-            "mobile_crane": {
-                "title": "Mobile Crane MC-500",
-                "description": "Hybrid diesel-electric mobile crane for all-terrain construction and industrial lifts."
-            }
-        },
-        "stats": {
-            "Global Reach": "Global Reach",
-            "Product SKUs": "Product SKUs",
-            "Platform Uptime": "Platform Uptime",
-            "Verified Suppliers": "Verified Suppliers"
         }
     }
 }
