@@ -1,7 +1,7 @@
 import React, { useState, useRef, Suspense, useMemo, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Canvas, useFrame } from '@react-three/fiber';
-import { PresentationControls, Float, ContactShadows, Environment, Stars, Loader, Center, Resize } from '@react-three/drei';
+import { OrbitControls, Float, ContactShadows, Environment, Stars, Loader, Center, Resize, Sphere } from '@react-three/drei';
 import * as THREE from 'three';
 import ProductModel from './ProductModel';
 import SoundManager from './SoundManager';
@@ -12,16 +12,19 @@ import { HeavyDutyRobot } from './subsystems/HeavyDutyRobot';
 // --- COMPONENTS ---
 
 function ShowroomStage({ currentProduct, isHeavy }) {
-    // Fallback for missing models (Holographic Box)
+    // Fallback for missing models (Holographic Placeholder)
     const PlaceholderModel = () => (
         <group>
             <mesh position={[0, 0, 0]}>
                 <boxGeometry args={[1, 1, 1]} />
                 <meshBasicMaterial color="#00ffff" wireframe transparent opacity={0.3} />
             </mesh>
+            <Sphere args={[0.4, 16, 16]}>
+                <meshBasicMaterial color="#00ffff" wireframe transparent opacity={0.2} />
+            </Sphere>
             <mesh position={[0, 0, 0]}>
                 <boxGeometry args={[0.8, 0.8, 0.8]} />
-                <meshBasicMaterial color="#00ffff" transparent opacity={0.1} />
+                <meshBasicMaterial color="#00ffff" transparent opacity={0.05} />
             </mesh>
         </group>
     );
@@ -29,66 +32,54 @@ function ShowroomStage({ currentProduct, isHeavy }) {
     // Smooth floating animation
     return (
         <group>
-            <PresentationControls
-                global={false}
-                cursor={true}
-                snap={{ mass: 4, tension: 400 }}
-                speed={1.5}
-                zoom={1.2}
-                rotation={[0, 0, 0]}
-                polar={[-Math.PI / 3, Math.PI / 3]} // Relaxed vertical usage
-                azimuth={[-Infinity, Infinity]}
-                config={{ mass: 2, tension: 250, friction: 18 }}
+            <Float
+                speed={2}
+                rotationIntensity={0.1}
+                floatIntensity={0.2}
+                floatingRange={[-0.1, 0.1]}
             >
-                <Float
-                    speed={2}
-                    rotationIntensity={0.05}
-                    floatIntensity={0.1}
-                    floatingRange={[-0.1, 0.1]}
-                >
-                    {/* CINEMATIC LIGHTING attached to the camera/scene scope */}
-                    <group position={[0, 1.0, 0]}> {/* Lifted Center Stage */}
-                        {/* Centered Content: PIVOT FIXED to Visual Center */}
-                        <Center>
-                            <Resize scale={5}>
-                                {/* Product Rendering Switch */}
-                                {currentProduct.isRoboticArm ? (
-                                    <HeavyDutyRobot />
-                                ) : currentProduct.modelPath ? (
-                                    <ProductModel
-                                        path={currentProduct.modelPath}
-                                    />
-                                ) : (
-                                    <PlaceholderModel />
-                                )}
-                            </Resize>
-                        </Center>
+                {/* CINEMATIC LIGHTING attached to the camera/scene scope */}
+                <group position={[0, 0, 0]}>
+                    {/* Centered & RESIZED Content */}
+                    <Center>
+                        <Resize scale={5}>
+                            {/* Product Rendering Switch */}
+                            {currentProduct.isRoboticArm ? (
+                                <HeavyDutyRobot />
+                            ) : currentProduct.modelPath ? (
+                                <ProductModel
+                                    path={currentProduct.modelPath}
+                                />
+                            ) : (
+                                <PlaceholderModel />
+                            )}
+                        </Resize>
+                    </Center>
 
-                        {/* Ground Shadows for realism */}
-                        <ContactShadows
-                            opacity={0.7}
-                            scale={20}
-                            blur={2}
-                            far={4}
-                            resolution={512}
-                            color="#000000"
-                            position={[0, -2.5, 0]} // Shadow at bottom of 5-unit box
-                        />
+                    {/* Ground Shadows for realism */}
+                    <ContactShadows
+                        opacity={0.7}
+                        scale={20}
+                        blur={2}
+                        far={4}
+                        resolution={512}
+                        color="#000000"
+                        position={[0, -2.5, 0]} // Shadow at bottom of 5-unit box
+                    />
 
-                        {/* Glowing Platform Ring */}
-                        <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -2.45, 0]}>
-                            <ringGeometry args={[3.0, 3.1, 64]} />
-                            <meshBasicMaterial color="#00ffff" opacity={0.4} transparent />
-                        </mesh>
-                        <pointLight position={[0, 0, 0]} color="#00ffff" intensity={2} distance={5} />
-                    </group>
-                </Float>
-            </PresentationControls>
+                    {/* Glowing Platform Ring */}
+                    <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -2.45, 0]}>
+                        <ringGeometry args={[3.0, 3.1, 64]} />
+                        <meshBasicMaterial color="#00ffff" opacity={0.4} transparent />
+                    </mesh>
+                    <pointLight position={[0, 0, 0]} color="#00ffff" intensity={2} distance={5} />
+                </group>
+            </Float>
 
             {/* AMBIENCE */}
-            <ambientLight intensity={0.8} /> {/* Brighter ambient for back-lighting */}
-            <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} intensity={10} castShadow />
-            <pointLight position={[-10, 5, -10]} intensity={5} color="#4444ff" /> {/* Backlight */}
+            <ambientLight intensity={1.5} />
+            <spotLight position={[10, 10, 10]} angle={0.2} penumbra={1} intensity={15} castShadow />
+            <pointLight position={[-10, 5, -10]} intensity={8} color="#8888ff" />
             <Environment preset="city" blur={0.8} background={false} />
             <Stars radius={100} depth={50} count={5000} factor={4} saturation={0} fade speed={1} />
         </group>
@@ -125,9 +116,21 @@ export default function ShowroomView({ pavilionData, onBack }) {
 
             {/* 3D SCENE */}
             <div className="absolute inset-0 z-10">
-                <Canvas shadows dpr={[1, 2]} camera={{ position: [0, 1.0, 9], fov: 40 }}> {/* Moved closer (8 vs 10) */}
+                <Canvas shadows dpr={[1, 2]} camera={{ position: [0, 1.0, 9], fov: 35 }}>
                     <Suspense fallback={null}>
                         <ShowroomStage currentProduct={currentProduct} isHeavy={isHeavy} />
+                        <OrbitControls
+                            makeDefault
+                            autoRotate
+                            autoRotateSpeed={0.5}
+                            enableDamping
+                            dampingFactor={0.05}
+                            minDistance={4}
+                            maxDistance={15}
+                            minPolarAngle={0}
+                            maxPolarAngle={Math.PI / 1.7}
+                            target={[0, 0, 0]}
+                        />
                     </Suspense>
                 </Canvas>
             </div>
@@ -214,7 +217,7 @@ export default function ShowroomView({ pavilionData, onBack }) {
                 Drag to Rotate • Scroll to Zoom
             </div>
 
-            <Loader dataInterpolation={(p) => `Loading Collection ${p.toFixed(0)}%`} />
+            <Loader dataInterpolation={(p) => `Loading Collection ${p.toFixed(0)}% `} />
         </div>
     );
 }
