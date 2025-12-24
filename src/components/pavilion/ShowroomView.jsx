@@ -8,6 +8,9 @@ import SoundManager from './SoundManager';
 
 // ... imports
 import { HeavyDutyRobot } from './subsystems/HeavyDutyRobot';
+import { PlatformDemoModel } from './subsystems/PlatformDemoModel';
+import { Microwave } from './subsystems/Microwave';
+import { Television } from './subsystems/Television';
 
 // --- COMPONENTS ---
 
@@ -56,7 +59,13 @@ function ShowroomStage({ currentProduct, isHeavy }) {
                     <Center>
                         <Resize scale={5 * (currentProduct.scale || 1)}>
                             {/* Product Rendering Switch */}
-                            {currentProduct.isRoboticArm ? (
+                            {currentProduct.isMicrowave ? (
+                                <Microwave />
+                            ) : currentProduct.isTelevision ? (
+                                <Television />
+                            ) : currentProduct.isPlatformDemo ? (
+                                <PlatformDemoModel />
+                            ) : currentProduct.isRoboticArm ? (
                                 <HeavyDutyRobot />
                             ) : currentProduct.modelPath ? (
                                 <ProductModel

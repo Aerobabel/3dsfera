@@ -26,16 +26,32 @@ export const PAVILIONS = {
         videoUrl: logoVideoUrl,
         products: [
             {
-                id: 'platform_demo',
-                title: 'Platform Demo',
-                description: '3D visualization platform for industrial equipment showcasing and virtual trade shows.',
+                id: 'smart_microwave',
+                title: 'Smart Inverter Microwave',
+                description: 'Next-gen kitchen appliance with AI cooking sensors and rapid defrost technology. Sleek stainless steel finish.',
                 stats: {
-                    'Active Users': '500k+',
-                    'Uptime': '99.99%',
-                    'Integrations': 'API/ERP'
+                    'Power': '1200W',
+                    'Capacity': '2.2 cu ft',
+                    'Sensors': 'Humidity/Temp'
                 },
                 modelPath: null,
+                isMicrowave: true,
+                scale: 1.0,
                 position: [0, 0, 0]
+            },
+            {
+                id: 'oled_tv',
+                title: '65" 4K OLED TV',
+                description: 'Ultra-thin bezel-less display with infinite contrast and cinematic color accuracy.',
+                stats: {
+                    'Resolution': '3840 x 2160',
+                    'Panel Type': 'OLED',
+                    'Refresh Rate': '120Hz'
+                },
+                modelPath: null,
+                isTelevision: true,
+                scale: 1.2,
+                position: [5, 0, 0]
             }
         ]
     },
