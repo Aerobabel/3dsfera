@@ -6,7 +6,8 @@ import logoVideoUrl from '../../assets/videos/Logo_Video_Generation.mp4';
 import aeroWallUrl from '../../assets/images/aerowall.png';
 import liftWallUrl from '../../assets/images/liftwall.png';
 
-const TURBO_ENGINE_PATH = '/objects/turbo_schaft_engine_ivchenko_al-20.glb';
+const TURBO_ENGINE_PATH = '/objects/turbo_schaft_engine_ivchenko_al-20.glb'; // Kept for reference or removal
+const PNEUMATIC_PATH = '/objects/Pneumatic.glb';
 const CRANE_MACHINE_PATH = '/objects/crane_machine.glb';
 const VALVE_PATH = '/objects/valve.glb';
 
@@ -62,21 +63,22 @@ export const PAVILIONS = {
                     'Pressure Rating': '250 Bar'
                 },
                 modelPath: VALVE_PATH,
-                scale: 0.15,
+                scale: 0.9,
                 position: [0, 0, 0]
             },
             {
-                id: 'turbo_engine',
-                title: 'AL-20 Turboshaft Engine',
-                description: 'Advanced turboshaft engine with exceptional power-to-weight ratio. Proven performance in demanding aerospace applications.',
+                id: 'pneumatic_system',
+                title: 'Industrial Pneumatic Actuator',
+                description: 'Heavy-duty pneumatic control system for high-pressure industrial airflow management. Engineered for rapid response and extreme durability.',
                 stats: {
-                    'Power Output': '240kN',
-                    'Weight': '850kg',
-                    'Fuel Efficiency': '94%',
-                    'TBO': '6000 Hours'
+                    'Max Pressure': '350 Bar',
+                    'Actuation Time': '0.05s',
+                    'Cycle Life': '10M Cycles',
+                    'Material': 'Stainless 316L'
                 },
-                modelPath: TURBO_ENGINE_PATH,
-                scale: 0.8,
+                modelPath: PNEUMATIC_PATH,
+                scale: 1.3,
+                rotation: [0, 1.57, 0],
                 position: [5, 0, 0]
             }
         ]
@@ -119,7 +121,7 @@ export const PAVILIONS = {
                     'Mobility': 'All-Terrain'
                 },
                 modelPath: CRANE_MACHINE_PATH,
-                scale: 0.35,
+                scale: 1.1,
                 position: [-5, 0, 0]
             }
         ]

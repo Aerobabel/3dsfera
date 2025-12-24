@@ -1,6 +1,6 @@
 import React, { useState, useRef, Suspense, useMemo, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Canvas, useFrame } from '@react-three/fiber';
+import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { OrbitControls, Float, ContactShadows, Environment, Stars, Loader, Center, Resize, Sphere } from '@react-three/drei';
 import * as THREE from 'three';
 import ProductModel from './ProductModel';
@@ -10,6 +10,18 @@ import SoundManager from './SoundManager';
 import { HeavyDutyRobot } from './subsystems/HeavyDutyRobot';
 
 // --- COMPONENTS ---
+
+function CameraHandler({ trigger }) {
+    const { camera, controls } = useThree();
+    useEffect(() => {
+        camera.position.set(0, 1.0, 9);
+        if (controls) {
+            controls.target.set(0, 0, 0);
+            controls.update();
+        }
+    }, [trigger, camera, controls]);
+    return null;
+}
 
 function ShowroomStage({ currentProduct, isHeavy }) {
     // Fallback for missing models (Holographic Placeholder)
@@ -42,13 +54,14 @@ function ShowroomStage({ currentProduct, isHeavy }) {
                 <group position={[0, 0, 0]}>
                     {/* Centered & RESIZED Content */}
                     <Center>
-                        <Resize scale={5}>
+                        <Resize scale={5 * (currentProduct.scale || 1)}>
                             {/* Product Rendering Switch */}
                             {currentProduct.isRoboticArm ? (
                                 <HeavyDutyRobot />
                             ) : currentProduct.modelPath ? (
                                 <ProductModel
                                     path={currentProduct.modelPath}
+                                    rotation={currentProduct.rotation || [0, 0, 0]}
                                 />
                             ) : (
                                 <PlaceholderModel />
@@ -119,6 +132,7 @@ export default function ShowroomView({ pavilionData, onBack }) {
                 <Canvas shadows dpr={[1, 2]} camera={{ position: [0, 1.0, 9], fov: 35 }}>
                     <Suspense fallback={null}>
                         <ShowroomStage currentProduct={currentProduct} isHeavy={isHeavy} />
+                        <CameraHandler trigger={currentProduct.id} />
                         <OrbitControls
                             makeDefault
                             autoRotate
