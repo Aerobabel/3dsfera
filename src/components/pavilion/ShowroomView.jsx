@@ -56,8 +56,8 @@ function ShowroomStage({ currentProduct, isHeavy }) {
                 {/* CINEMATIC LIGHTING attached to the camera/scene scope */}
                 <group position={[0, 0, 0]}>
                     {/* Centered & RESIZED Content */}
-                    <Center>
-                        <Resize scale={5 * (currentProduct.scale || 1)}>
+                    <Center key={currentProduct.id}>
+                        <Resize key={currentProduct.id} scale={5 * (currentProduct.scale || 1)}>
                             {/* Product Rendering Switch */}
                             {currentProduct.isMicrowave ? (
                                 <Microwave />
