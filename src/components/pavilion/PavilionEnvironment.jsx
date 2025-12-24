@@ -1,6 +1,65 @@
+
 import React from 'react';
-import { useVideoTexture, CatmullRomLine, Text, Grid, MeshReflectorMaterial, Torus } from '@react-three/drei';
+import { useVideoTexture, CatmullRomLine, Text, Grid, MeshReflectorMaterial, Torus, SpotLight } from '@react-three/drei';
 import * as THREE from 'three';
+
+
+export function CeilingLights() {
+    // Array of lights to simulate an industrial ceiling grid
+    const cols = 4;
+    const rows = 3;
+    const lights = [];
+
+    for (let x = -30; x <= 30; x += 20) {
+        for (let z = -10; z <= 30; z += 20) {
+            lights.push([x, z]);
+        }
+    }
+
+    return (
+        <group position={[0, 28, 0]}> {/* Raised from 18 to 28 */}
+            {lights.map(([x, z], i) => (
+                <group key={i} position={[x, 0, z]}>
+                    {/* Physical Fixture */}
+                    <mesh rotation={[Math.PI / 2, 0, 0]}>
+                        <cylinderGeometry args={[0.8, 0.8, 0.5]} />
+                        <meshStandardMaterial color="#111" emissive="#333" />
+                    </mesh>
+
+                    {/* Glowing Source Bulb */}
+                    <mesh position={[0, -0.3, 0]}>
+                        <sphereGeometry args={[0.4]} />
+                        <meshBasicMaterial color="#ffffff" toneMapped={false} />
+                    </mesh>
+
+                    {/* VOLUMETRIC BEAM (God Ray) */}
+                    <SpotLight
+                        position={[0, -0.4, 0]}
+                        distance={35}
+                        angle={0.6}
+                        attenuation={15}
+                        anglePower={7} // Sharp edges
+                        radiusTop={0.4}
+                        radiusBottom={10}
+                        opacity={0.2} // Subtle dust look
+                        color="#cceeff"
+                        volumetric
+                        castShadow={false}
+                    />
+
+                    {/* Floor Illuminator (Bounce) */}
+                    <pointLight
+                        position={[0, -5, 0]}
+                        color="#ffffff"
+                        intensity={5}
+                        distance={40}
+                        decay={1.2}
+                    />
+                </group>
+            ))}
+        </group>
+    );
+}
 import tractorVideoUrl from '../../assets/videos/Cyberpunk_Tractor_Video_Generation.mp4';
 import logoVideoUrl from '../../assets/videos/Logo_Video_Generation.mp4';
 
@@ -89,52 +148,7 @@ export function DetailedFloor() {
     );
 }
 
-export function CeilingLights() {
-    // Array of lights to simulate an industrial ceiling grid
-    const cols = 4;
-    const rows = 3;
-    const lights = [];
 
-    for (let x = -30; x <= 30; x += 20) {
-        for (let z = -10; z <= 30; z += 20) {
-            lights.push([x, z]);
-        }
-    }
-
-    return (
-        <group position={[0, 28, 0]}> {/* Raised from 18 to 28 */}
-            {lights.map(([x, z], i) => (
-                <group key={i} position={[x, 0, z]}>
-                    {/* Physical Fixture */}
-                    <mesh rotation={[Math.PI / 2, 0, 0]}>
-                        <cylinderGeometry args={[0.5, 0.5, 0.2]} />
-                        <meshStandardMaterial color="#111" emissive="#333" />
-                    </mesh>
-                    <mesh position={[0, -0.1, 0]} rotation={[Math.PI / 2, 0, 0]}>
-                        <circleGeometry args={[0.4]} />
-                        <meshStandardMaterial color="#ffffff" emissive="#ffffff" emissiveIntensity={2} toneMapped={false} />
-                    </mesh>
-                    {/* The Light */}
-                    <spotLight
-                        color="#ffffff"
-                        intensity={4}
-                        angle={0.6}
-                        penumbra={0.5}
-                        distance={30}
-                        castShadow={false}
-                    />
-                    {/* Added Point Light for ambient glow */}
-                    <pointLight
-                        color="#ffffee"
-                        intensity={15} // Boosted from 2
-                        distance={60} // Increased range
-                        decay={1}
-                    />
-                </group>
-            ))}
-        </group>
-    );
-}
 
 // Large Background Billboard with Fish Video
 export function BackgroundBillboard() {
