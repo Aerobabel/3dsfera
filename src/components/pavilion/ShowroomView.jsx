@@ -1,123 +1,220 @@
-import React, { useState, Suspense } from 'react';
+import React, { useState, useRef, Suspense, useMemo, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Canvas } from '@react-three/fiber';
-import { Loader, OrbitControls, Environment, MeshReflectorMaterial } from '@react-three/drei';
+import { Canvas, useFrame } from '@react-three/fiber';
+import { PresentationControls, Float, ContactShadows, Environment, Stars, Loader, Center, Resize } from '@react-three/drei';
 import * as THREE from 'three';
 import ProductModel from './ProductModel';
+import SoundManager from './SoundManager';
 
-// ASSET PATHS (Hardcoded here for now, could be props or shared constants)
-const TURBO_ENGINE_PATH = '/objects/turbo_schaft_engine_ivchenko_al-20.glb';
-const PNEUMATIC_PATH = '/objects/Pneumatic.glb';
-const CRANE_PATH = '/objects/mobile_crane.glb';
+// ... imports
+import { HeavyDutyRobot } from './subsystems/HeavyDutyRobot';
 
-function ShowroomView({ pavilionData, onBack, user }) {
-    const { t } = useTranslation();
-    const [selectedProduct, setSelectedProduct] = useState(null);
+// --- COMPONENTS ---
 
+function ShowroomStage({ currentProduct, isHeavy }) {
+    // Fallback for missing models (Holographic Box)
+    const PlaceholderModel = () => (
+        <group>
+            <mesh position={[0, 0, 0]}>
+                <boxGeometry args={[1, 1, 1]} />
+                <meshBasicMaterial color="#00ffff" wireframe transparent opacity={0.3} />
+            </mesh>
+            <mesh position={[0, 0, 0]}>
+                <boxGeometry args={[0.8, 0.8, 0.8]} />
+                <meshBasicMaterial color="#00ffff" transparent opacity={0.1} />
+            </mesh>
+        </group>
+    );
+
+    // Smooth floating animation
     return (
-        <div className="w-full h-screen bg-[#111] relative">
-            <button
-                onClick={onBack}
-                className="absolute top-8 left-8 z-50 px-4 py-2 bg-white/10 backdrop-blur border border-white/20 rounded-lg text-white font-bold hover:bg-white/20 transition"
+        <group>
+            <PresentationControls
+                global={false}
+                cursor={true}
+                snap={{ mass: 4, tension: 400 }}
+                speed={1.5}
+                zoom={1.2}
+                rotation={[0, 0, 0]}
+                polar={[-Math.PI / 3, Math.PI / 3]} // Relaxed vertical usage
+                azimuth={[-Infinity, Infinity]}
+                config={{ mass: 2, tension: 250, friction: 18 }}
             >
-                {t('verified_pavilion.ui.back_to_expo')}
-            </button>
+                <Float
+                    speed={2}
+                    rotationIntensity={0.05}
+                    floatIntensity={0.1}
+                    floatingRange={[-0.1, 0.1]}
+                >
+                    {/* CINEMATIC LIGHTING attached to the camera/scene scope */}
+                    <group position={[0, 1.0, 0]}> {/* Lifted Center Stage */}
+                        {/* Centered Content: PIVOT FIXED to Visual Center */}
+                        <Center>
+                            <Resize scale={5}>
+                                {/* Product Rendering Switch */}
+                                {currentProduct.isRoboticArm ? (
+                                    <HeavyDutyRobot />
+                                ) : currentProduct.modelPath ? (
+                                    <ProductModel
+                                        path={currentProduct.modelPath}
+                                    />
+                                ) : (
+                                    <PlaceholderModel />
+                                )}
+                            </Resize>
+                        </Center>
 
-            {selectedProduct && (
-                <div className="absolute inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-md p-4 md:p-10">
-                    <div className="bg-gray-900 border border-cyan-500/50 p-6 rounded-2xl w-full max-w-4xl h-[80vh] flex flex-col relative shadow-[0_0_50px_rgba(0,255,255,0.2)]">
-                        <button onClick={() => setSelectedProduct(null)} className="absolute top-4 right-4 text-gray-400 hover:text-white font-bold text-xl">Close</button>
-                        <h2 className="text-2xl text-cyan-400 font-bold mb-1">{selectedProduct.name}</h2>
-                        <p className="text-sm text-gray-400 mb-4">{selectedProduct.description}</p>
-                        <div className="flex-1 bg-black/50 rounded-lg overflow-hidden relative border border-white/10">
-                            <Canvas camera={{ position: [0, 2, 5], fov: 45 }}>
-                                <ambientLight intensity={1.5} />
-                                <spotLight position={[10, 10, 10]} intensity={20} angle={0.5} penumbra={1} />
-                                <OrbitControls autoRotate enableZoom={true} />
-                                <Suspense fallback={<Loader />}>
-                                    <ProductModel path={selectedProduct.path} size={3} position={[0, -0.5, 0]} />
-                                    <Environment preset="city" />
-                                </Suspense>
-                            </Canvas>
-                        </div>
-                    </div>
-                </div>
-            )}
+                        {/* Ground Shadows for realism */}
+                        <ContactShadows
+                            opacity={0.7}
+                            scale={20}
+                            blur={2}
+                            far={4}
+                            resolution={512}
+                            color="#000000"
+                            position={[0, -2.5, 0]} // Shadow at bottom of 5-unit box
+                        />
 
-            <Canvas camera={{ position: [0, 5, 12], fov: 45 }}>
-                <color attach="background" args={['#1a1a1a']} />
-                <ambientLight intensity={1.5} />
-                <spotLight position={[5, 15, 5]} intensity={30} angle={0.6} penumbra={0.5} castShadow />
-                <pointLight position={[-5, 5, -5]} intensity={5} color="#00ffff" />
-                <OrbitControls maxPolarAngle={Math.PI / 2 - 0.1} maxDistance={20} minDistance={5} enablePan={false} />
-
-                {/* Room Shell */}
-                <mesh position={[0, 0, 0]} rotation={[-Math.PI / 2, 0, 0]}>
-                    <circleGeometry args={[15, 64]} />
-                    <MeshReflectorMaterial
-                        blur={[300, 100]}
-                        resolution={1024}
-                        mixBlur={1}
-                        mixStrength={50}
-                        roughness={0.4}
-                        depthScale={1.2}
-                        minDepthThreshold={0.4}
-                        maxDepthThreshold={1.4}
-                        color="#222"
-                        metalness={0.6}
-                    />
-                </mesh>
-                <mesh position={[0, 10, 0]} rotation={[Math.PI / 2, 0, 0]}>
-                    <circleGeometry args={[15, 64]} />
-                    <meshStandardMaterial color="#111" />
-                </mesh>
-                {/* Curved Walls */}
-                <mesh position={[0, 5, 0]}>
-                    <cylinderGeometry args={[15, 15, 10, 32, 1, true]} />
-                    <meshStandardMaterial color="#111" side={THREE.BackSide} />
-                </mesh>
-
-
-                {/* Pedestals */}
-                <group position={[0, 0, 0]}>
-                    {/* Center Product */}
-                    <group position={[0, 0, 0]}>
-                        <cylinderGeometry args={[1.5, 1.2, 1]} />
-                        <meshStandardMaterial color="#222" roughness={0.2} metalness={0.8} />
-                        <mesh position={[0, 0.51, 0]} rotation={[-Math.PI / 2, 0, 0]}>
-                            <circleGeometry args={[1.2]} />
-                            <meshStandardMaterial color="#00ffff" emissive="#00ffff" emissiveIntensity={2} toneMapped={false} />
+                        {/* Glowing Platform Ring */}
+                        <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -2.45, 0]}>
+                            <ringGeometry args={[3.0, 3.1, 64]} />
+                            <meshBasicMaterial color="#00ffff" opacity={0.4} transparent />
                         </mesh>
-                        <ProductModel path={TURBO_ENGINE_PATH} position={[0, 1.5, 0]} size={2} onClick={() => setSelectedProduct({ name: 'Turbo Engine X1', description: 'High performance industrial turbine engine.', path: TURBO_ENGINE_PATH })} />
+                        <pointLight position={[0, 0, 0]} color="#00ffff" intensity={2} distance={5} />
                     </group>
+                </Float>
+            </PresentationControls>
 
-                    {/* Left Product */}
-                    <group position={[-5, 0, 2]} rotation={[0, Math.PI / 4, 0]}>
-                        <cylinderGeometry args={[1, 0.8, 1]} />
-                        <meshStandardMaterial color="#222" roughness={0.2} metalness={0.8} />
-                        <mesh position={[0, 0.51, 0]} rotation={[-Math.PI / 2, 0, 0]}>
-                            <circleGeometry args={[0.8]} />
-                            <meshStandardMaterial color="#00cccc" emissive="#00cccc" emissiveIntensity={1} toneMapped={false} />
-                        </mesh>
-                        <ProductModel path={PNEUMATIC_PATH} position={[0, 1.2, 0]} size={1.5} onClick={() => setSelectedProduct({ name: 'Pneumatic Control System', description: 'Precision pneumatic automation unit.', path: PNEUMATIC_PATH })} />
-                    </group>
-
-                    {/* Right Product */}
-                    <group position={[5, 0, 2]} rotation={[0, -Math.PI / 4, 0]}>
-                        <cylinderGeometry args={[1, 0.8, 1]} />
-                        <meshStandardMaterial color="#222" roughness={0.2} metalness={0.8} />
-                        <mesh position={[0, 0.51, 0]} rotation={[-Math.PI / 2, 0, 0]}>
-                            <circleGeometry args={[0.8]} />
-                            <meshStandardMaterial color="#00cccc" emissive="#00cccc" emissiveIntensity={1} toneMapped={false} />
-                        </mesh>
-                        <ProductModel path={CRANE_PATH} position={[0, 1.2, 0]} size={3} onClick={() => setSelectedProduct({ name: 'Mobile Crane Support', description: 'Heavy lifting support infrastructure.', path: CRANE_PATH })} />
-                    </group>
-                </group>
-
-                <Environment preset="warehouse" />
-            </Canvas>
-        </div>
-    )
+            {/* AMBIENCE */}
+            <ambientLight intensity={0.8} /> {/* Brighter ambient for back-lighting */}
+            <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} intensity={10} castShadow />
+            <pointLight position={[-10, 5, -10]} intensity={5} color="#4444ff" /> {/* Backlight */}
+            <Environment preset="city" blur={0.8} background={false} />
+            <Stars radius={100} depth={50} count={5000} factor={4} saturation={0} fade speed={1} />
+        </group>
+    );
 }
 
-export default ShowroomView;
+// --- MAIN VIEW ---
+
+export default function ShowroomView({ pavilionData, onBack }) {
+    const [activeIndex, setActiveIndex] = useState(0);
+    const products = useMemo(() => pavilionData?.products || [], [pavilionData]);
+    const currentProduct = products[activeIndex] || {};
+    const isHeavy = pavilionData?.id === 'heavy';
+
+    // Carousel Navigation
+    const nextProduct = () => {
+        if (products.length === 0) return;
+        SoundManager.playClick();
+        setActiveIndex((prev) => (prev + 1) % products.length);
+    };
+
+    const prevProduct = () => {
+        if (products.length === 0) return;
+        SoundManager.playClick();
+        setActiveIndex((prev) => (prev - 1 + products.length) % products.length);
+    };
+
+    if (!currentProduct.id && products.length > 0) return null; // Safety
+
+    return (
+        <div className="relative w-full h-full bg-[#050510] overflow-hidden">
+            {/* BACKGROUND GRADIENTS */}
+            <div className="absolute inset-0 bg-gradient-to-t from-black via-[#0a0f1e] to-[#050510] z-0 pointer-events-none" />
+
+            {/* 3D SCENE */}
+            <div className="absolute inset-0 z-10">
+                <Canvas shadows dpr={[1, 2]} camera={{ position: [0, 1.0, 9], fov: 40 }}> {/* Moved closer (8 vs 10) */}
+                    <Suspense fallback={null}>
+                        <ShowroomStage currentProduct={currentProduct} isHeavy={isHeavy} />
+                    </Suspense>
+                </Canvas>
+            </div>
+
+            {/* --- UI LAYER (HUD) --- */}
+
+            {/* Header */}
+            <div className="absolute top-0 left-0 w-full p-8 z-50 flex justify-between items-start pointer-events-none">
+                <button
+                    onClick={onBack}
+                    className="pointer-events-auto group flex items-center gap-3 text-white/50 hover:text-white transition-all hover:scale-105"
+                >
+                    <div className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center backdrop-blur-md">
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
+                    </div>
+                    <span className="text-xs font-bold tracking-[0.2em] uppercase">Exit Showroom</span>
+                </button>
+
+                <div className="text-right">
+                    <h1 className="text-5xl font-black text-white tracking-tighter mb-1 font-[Orbitron] drop-shadow-[0_0_30px_rgba(255,255,255,0.2)]">
+                        {pavilionData?.name?.toUpperCase() || 'SHOWROOM'}
+                    </h1>
+                    <div className="flex items-center justify-end gap-2 text-cyan-400">
+                        <div className="w-1.5 h-1.5 rounded-full bg-cyan-400 shadow-[0_0_10px_#22d3ee] animate-pulse" />
+                        <span className="text-[10px] font-bold tracking-[0.3em] uppercase">Premium Selection</span>
+                    </div>
+                </div>
+            </div>
+
+            {/* PRODUCT INFO PANEL (Bottom Left) */}
+            <div className="absolute bottom-12 left-12 z-50 max-w-md pointer-events-none">
+                <div className="pointer-events-auto animate-in slide-in-from-left-10 fade-in duration-700">
+                    <h2 className="text-4xl font-bold text-white mb-2 leading-none font-[Orbitron]">
+                        {currentProduct.name || 'Unnamed Artifact'}
+                    </h2>
+                    <p className="text-cyan-400 text-sm font-mono tracking-widest mb-4 uppercase">
+                        {currentProduct.category || pavilionData?.name} // SERIES NO. {activeIndex + 1}
+                    </p>
+                    <div className="h-px w-24 bg-gradient-to-r from-cyan-500 to-transparent mb-4" />
+                    <p className="text-gray-400 text-sm leading-relaxed mb-6 border-l-2 border-white/10 pl-4">
+                        {currentProduct.description || "A masterpiece of engineering. Select to view details."}
+                    </p>
+
+                    {/* Action Buttons */}
+                    <div className="flex items-center gap-4">
+                        <button className="px-6 py-3 bg-cyan-500 hover:bg-cyan-400 text-black font-bold text-xs uppercase tracking-widest transition-colors shadow-[0_0_20px_rgba(34,211,238,0.4)]">
+                            Inquire Now
+                        </button>
+                        <button className="px-6 py-3 border border-white/20 hover:border-white text-white font-bold text-xs uppercase tracking-widest transition-colors backdrop-blur-md bg-black/30">
+                            Specs
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            {/* NAVIGATOR (Bottom Right) */}
+            <div className="absolute bottom-12 right-12 z-50 flex items-center gap-6 pointer-events-auto">
+                <button
+                    onClick={prevProduct}
+                    className="w-14 h-14 rounded-full border border-white/10 bg-black/40 backdrop-blur-md text-white flex items-center justify-center hover:bg-white hover:text-black transition-all hover:scale-110 active:scale-95"
+                >
+                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
+                </button>
+
+                <div className="flex flex-col items-center">
+                    <span className="text-2xl font-bold text-white font-[Orbitron]">
+                        {(activeIndex + 1).toString().padStart(2, '0')}
+                    </span>
+                    <span className="text-[10px] text-white/40 tracking-[0.2em]">
+                        / {products.length.toString().padStart(2, '0')}
+                    </span>
+                </div>
+
+                <button
+                    onClick={nextProduct}
+                    className="w-14 h-14 rounded-full border border-white/10 bg-black/40 backdrop-blur-md text-white flex items-center justify-center hover:bg-white hover:text-black transition-all hover:scale-110 active:scale-95"
+                >
+                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
+                </button>
+            </div>
+
+            {/* Center Hint */}
+            <div className="absolute bottom-6 left-1/2 -translate-x-1/2 text-white/20 text-[10px] uppercase tracking-[0.3em] font-medium pointer-events-none animate-pulse">
+                Drag to Rotate • Scroll to Zoom
+            </div>
+
+            <Loader dataInterpolation={(p) => `Loading Collection ${p.toFixed(0)}%`} />
+        </div>
+    );
+}

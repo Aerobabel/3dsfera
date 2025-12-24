@@ -55,11 +55,11 @@ export function CameraSmoother({ controlsRef, targetPosition, cameraPosition, is
 }
 
 // Floating UI Card
-export function FloatingAnnotation({ title, description, stats, visible, position, onDetailsClick }) {
+export function FloatingAnnotation({ title, description, stats, pavilionName, visible, position, onDetailsClick }) {
     if (!visible) return null;
 
     return (
-        <Html position={position} center distanceFactor={10} style={{ pointerEvents: 'auto' }}>
+        <Html position={position} center distanceFactor={10} style={{ pointerEvents: 'none' }}>
             <div className={`
                 flex flex-col gap-2 w-64 p-5 rounded-lg 
                 bg-black/80 backdrop-blur-xl border border-white/20 
@@ -73,7 +73,10 @@ export function FloatingAnnotation({ title, description, stats, visible, positio
                 {/* Header */}
                 <div className="border-b border-white/10 pb-2 mb-2 flex justify-between items-center">
                     <div>
-                        <h3 className="text-white font-bold tracking-widest uppercase text-sm">{title}</h3>
+                        {pavilionName && (
+                            <div className="text-[10px] text-cyan-400/80 uppercase tracking-[0.2em] mb-1">Pavilion</div>
+                        )}
+                        <h3 className="text-white font-bold tracking-widest uppercase text-sm">{pavilionName || title}</h3>
                         <div className="h-0.5 w-8 bg-cyan-400 mt-1 shadow-[0_0_8px_#22d3ee]" />
                     </div>
                 </div>
@@ -97,9 +100,9 @@ export function FloatingAnnotation({ title, description, stats, visible, positio
 
                 <button
                     onClick={(e) => { e.stopPropagation(); onDetailsClick?.(); }}
-                    className="w-full py-2 bg-white/10 hover:bg-white/20 border border-white/10 rounded text-xs font-bold text-white transition flex items-center justify-center gap-2 group"
+                    className="w-full py-2 bg-cyan-500/20 hover:bg-cyan-500/30 border border-cyan-400/30 rounded text-xs font-bold text-white transition flex items-center justify-center gap-2 group"
                 >
-                    <span>OPEN INFO + CHAT</span>
+                    <span>ENTER PAVILION</span>
                     <svg className="w-3 h-3 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
                 </button>
             </div>

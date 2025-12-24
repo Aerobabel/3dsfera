@@ -13,6 +13,7 @@ import MaintenanceDrone from './pavilion/MaintenanceDrone';
 import KioskUnit from './pavilion/KioskUnit';
 import ShowroomView from './pavilion/ShowroomView';
 import InfographicOverlay from './pavilion/InfographicOverlay';
+import { PAVILIONS } from './pavilion/pavilionData';
 // RESTORED: Original Environment Imports
 import { BackWallStructure, NeonCeiling, FloorArrows, IndustrialCeilingDetailsFixed, BackgroundBillboard, ReflectiveGridFloor, CeilingLights } from './pavilion/PavilionEnvironment';
 import { ControlsWrapper, CameraPitchClamp } from './pavilion/PavilionControls';
@@ -49,7 +50,7 @@ export default function VerifiedPavilion({ onBack, user }) {
     const [inspectMode, setInspectMode] = useState(false); // New: Inspect Mode State
     const [orbitTarget, setOrbitTarget] = useState(null); // New: Target for Orbit Controls
     const [cameraPosition, setCameraPosition] = useState(null); // New: Smoother Target Cam Pos
-    const [showFullDetails, setShowFullDetails] = useState(false); // New: Full Overlay State
+    const [isOpen, setIsOpen] = useState(false); // Pavilion info overlay state
     const controlsRef = useRef(); // Ref for OrbitControls
     const [pavilionId, setPavilionId] = useState(null);
     const [isShowroomOpen, setIsShowroomOpen] = useState(false);
@@ -107,7 +108,7 @@ export default function VerifiedPavilion({ onBack, user }) {
             setInspectMode(true);
             setOrbitTarget(position);
             // Calculate viewing angle: look from slightly above and back
-            const viewOffset = [position[0], position[1] + 2.0, position[2] + 6.0]; // Backed up to +6, raised camera
+            const viewOffset = [position[0], position[1] + 2.5, position[2] + 8.0]; // Better camera distance for visibility
             setCameraPosition(viewOffset);
         }
     }, []);
@@ -117,7 +118,18 @@ export default function VerifiedPavilion({ onBack, user }) {
         setSelectedObject(null);
         setOrbitTarget(null);
         setCameraPosition(null);
-        setShowFullDetails(false);
+        setIsOpen(false);
+    };
+
+    const closeOverlayOnly = () => {
+        setIsOpen(false);
+        // Keep inspect mode active after closing overlay
+    };
+
+    const openFullOverlay = () => {
+        // Instead of opening another overlay, directly enter the showroom
+        setShowroomData(selectedObject);
+        setIsShowroomOpen(true);
     };
 
     const handleBack = () => {
@@ -135,15 +147,7 @@ export default function VerifiedPavilion({ onBack, user }) {
         { name: 'run', keys: ['Shift'] },
     ], []);
 
-    if (isShowroomOpen) {
-        return (
-            <ShowroomView
-                pavilionData={showroomData}
-                onBack={() => setIsShowroomOpen(false)}
-                user={user}
-            />
-        );
-    }
+
 
     return (
         <div id="game-container" className="w-full h-screen bg-black relative select-none overflow-hidden">
@@ -243,15 +247,13 @@ export default function VerifiedPavilion({ onBack, user }) {
                             heightOffset={0.8} // Raise it up a bit from pedestal
                             onClick={(e) => {
                                 e.stopPropagation();
-                                handleObjectClick({
-                                    title: t('verified_pavilion.items.crane.title'),
-                                    description: t('verified_pavilion.items.crane.desc'),
-                                    stats: {
-                                        [t('verified_pavilion.items.crane.stat_lift')]: "40 Tons",
-                                        [t('verified_pavilion.items.crane.stat_boom')]: "32m",
-                                        [t('verified_pavilion.items.crane.stat_power')]: "Diesel-Elec"
-                                    }
-                                }, [15, 2.8, 18]); // Raised target to 2.8
+                                const position = [15, 0.1, 18];
+                                if (inspectMode && orbitTarget && orbitTarget[0] === position[0] && orbitTarget[2] === position[2]) return;
+                                SoundManager.playClick();
+                                setSelectedObject(PAVILIONS['heavy']);
+                                setInspectMode(true);
+                                setOrbitTarget(position);
+                                setCameraPosition([position[0], position[1] + 2.5, position[2] + 8.0]);
                             }}
                             onPointerOver={(e) => { e.stopPropagation(); document.body.style.cursor = 'pointer'; }}
                             onPointerOut={(e) => { e.stopPropagation(); document.body.style.cursor = 'auto'; }}
@@ -266,15 +268,13 @@ export default function VerifiedPavilion({ onBack, user }) {
                             heightOffset={-0.9} // Reduce distance to pedestal
                             onClick={(e) => {
                                 e.stopPropagation();
-                                handleObjectClick({
-                                    title: t('verified_pavilion.items.valve.title'),
-                                    description: t('verified_pavilion.items.valve.desc'),
-                                    stats: {
-                                        [t('verified_pavilion.items.valve.stat_pressure')]: "250 Bar",
-                                        [t('verified_pavilion.items.valve.stat_material')]: "Steel/Alloy",
-                                        [t('verified_pavilion.items.valve.stat_life')]: "20 Yrs"
-                                    }
-                                }, [-10, 1.8, 10]); // Raised target to 1.8
+                                const position = [-10, 0, 10];
+                                if (inspectMode && orbitTarget && orbitTarget[0] === position[0] && orbitTarget[2] === position[2]) return;
+                                SoundManager.playClick();
+                                setSelectedObject(PAVILIONS['aero']);
+                                setInspectMode(true);
+                                setOrbitTarget(position);
+                                setCameraPosition([position[0], position[1] + 2.5, position[2] + 8.0]);
                             }}
                             onPointerOver={(e) => { e.stopPropagation(); document.body.style.cursor = 'pointer'; }}
                             onPointerOut={(e) => { e.stopPropagation(); document.body.style.cursor = 'auto'; }}
@@ -325,27 +325,23 @@ export default function VerifiedPavilion({ onBack, user }) {
                             isTv={true} // Enable TV display inside kiosk
                             onClick={(e) => {
                                 e.stopPropagation();
-                                handleObjectClick({
-                                    title: t('verified_pavilion.items.hq.title'),
-                                    description: t('verified_pavilion.items.hq.desc'),
-                                    stats: {
-                                        [t('verified_pavilion.items.hq.stat_reach')]: "140 Countries",
-                                        [t('verified_pavilion.items.hq.stat_skus')]: "2.4M",
-                                        [t('verified_pavilion.items.hq.stat_reliability')]: "99.9%"
-                                    }
-                                }); // No position passed = Direct Details Open
+                                const position = [0, 0, -5];
+                                if (inspectMode && orbitTarget && orbitTarget[0] === position[0] && orbitTarget[2] === position[2]) return;
+                                SoundManager.playClick();
+                                setSelectedObject(PAVILIONS['3dsfera']);
+                                setInspectMode(true);
+                                setOrbitTarget(position);
+                                setCameraPosition([position[0], position[1] + 2.5, position[2] + 8.0]);
                             }}
                             onProductClick={(e) => {
                                 e.stopPropagation();
-                                handleObjectClick({
-                                    title: t('verified_pavilion.items.platform.title'),
-                                    description: t('verified_pavilion.items.platform.desc'),
-                                    stats: {
-                                        [t('verified_pavilion.items.platform.stat_users')]: "500k+",
-                                        [t('verified_pavilion.items.platform.stat_uptime')]: "99.99%",
-                                        [t('verified_pavilion.items.platform.stat_integration')]: "API/ERP"
-                                    }
-                                }, [0, 2.5, -5]);
+                                if (inspectMode && selectedObject === PAVILIONS['3dsfera']) return;
+                                SoundManager.playClick();
+                                const position = [0, 0, -5];
+                                setSelectedObject(PAVILIONS['3dsfera']);
+                                setInspectMode(true);
+                                setOrbitTarget(position);
+                                setCameraPosition([position[0], position[1] + 2.5, position[2] + 8.0]);
                             }}
                         />
 
@@ -364,27 +360,23 @@ export default function VerifiedPavilion({ onBack, user }) {
                             // hideMainPedestal={true} // Restored pedestal per "on the custom pedestals" request
                             onClick={(e) => {
                                 e.stopPropagation();
-                                handleObjectClick({
-                                    title: t('verified_pavilion.items.aero.title'),
-                                    description: t('verified_pavilion.items.aero.desc'),
-                                    stats: {
-                                        [t('verified_pavilion.items.aero.stat_thrust')]: "240kN",
-                                        [t('verified_pavilion.items.aero.stat_efficiency')]: "94%",
-                                        [t('verified_pavilion.items.aero.stat_maintenance')]: "Low"
-                                    }
-                                }); // No position passed = Direct Details Open
+                                const position = [-22, 0, 0];
+                                if (inspectMode && orbitTarget && orbitTarget[0] === position[0] && orbitTarget[2] === position[2]) return;
+                                SoundManager.playClick();
+                                setSelectedObject(PAVILIONS['aero']);
+                                setInspectMode(true);
+                                setOrbitTarget(position);
+                                setCameraPosition([position[0], position[1] + 2.5, position[2] + 8.0]);
                             }}
                             onProductClick={(e) => {
                                 e.stopPropagation();
-                                handleObjectClick({
-                                    title: t('verified_pavilion.items.turbine_valve.title'),
-                                    description: t('verified_pavilion.items.turbine_valve.desc'),
-                                    stats: {
-                                        [t('verified_pavilion.items.turbine_valve.stat_temp')]: "2500C",
-                                        [t('verified_pavilion.items.turbine_valve.stat_alloy')]: "Titanium-X",
-                                        [t('verified_pavilion.items.turbine_valve.stat_warranty')]: "5000 Hrs"
-                                    }
-                                }, [-22, 2.5, 0]);
+                                if (inspectMode && selectedObject === PAVILIONS['aero']) return;
+                                SoundManager.playClick();
+                                const position = [-22, 0, 0];
+                                setSelectedObject(PAVILIONS['aero']);
+                                setInspectMode(true);
+                                setOrbitTarget(position);
+                                setCameraPosition([position[0], position[1] + 2.5, position[2] + 8.0]);
                             }}
                         />
 
@@ -402,27 +394,23 @@ export default function VerifiedPavilion({ onBack, user }) {
                             hideSideModels={true}
                             onClick={(e) => {
                                 e.stopPropagation();
-                                handleObjectClick({
-                                    title: t('verified_pavilion.items.heavy.title'),
-                                    description: t('verified_pavilion.items.heavy.desc'),
-                                    stats: {
-                                        [t('verified_pavilion.items.heavy.stat_load')]: "500T",
-                                        [t('verified_pavilion.items.heavy.stat_reach')]: "120m",
-                                        [t('verified_pavilion.items.heavy.stat_safety')]: "A+"
-                                    }
-                                }); // No position passed = Direct Details Open
+                                const position = [22, 0, 0];
+                                if (inspectMode && orbitTarget && orbitTarget[0] === position[0] && orbitTarget[2] === position[2]) return;
+                                SoundManager.playClick();
+                                setSelectedObject(PAVILIONS['heavy']);
+                                setInspectMode(true);
+                                setOrbitTarget(position);
+                                setCameraPosition([position[0], position[1] + 2.5, position[2] + 8.0]);
                             }}
                             onProductClick={(e) => {
                                 e.stopPropagation();
-                                handleObjectClick({
-                                    title: t('verified_pavilion.items.robotic_arm.title'),
-                                    description: t('verified_pavilion.items.robotic_arm.desc'),
-                                    stats: {
-                                        [t('verified_pavilion.items.robotic_arm.stat_payload')]: "2.3T",
-                                        [t('verified_pavilion.items.robotic_arm.stat_axis')]: "6-DOF",
-                                        [t('verified_pavilion.items.robotic_arm.stat_repeatability')]: "+/-0.1mm"
-                                    }
-                                }, [22, 2.5, 0]);
+                                if (inspectMode) return;
+                                SoundManager.playClick();
+                                const position = [22, 0, 0];
+                                setSelectedObject(PAVILIONS['heavy']);
+                                setInspectMode(true);
+                                setOrbitTarget(position);
+                                setCameraPosition([position[0], position[1] + 2.5, position[2] + 8.0]);
                             }}
                         />
 
@@ -455,13 +443,14 @@ export default function VerifiedPavilion({ onBack, user }) {
 
                         {/* 3D Floating UI - Offset to the SIDE */}
                         <FloatingAnnotation
-                            visible={inspectMode && selectedObject && !showFullDetails}
+                            visible={inspectMode && selectedObject && !isOpen && !isShowroomOpen}
+                            pavilionName={selectedObject?.name}
                             title={selectedObject?.title}
                             description={selectedObject?.description}
                             stats={selectedObject?.stats}
                             // Move UI 3.5 units to the Right (X) and slightly up (Y) relative to target
                             position={orbitTarget ? [orbitTarget[0] + 3.5, orbitTarget[1] + 1.0, orbitTarget[2]] : [0, 0, 0]}
-                            onDetailsClick={() => setShowFullDetails(true)}
+                            onDetailsClick={openFullOverlay}
                         />
 
                         <Preload all />
@@ -477,10 +466,11 @@ export default function VerifiedPavilion({ onBack, user }) {
             </KeyboardControls>
 
             {/* OVERLAYS */}
-            {showFullDetails && (
+            {isOpen && !isShowroomOpen && (
                 <InfographicOverlay
                     data={selectedObject}
-                    onClose={() => setShowFullDetails(false)} // Just close details, stay in inspect
+                    isOpen={isOpen}
+                    onClose={closeOverlayOnly} // Close overlay but keep inspect mode
                     realPavilionId={pavilionId}
                     user={user}
                     startMode="info"
@@ -491,8 +481,8 @@ export default function VerifiedPavilion({ onBack, user }) {
                 />
             )}
 
-            {/* Exit Inspect Button (visible when not in full details) */}
-            {inspectMode && !showFullDetails && (
+            {/* Exit Inspect Button (visible when not in overlay) */}
+            {inspectMode && !isOpen && (
                 <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20 pointer-events-auto animate-fadeIn">
                     <button
                         onClick={closeInspectMode}
@@ -557,6 +547,19 @@ export default function VerifiedPavilion({ onBack, user }) {
                             </div>
                         </div>
                     </div>
+                </div>
+            )}
+            {/* Showroom Overlay - Renders ON TOP of Canvas so scene doesn't unmount */}
+            {isShowroomOpen && (
+                <div className="absolute inset-0 z-50 bg-black animate-in fade-in duration-300">
+                    <ShowroomView
+                        pavilionData={showroomData}
+                        onBack={() => {
+                            setIsShowroomOpen(false);
+                            closeInspectMode();
+                        }}
+                        user={user}
+                    />
                 </div>
             )}
         </div >

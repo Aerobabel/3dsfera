@@ -5,11 +5,14 @@ export default function InfographicOverlay({ data, onClose, realPavilionId, user
     const [mode, setMode] = useState(startMode); // 'info' or 'chat'
 
     useEffect(() => {
-        // When a new infographic opens, honor the requested starting mode (chat-first for quick buyer outreach)
-        setMode(startMode);
-    }, [data, startMode]);
+        // Reset to info mode when new data arrives
+        setMode('info');
+    }, [data]);
 
     if (!data) return null;
+
+    // Check if we have a pavilion object (has 'products' array) or individual product
+    const isPavilion = data.products && Array.isArray(data.products);
 
     return (
         <div className="absolute inset-0 z-50 flex items-center justify-center p-4 md:p-10 pointer-events-none">
@@ -25,21 +28,26 @@ export default function InfographicOverlay({ data, onClose, realPavilionId, user
 
                 {/* Left Sidebar - Navigation */}
                 <div className="w-64 bg-white/5 border-r border-white/10 flex flex-col p-6 space-y-4">
-                    <h2 className="text-2xl font-bold text-white mb-6 tracking-wider">DATA LINK</h2>
+                    <h2 className="text-2xl font-bold text-white mb-6 tracking-wider">PAVILION</h2>
 
                     <button
                         onClick={() => setMode('info')}
                         className={`w-full text-left px-4 py-3 rounded-lg border transition ${mode === 'info' ? 'bg-cyan-500/20 border-cyan-500 text-cyan-400' : 'border-transparent hover:bg-white/5 text-gray-400'}`}
                     >
-                        <span className="font-mono font-bold mr-2">01</span> OVERVIEW
+                        <span className="font-mono font-bold mr-2">01</span> COMPANY INFO
                     </button>
 
-                    <button
-                        onClick={() => setMode('chat')}
-                        className={`w-full text-left px-4 py-3 rounded-lg border transition ${mode === 'chat' ? 'bg-cyan-500/20 border-cyan-500 text-cyan-400' : 'border-transparent hover:bg-white/5 text-gray-400'}`}
-                    >
-                        <span className="font-mono font-bold mr-2">02</span> LIVE COMMS
-                    </button>
+                    {isPavilion && (
+                        <button
+                            onClick={() => {
+                                onEnterRoom();
+                                onClose();
+                            }}
+                            className="w-full text-left px-4 py-3 rounded-lg border border-cyan-400/40 bg-cyan-500/20 text-cyan-300 hover:bg-cyan-500/30 transition"
+                        >
+                            <span className="font-mono font-bold mr-2">&gt;&gt;</span> ENTER PAVILION
+                        </button>
+                    )}
 
                 </div>
 
@@ -48,9 +56,9 @@ export default function InfographicOverlay({ data, onClose, realPavilionId, user
                     {mode === 'info' && (
                         <div className="space-y-6 animate-fadeIn">
                             <div>
-                                <h1 className="text-4xl font-bold text-white mb-2">{data.title || data.name || "UNKNOWN OBJECT"}</h1>
+                                <h1 className="text-4xl font-bold text-white mb-2">{data.name || data.title || "COMPANY"}</h1>
                                 <div className="h-1 w-20 bg-cyan-500 mb-4"></div>
-                                <p className="text-lg text-gray-300 leading-relaxed font-light">{data.description || "No description data available."}</p>
+                                <p className="text-lg text-gray-300 leading-relaxed font-light">{data.description || "No description available."}</p>
                             </div>
 
                             {data.stats && (
@@ -64,19 +72,33 @@ export default function InfographicOverlay({ data, onClose, realPavilionId, user
                                 </div>
                             )}
 
-                            <div className="pt-4">
-                                <button
-                                    onClick={() => setMode('chat')}
-                                    className="px-5 py-3 bg-cyan-500/20 border border-cyan-400/40 rounded-lg text-cyan-100 font-semibold hover:bg-cyan-500/30 transition"
-                                >
-                                    Jump to Chat
-                                </button>
-                            </div>
-                        </div>
-                    )}
+                            {isPavilion && data.products && (
+                                <div className="mt-8 space-y-3">
+                                    <h3 className="text-sm uppercase tracking-widest text-cyan-300 mb-3">Products in Showroom</h3>
+                                    <div className="grid grid-cols-1 gap-2">
+                                        {data.products.map((product, idx) => (
+                                            <div key={idx} className="bg-white/5 border border-white/10 px-4 py-2 rounded text-sm text-gray-300">
+                                                • {product.title}
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
 
-                    {mode === 'chat' && (
-                        <LiveChat pavilionId={realPavilionId} user={user} />
+                            {isPavilion && (
+                                <div className="pt-6">
+                                    <button
+                                        onClick={() => {
+                                            onEnterRoom();
+                                            onClose();
+                                        }}
+                                        className="px-6 py-3 bg-cyan-500/30 border border-cyan-400/60 rounded-lg text-cyan-100 font-semibold hover:bg-cyan-500/40 transition shadow-lg shadow-cyan-500/20"
+                                    >
+                                        Enter Pavilion Showroom →
+                                    </button>
+                                </div>
+                            )}
+                        </div>
                     )}
                 </div>
 
