@@ -121,7 +121,12 @@ function ShowroomStage({ currentProduct, isHeavy }) {
             <spotLight position={[-10, 10, -5]} angle={0.4} penumbra={1} intensity={10} color="#eef" />
 
             {/* Environment Reflection Map (Abstract Studio) */}
-            <Environment preset="studio" />
+            {/* Environment Reflection Map (Local) */}
+            <Environment
+                files="/hdris/convertio.in_image.hdr"
+                background={false}
+                environmentIntensity={0.6}
+            />
 
             <Grid
                 position={[0, -2.55, 0]}

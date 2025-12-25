@@ -216,7 +216,12 @@ export default function VerifiedPavilion({ onBack, user }) {
                         {/* --- ENVIRONMENT (RESTORED DARK) --- */}
                         <color attach="background" args={['#2a2a2a']} />
                         <fogExp2 attach="fog" args={['#2a2a2a', 0.015]} />
-                        <Environment preset="city" />
+                        <Environment
+                            files="/hdris/convertio.in_image.hdr"
+                            background={false}
+                            blur={0.02}
+                            environmentIntensity={1.0}
+                        />
 
                         <ambientLight intensity={1.5} />
                         <directionalLight
