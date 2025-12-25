@@ -91,22 +91,54 @@ function ShowroomStage({ currentProduct, isHeavy }) {
                         position={[0, -2.5, 0]} // Shadow at bottom of 5-unit box
                     />
 
-                    {/* Industrial Turntable Base */}
+                    {/* Premium Industrial Platform - Sleek & Realistic */}
                     <group position={[0, -2.55, 0]}>
-                        {/* Main Base Cylinder */}
+                        {/* 1. Main Base Block (Heavy Dark Metal) */}
                         <mesh receiveShadow>
-                            <cylinderGeometry args={[3.2, 3.5, 0.2, 64]} />
-                            <meshStandardMaterial color="#2a2a2a" metalness={0.8} roughness={0.2} />
+                            <cylinderGeometry args={[3.2, 3.4, 0.25, 64]} />
+                            <meshStandardMaterial
+                                color="#151515"
+                                roughness={0.3}
+                                metalness={0.8}
+                                envMapIntensity={1}
+                            />
                         </mesh>
-                        {/* Inner Detail Ring */}
-                        <mesh position={[0, 0.11, 0]}>
-                            <cylinderGeometry args={[2.5, 2.5, 0.05, 64]} />
-                            <meshStandardMaterial color="#1a1a1a" metalness={0.5} roughness={0.8} />
+
+                        {/* 2. Glassy Rim (The "Radiant" Element) */}
+                        <mesh position={[0, 0.13, 0]}>
+                            <cylinderGeometry args={[3.2, 3.2, 0.02, 64]} />
+                            <meshPhysicalMaterial
+                                color="#ffffff"
+                                transmission={0.9} // Glass-like
+                                opacity={1}
+                                metalness={0}
+                                roughness={0}
+                                ior={1.5}
+                                thickness={0.1}
+                                emissive="#ffffff"
+                                emissiveIntensity={2}
+                                toneMapped={false}
+                            />
                         </mesh>
-                        {/* Thin Rim Light (Subtle) */}
-                        <mesh position={[0, 0, 0]} rotation={[Math.PI / 2, 0, 0]}>
-                            <torusGeometry args={[3.2, 0.02, 16, 64]} />
-                            <meshBasicMaterial color="#ffffff" opacity={0.3} transparent />
+
+                        {/* 3. Inner Surface (Matte Tech) */}
+                        <mesh position={[0, 0.126, 0]}>
+                            <cylinderGeometry args={[3.15, 3.15, 0.02, 64]} />
+                            <meshStandardMaterial
+                                color="#0a0a0a"
+                                roughness={0.8}
+                                metalness={0.5}
+                            />
+                        </mesh>
+
+                        {/* 4. Floor Reflection/Glow (Soft Ambient) */}
+                        <mesh position={[0, -0.1, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+                            <ringGeometry args={[3.3, 5, 64]} />
+                            <meshBasicMaterial
+                                color="#ffffff"
+                                transparent
+                                opacity={0.08}
+                            />
                         </mesh>
                     </group>
                 </group>
@@ -129,7 +161,7 @@ function ShowroomStage({ currentProduct, isHeavy }) {
             />
 
             <Grid
-                position={[0, -2.55, 0]}
+                position={[0, -2.60, 0]} // Kept lowered for Z-fighting fix
                 args={[40, 40]}
                 cellSize={1}
                 cellThickness={0.5}

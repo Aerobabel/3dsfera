@@ -1,6 +1,6 @@
 ﻿import React, { Suspense, useRef, useEffect, useState, useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Canvas } from '@react-three/fiber';
+import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { useKeyboardControls, KeyboardControls, Preload, useGLTF, Environment, useProgress } from '@react-three/drei';
 import * as THREE from 'three';
 import { EffectComposer, Bloom, Vignette, Noise } from '@react-three/postprocessing';
@@ -43,6 +43,22 @@ const VALVE_PATH = '/objects/valve.glb';
 useGLTF.preload(TURBO_ENGINE_PATH);
 useGLTF.preload(CRANE_PATH);
 useGLTF.preload(CRANE_MACHINE_PATH);
+
+// Helper to ensure scene is actually rendered before hiding loader
+function SceneReadyNotifier({ onReady }) {
+    const { gl } = useThree();
+    const frameCount = useRef(0);
+
+    useFrame(() => {
+        if (frameCount.current < 4) { // Wait 4 frames for safety (shader compile/upload)
+            frameCount.current += 1;
+            return;
+        }
+        // Force a gl compile check or just trust the frames
+        onReady();
+    });
+    return null;
+}
 
 export default function VerifiedPavilion({ onBack, user }) {
     const { t } = useTranslation();
@@ -210,9 +226,10 @@ export default function VerifiedPavilion({ onBack, user }) {
                         stencil: false,
                         depth: true
                     }}
-                    onCreated={() => setSceneReady(true)}
+                // Removed onCreated to wait for real frames via SceneReadyNotifier
                 >
                     <Suspense fallback={null}>
+                        <SceneReadyNotifier onReady={() => setSceneReady(true)} />
                         {/* --- ENVIRONMENT (RESTORED DARK) --- */}
                         <color attach="background" args={['#2a2a2a']} />
                         <fogExp2 attach="fog" args={['#2a2a2a', 0.015]} />
