@@ -20,9 +20,9 @@ export default function LanguageSwitcher() {
                 <button
                     key={lng.code}
                     onClick={() => changeLanguage(lng.code)}
-                    className={`px-3 py-1 text-xs font-semibold rounded-lg transition-colors border ${i18n.language === lng.code
-                            ? 'bg-blue-600 border-blue-500 text-white'
-                            : 'bg-white/5 border-white/10 text-slate-300 hover:bg-white/10'
+                    className={`px-3 py-1.5 text-xs font-bold tracking-wider rounded-lg transition-all border backdrop-blur-md ${i18n.language === lng.code
+                        ? 'bg-cyan-500/20 border-cyan-400 text-white shadow-[0_0_10px_rgba(34,211,238,0.5)]'
+                        : 'bg-white/10 border-white/20 text-white/70 hover:bg-white/20 hover:text-white hover:border-white/40'
                         }`}
                 >
                     {lng.label}

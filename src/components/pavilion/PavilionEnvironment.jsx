@@ -440,7 +440,7 @@ export function ReflectiveGridFloor() {
             </mesh>
             {/* Grid Overlay */}
             <Grid
-                position={[0, 0.01, 0]}
+                position={[0, 0.05, 0]}
                 args={[100, 100]}
                 cellSize={2}
                 cellThickness={1}

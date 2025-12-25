@@ -265,9 +265,70 @@ function KioskUnit({ position, rotation, title = "PREMIUM SUPPLIER", glowColor =
         )
     }
 
+    const groupRef = useRef();
+    const backWallMatRef = useRef();
+    const roofMatRef = useRef();
+
+    // Use refs instead of state to avoid re-renders inside useFrame
+    const isBackOccludedRef = useRef(false);
+    const isRoofOccludedRef = useRef(false);
+
+    // Group refs for traversal
+    const backWallGroupRef = useRef();
+    const roofGroupRef = useRef();
+
+    useFrame((state) => {
+        if (!groupRef.current) return;
+
+        // Calculate camera position relative to the kiosk
+        const localCameraPos = groupRef.current.worldToLocal(state.camera.position.clone());
+
+        const shouldHideBack = localCameraPos.z < -4;
+        const shouldHideRoof = localCameraPos.y > 4 && localCameraPos.length() < 8;
+
+        const targetBackOpacity = shouldHideBack ? 0.1 : 1;
+        const targetRoofOpacity = shouldHideRoof ? 0.2 : 1;
+
+        // 1. Raycast Swapping Logic (Back Wall)
+        if (shouldHideBack !== isBackOccludedRef.current) {
+            isBackOccludedRef.current = shouldHideBack;
+            if (backWallGroupRef.current) {
+                backWallGroupRef.current.traverse((obj) => {
+                    if (obj.isMesh) {
+                        // Swap raycast method: Null if hidden, default if visible
+                        obj.raycast = shouldHideBack ? () => null : THREE.Mesh.prototype.raycast;
+                    }
+                });
+            }
+        }
+
+        // 2. Raycast Swapping Logic (Roof)
+        if (shouldHideRoof !== isRoofOccludedRef.current) {
+            isRoofOccludedRef.current = shouldHideRoof;
+            if (roofGroupRef.current) {
+                roofGroupRef.current.traverse((obj) => {
+                    if (obj.isMesh) {
+                        obj.raycast = shouldHideRoof ? () => null : THREE.Mesh.prototype.raycast;
+                    }
+                });
+            }
+        }
+
+        // 3. Opacity Animation
+        if (backWallMatRef.current) {
+            backWallMatRef.current.opacity = THREE.MathUtils.lerp(backWallMatRef.current.opacity, targetBackOpacity, 0.1);
+            backWallMatRef.current.transparent = true;
+        }
+
+        if (roofMatRef.current) {
+            roofMatRef.current.opacity = THREE.MathUtils.lerp(roofMatRef.current.opacity, targetRoofOpacity, 0.1);
+            roofMatRef.current.transparent = true;
+        }
+    });
+
     // --- ORIGINAL CYBERPUNK BOOTH VARIANT ---
     return (
-        <group position={position} rotation={rotation}>
+        <group ref={groupRef} position={position} rotation={rotation}>
             {/* Top Down Spot */}
             <spotLight position={[0, 10, 0]} angle={0.6} penumbra={0.5} intensity={5} color={effectiveGlow} distance={20} />
 
@@ -321,23 +382,31 @@ function KioskUnit({ position, rotation, title = "PREMIUM SUPPLIER", glowColor =
             </group>
 
             {/* 2. Back Structure */}
-            <group position={[0, 3, -5.8]} onClick={onClick}>
+            <group ref={backWallGroupRef} position={[0, 3, -5.8]} onClick={onClick}>
                 <RoundedBox args={[18, 6, 0.5]} radius={0.1} smoothness={4}>
-                    <meshStandardMaterial color={detailsColor} roughness={0.2} metalness={metalness} />
+                    <meshStandardMaterial
+                        ref={backWallMatRef}
+                        color={detailsColor}
+                        roughness={0.2}
+                        metalness={metalness}
+                        transparent
+                    />
                 </RoundedBox>
                 <TechScreen videoUrl={videoUrl} imageUrl={imageUrl} />
             </group>
 
             {/* 3. Roof Structure - Conditionally Hidden in Inspection Mode */}
             {!hideRoof && (
-                <group position={[0, 5.8, 0]} onClick={onClick}>
+                <group ref={roofGroupRef} position={[0, 5.8, 0]} onClick={onClick}>
                     <RoundedBox args={[18, 0.4, 12]} radius={0.05} smoothness={4}>
                         <meshStandardMaterial
+                            ref={roofMatRef}
                             color={roofColor || detailsColor}
                             roughness={0.2}
                             metalness={metalness}
                             emissive={roofColor === "white" ? "#ffffff" : "#000000"}
                             emissiveIntensity={roofColor === "white" ? 0.8 : 0}
+                            transparent
                         />
                     </RoundedBox>
                     {/* Border */}

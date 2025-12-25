@@ -401,8 +401,9 @@ export default function VerifiedPavilion({ onBack, user }) {
                             imageUrl={liftWallUrl} // Custom wall image
                             // modelPath={CRANE_MACHINE_PATH} 
                             isRoboticArm={true} // Restored Industrial Robot
-                            modelPosition={[0, 0.5, 0]}
+                            modelPosition={[0, 0, 0]} // Reset position
                             hideSideModels={true}
+                            hideMainPedestal={true} // Hide standard pedestal so robot sits on floor
                             onClick={(e) => {
                                 e.stopPropagation();
                                 const position = [22, 0, 0];
@@ -415,9 +416,9 @@ export default function VerifiedPavilion({ onBack, user }) {
                             }}
                             onProductClick={(e) => {
                                 e.stopPropagation();
-                                if (inspectMode) return;
-                                SoundManager.playClick();
                                 const position = [22, 0, 0];
+                                if (inspectMode && orbitTarget && orbitTarget[0] === position[0] && orbitTarget[2] === position[2]) return;
+                                SoundManager.playClick();
                                 setSelectedObject(PAVILIONS['heavy']);
                                 setInspectMode(true);
                                 setOrbitTarget(position);

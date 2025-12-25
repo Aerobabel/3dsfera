@@ -300,22 +300,25 @@ export default function SellerDashboard({ user }) {
     const totalProducts = pavilions.reduce((sum, pav) => sum + (pav.products?.length || 0), 0);
 
     return (
-        <div className="relative max-w-7xl mx-auto px-6 pb-16 text-white min-h-screen pt-24">
-            <div className="absolute inset-0 cyber-grid opacity-20 pointer-events-none" aria-hidden />
-            <div className="absolute inset-0 bg-gradient-to-br from-cyan-900/25 via-[#0b1223] to-purple-900/25 pointer-events-none" aria-hidden />
-            <div className="absolute inset-0 scanlines opacity-10 pointer-events-none" aria-hidden />
+        <div className="relative max-w-7xl mx-auto px-6 pb-16 text-white min-h-screen pt-32">
+            {/* Background Layers - Matches Homepage Vibe */}
+            <div className="fixed inset-0 cyber-grid opacity-30 pointer-events-none" aria-hidden />
+            <div className="fixed inset-0 bg-gradient-to-b from-transparent via-[#050b14] to-[#02040a] pointer-events-none" aria-hidden />
+            {/* Vivid Orbs */}
+            <div className="fixed top-0 left-1/4 w-[500px] h-[500px] bg-cyan-500/10 rounded-full blur-[120px] pointer-events-none mix-blend-screen" />
+            <div className="fixed bottom-0 right-1/4 w-[500px] h-[500px] bg-purple-500/10 rounded-full blur-[120px] pointer-events-none mix-blend-screen" />
 
             {/* MESSAGES MODAL */}
             {viewingMessages && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
-                    <div className="bg-[#0f1623] border border-white/10 rounded-2xl w-full max-w-4xl overflow-hidden flex h-[600px] shadow-2xl">
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-md p-4 animate-in fade-in duration-200">
+                    <div className="bg-[#0f1623]/80 border border-white/10 rounded-3xl w-full max-w-4xl overflow-hidden flex h-[650px] shadow-[0_0_50px_rgba(0,0,0,0.5)] backdrop-blur-xl">
 
                         {/* LEFT: THREADS LIST */}
-                        <div className="w-1/3 border-r border-white/10 flex flex-col bg-black/20">
-                            <div className="p-4 border-b border-white/10 bg-white/5">
-                                <h3 className="font-bold text-cyan-400 tracking-wider text-xs uppercase">{t('seller_dashboard.inbox')}</h3>
+                        <div className="w-[300px] border-r border-white/5 flex flex-col bg-black/40">
+                            <div className="p-5 border-b border-white/5 bg-white/5 backdrop-blur-sm">
+                                <h3 className="font-bold text-white tracking-widest text-xs uppercase drop-shadow-md">{t('seller_dashboard.inbox')}</h3>
                             </div>
-                            <div className="flex-1 overflow-y-auto">
+                            <div className="flex-1 overflow-y-auto custom-scrollbar">
                                 {(() => {
                                     // Group threads by pavilion + buyer
                                     const threads = {};
@@ -330,28 +333,29 @@ export default function SellerDashboard({ user }) {
 
                                     const threadKeys = Object.keys(threads);
 
-                                    if (threadKeys.length === 0) return <p className="p-4 text-xs text-slate-500 text-center">{t('seller_dashboard.conversation_empty')}</p>;
+                                    if (threadKeys.length === 0) return <div className="p-8 text-xs text-slate-500 text-center font-medium">{t('seller_dashboard.conversation_empty')}</div>;
 
                                     return threadKeys.map(threadId => {
                                         const thread = threads[threadId];
                                         const { pavilionKey, buyerId } = parseThreadKey(threadId);
                                         const lastMsg = thread[thread.length - 1]; // Naive last message
                                         const pavilionLabel = pavilionKey ? pavilionKey.toUpperCase() : (viewingMessages?.title || t('seller_dashboard.inbox'));
+                                        const isActive = viewingThread === threadId;
                                         return (
                                             <button
                                                 key={threadId}
                                                 onClick={() => setViewingThread(threadId)}
-                                                className={`w-full p-4 border-b border-white/5 text-left hover:bg-white/5 transition flex items-start gap-3 ${viewingThread === threadId ? 'bg-cyan-900/20 border-l-2 border-l-cyan-400' : 'border-l-2 border-l-transparent'}`}
+                                                className={`w-full p-4 border-b border-white/5 text-left transition-all duration-300 flex items-start gap-3 group ${isActive ? 'bg-cyan-500/10 border-l-2 border-l-cyan-400' : 'hover:bg-white/5 border-l-2 border-l-transparent'}`}
                                             >
-                                                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-500 to-blue-600 flex items-center justify-center text-[10px] font-bold text-white text-center leading-3">
+                                                <div className={`w-8 h-8 rounded-full flex items-center justify-center text-[10px] font-bold text-white text-center leading-3 shadow-lg ${isActive ? 'bg-gradient-to-br from-cyan-400 to-blue-500 scale-110' : 'bg-white/10 group-hover:bg-white/20'}`}>
                                                     {pavilionLabel.slice(0, 2)}
                                                 </div>
                                                 <div className="flex-1 min-w-0">
                                                     <div className="flex justify-between items-baseline mb-1">
-                                                        <span className="text-sm font-bold text-slate-200 truncate">{pavilionLabel} · {t('seller_dashboard.buyer_label', { id: buyerId.substr(0, 4) })}...</span>
-                                                        <span className="text-[10px] text-slate-500">{new Date(lastMsg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                                                        <span className={`text-xs font-bold truncate transition-colors ${isActive ? 'text-white' : 'text-slate-400 group-hover:text-slate-200'}`}>{pavilionLabel}</span>
+                                                        <span className="text-[10px] text-slate-600">{new Date(lastMsg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
                                                     </div>
-                                                    <p className="text-xs text-slate-400 truncate">{stripBuyerTag(lastMsg.content)}</p>
+                                                    <p className={`text-[11px] truncate ${isActive ? 'text-cyan-200/80' : 'text-slate-500 group-hover:text-slate-400'}`}>{stripBuyerTag(lastMsg.content)}</p>
                                                 </div>
                                             </button>
                                         );
@@ -361,29 +365,32 @@ export default function SellerDashboard({ user }) {
                         </div>
 
                         {/* RIGHT: CHAT AREA */}
-                        <div className="flex-1 flex flex-col bg-[#0f1623]">
+                        <div className="flex-1 flex flex-col bg-black/20 relative">
                             {/* Header */}
-                            <div className="p-4 border-b border-white/10 flex justify-between items-center bg-white/5">
+                            <div className="p-5 border-b border-white/5 flex justify-between items-center bg-white/5 backdrop-blur-sm z-10">
                                 <div>
-                                    <h3 className="font-bold text-sm text-white">{viewingMessages.title}</h3>
+                                    <h3 className="font-bold text-sm text-white tracking-wide">{viewingMessages.title}</h3>
                                     {viewingThread ? (
                                         (() => {
                                             const { buyerId } = parseThreadKey(viewingThread);
-                                            return <span className="text-xs text-cyan-500">{t('seller_dashboard.replying_to', { id: buyerId.substr(0, 6) })}...</span>;
+                                            return <span className="text-xs text-cyan-400 font-medium flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" /> Reply to {buyerId.substr(0, 6)}...</span>;
                                         })()
                                     ) : (
                                         <span className="text-xs text-slate-500">{t('seller_dashboard.select_conversation')}</span>
                                     )}
                                 </div>
-                                <button onClick={() => { setViewingMessages(null); setViewingThread(null); }} className="p-1 hover:bg-white/10 rounded text-slate-400 hover:text-white"><X size={20} /></button>
+                                <button onClick={() => { setViewingMessages(null); setViewingThread(null); }} className="p-2 hover:bg-white/10 rounded-full text-slate-400 hover:text-white transition-all"><X size={18} /></button>
                             </div>
 
                             {/* Messages Feed */}
-                            <div className="flex-1 overflow-y-auto p-6 space-y-4">
+                            <div className="flex-1 overflow-y-auto p-6 space-y-6 custom-scrollbar bg-[url('/assets/grid_pattern.png')] bg-repeat opacity-80">
+                                <div className="absolute inset-0 pointer-events-none opacity-5 bg-gradient-to-b from-cyan-500/10 to-transparent"></div>
                                 {!viewingThread ? (
-                                    <div className="h-full flex flex-col items-center justify-center text-slate-500 gap-4">
-                                        <MessageSquare size={48} className="opacity-20" />
-                                        <p>{t('seller_dashboard.select_conversation')}</p>
+                                    <div className="h-full flex flex-col items-center justify-center text-slate-600 gap-6">
+                                        <div className="w-20 h-20 rounded-full bg-white/5 flex items-center justify-center border border-white/5">
+                                            <MessageSquare size={32} className="opacity-40" />
+                                        </div>
+                                        <p className="font-light tracking-wide text-sm">{t('seller_dashboard.select_conversation')}</p>
                                     </div>
                                 ) : (
                                     pavilionMessages
@@ -398,11 +405,10 @@ export default function SellerDashboard({ user }) {
                                         .sort((a, b) => new Date(a.created_at) - new Date(b.created_at))
                                         .map((msg, i) => (
                                             <div key={i} className={`flex ${msg.sender_id === user.id ? 'justify-end' : 'justify-start'}`}>
-                                                <div className={`max-w-[70%] p-3 rounded-2xl ${msg.sender_id === user.id ? 'bg-blue-600 text-white rounded-tr-none' : 'bg-slate-800 text-slate-200 rounded-tl-none'}`}>
-                                                    <p className="text-sm leading-relaxed">{stripBuyerTag(msg.content)}</p>
-                                                    <span className="text-[10px] opacity-50 mt-1 block text-right">
+                                                <div className={`relative max-w-[75%] p-4 rounded-2xl shadow-lg ${msg.sender_id === user.id ? 'bg-gradient-to-br from-cyan-600 to-blue-700 text-white rounded-tr-sm border border-cyan-400/30' : 'bg-white/10 text-slate-200 rounded-tl-sm border border-white/10 backdrop-blur-md'}`}>
+                                                    <p className="text-sm leading-relaxed font-medium">{stripBuyerTag(msg.content)}</p>
+                                                    <span className={`text-[10px] mt-2 block text-right font-bold tracking-wider ${msg.sender_id === user.id ? 'text-cyan-200' : 'text-slate-500'}`}>
                                                         {new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                                                        {msg.sender_id === user.id && ` · ${t('seller_dashboard.you')}`}
                                                     </span>
                                                 </div>
                                             </div>
@@ -434,17 +440,17 @@ export default function SellerDashboard({ user }) {
                                             content: taggedContent
                                         });
                                     }}
-                                    className="p-4 border-t border-white/10 bg-white/5 flex gap-2"
+                                    className="p-5 border-t border-white/10 bg-black/40 backdrop-blur-xl flex gap-3 z-10"
                                 >
                                     <input
                                         name="replyInput"
                                         type="text"
                                         placeholder={t('seller_dashboard.reply_placeholder')}
-                                        className="flex-1 bg-black/30 border border-white/10 rounded-lg px-4 py-2 text-sm text-white focus:outline-none focus:border-cyan-500 transition"
+                                        className="flex-1 bg-white/5 border border-white/10 rounded-xl px-5 py-3 text-sm text-white focus:outline-none focus:border-cyan-500/50 focus:bg-white/10 transition-all font-medium placeholder-slate-500"
                                         autoComplete="off"
                                     />
-                                    <button type="submit" className="p-2 bg-cyan-600 hover:bg-cyan-500 rounded-lg text-white transition">
-                                        <MessageSquare size={18} />
+                                    <button type="submit" className="p-3 bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 rounded-xl text-white transition-all shadow-[0_0_15px_rgba(6,182,212,0.3)] hover:shadow-[0_0_25px_rgba(6,182,212,0.5)]">
+                                        <MessageSquare size={20} />
                                     </button>
                                 </form>
                             )}
@@ -467,41 +473,41 @@ export default function SellerDashboard({ user }) {
             {/* EDIT MODAL */}
             {
                 editingPavilion && (
-                    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 text-left">
-                        <div className="bg-[#0f1623] border border-white/10 rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+                    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-md p-4 text-left">
+                        <div className="bg-[#0f1623]/90 border border-white/10 rounded-3xl w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col shadow-[0_0_80px_rgba(0,0,0,0.6)] backdrop-blur-xl">
                             <div className="p-6 border-b border-white/10 flex justify-between items-center bg-white/5 sticky top-0 backdrop-blur-xl z-10">
-                                <h2 className="text-xl font-bold">{t('seller_dashboard.edit_pavilion')}</h2>
-                                <button onClick={() => setEditingPavilion(null)} className="p-1 hover:text-white text-slate-400"><X size={24} /></button>
+                                <h2 className="text-xl font-bold tracking-widest uppercase text-white drop-shadow-md">{t('seller_dashboard.edit_pavilion')}</h2>
+                                <button onClick={() => setEditingPavilion(null)} className="p-2 hover:bg-white/10 rounded-full text-slate-400 hover:text-white transition-all"><X size={20} /></button>
                             </div>
 
-                            <div className="p-6 space-y-6">
-                                <div className="grid grid-cols-2 gap-4">
-                                    <div>
-                                        <label className="block text-xs uppercase tracking-wider text-slate-500 mb-1">{t('seller_dashboard.pavilion_title')}</label>
+                            <div className="p-8 space-y-8 overflow-y-auto custom-scrollbar flex-1">
+                                <div className="grid grid-cols-2 gap-6">
+                                    <div className="space-y-2">
+                                        <label className="block text-xs font-bold uppercase tracking-widest text-cyan-400 ml-1">{t('seller_dashboard.pavilion_title')}</label>
                                         <input
                                             value={editingPavilion.title}
                                             onChange={e => setEditingPavilion({ ...editingPavilion, title: e.target.value })}
-                                            className="w-full bg-black/20 border border-white/10 rounded-lg px-3 py-2 outline-none focus:border-blue-500"
+                                            className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm outline-none focus:border-cyan-500/50 focus:bg-white/10 transition-all text-white placeholder-slate-500"
                                         />
                                     </div>
-                                    <div>
-                                        <label className="block text-xs uppercase tracking-wider text-slate-500 mb-1">{t('seller_dashboard.blurb')}</label>
+                                    <div className="space-y-2">
+                                        <label className="block text-xs font-bold uppercase tracking-widest text-cyan-400 ml-1">{t('seller_dashboard.blurb')}</label>
                                         <input
                                             value={editingPavilion.blurb}
                                             onChange={e => setEditingPavilion({ ...editingPavilion, blurb: e.target.value })}
-                                            className="w-full bg-black/20 border border-white/10 rounded-lg px-3 py-2 outline-none focus:border-blue-500"
+                                            className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm outline-none focus:border-cyan-500/50 focus:bg-white/10 transition-all text-white placeholder-slate-500"
                                         />
                                     </div>
                                 </div>
 
-                                <div>
-                                    <label className="block text-xs uppercase tracking-wider text-slate-500 mb-2">{t('seller_dashboard.theme_color')}</label>
-                                    <div className="flex gap-2">
+                                <div className="space-y-3">
+                                    <label className="block text-xs font-bold uppercase tracking-widest text-cyan-400 ml-1">{t('seller_dashboard.theme_color')}</label>
+                                    <div className="flex gap-4 p-4 bg-black/20 rounded-xl border border-white/5">
                                         {['#22d3ee', '#6366f1', '#f59e0b', '#10b981', '#ef4444', '#a855f7'].map(c => (
                                             <button
                                                 key={c}
                                                 onClick={() => setEditingPavilion({ ...editingPavilion, color: c })}
-                                                className={`w-8 h-8 rounded-full border-2 ${editingPavilion.color === c ? 'border-white' : 'border-transparent'}`}
+                                                className={`w-10 h-10 rounded-full border-2 transition-all duration-300 ${editingPavilion.color === c ? 'border-white scale-110 shadow-[0_0_15px_' + c + ']' : 'border-transparent hover:scale-110 opacity-70 hover:opacity-100'}`}
                                                 style={{ backgroundColor: c }}
                                             />
                                         ))}
@@ -509,19 +515,22 @@ export default function SellerDashboard({ user }) {
                                 </div>
 
                                 <div className="border-t border-white/10 pt-6">
-                                    <h3 className="font-semibold mb-4">{t('seller_dashboard.manage_products')}</h3>
+                                    <h3 className="text-sm font-bold uppercase tracking-widest text-white mb-6">{t('seller_dashboard.manage_products')}</h3>
 
                                     {/* Product List Editor */}
-                                    <div className="space-y-2 mb-6">
+                                    <div className="space-y-3 mb-8">
                                         {editingPavilion.products.map(p => (
-                                            <div key={p.id} className="flex justify-between items-center bg-white/5 p-3 rounded-lg">
-                                                <div>
-                                                    <p className="font-medium text-sm">{p.name}</p>
-                                                    <p className="text-xs text-slate-400">{p.price}</p>
+                                            <div key={p.id} className="flex justify-between items-center bg-white/5 p-4 rounded-xl border border-white/5 hover:border-white/10 transition-colors group">
+                                                <div className="flex items-center gap-4">
+                                                    <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-white/10 to-white/5 flex items-center justify-center font-bold text-white/50 border border-white/5">3D</div>
+                                                    <div>
+                                                        <p className="font-bold text-sm text-white group-hover:text-cyan-300 transition-colors">{p.name}</p>
+                                                        <p className="text-xs text-slate-400 font-mono mt-0.5">{p.price}</p>
+                                                    </div>
                                                 </div>
                                                 <button
                                                     onClick={() => removeProduct(p.id, (prod) => setEditingPavilion({ ...editingPavilion, products: prod }), editingPavilion.products)}
-                                                    className="text-red-400 hover:text-red-300 p-2 hover:bg-white/5 rounded"
+                                                    className="text-slate-500 hover:text-red-400 p-2 hover:bg-red-500/10 rounded-lg transition-all"
                                                 >
                                                     <Trash size={16} />
                                                 </button>
@@ -530,40 +539,40 @@ export default function SellerDashboard({ user }) {
                                     </div>
 
                                     {/* Add Product Inline */}
-                                    <div className="bg-black/20 p-4 rounded-xl border border-white/5">
-                                        <p className="text-xs text-slate-500 uppercase tracking-wider mb-3">{t('seller_dashboard.add_functionality')}</p>
-                                        <div className="grid grid-cols-2 gap-2 mb-2">
+                                    <div className="bg-gradient-to-br from-white/5 to-transparent p-6 rounded-2xl border border-white/10">
+                                        <p className="text-xs text-cyan-400 font-bold uppercase tracking-widest mb-4 flex items-center gap-2"><Plus size={14} /> {t('seller_dashboard.add_functionality')}</p>
+                                        <div className="grid grid-cols-2 gap-4 mb-4">
                                             <input
                                                 placeholder={t('seller_dashboard.product_name_placeholder')}
                                                 value={prodName}
                                                 onChange={e => setProdName(e.target.value)}
-                                                className="bg-white/5 border border-white/10 rounded px-2 py-1 text-sm outline-none"
+                                                className="bg-black/20 border border-white/10 rounded-xl px-4 py-2 text-sm outline-none focus:border-cyan-500/50 transition-colors"
                                             />
                                             <input
                                                 placeholder={t('seller_dashboard.product_price_placeholder')}
                                                 value={prodPrice}
                                                 onChange={e => setProdPrice(e.target.value)}
-                                                className="bg-white/5 border border-white/10 rounded px-2 py-1 text-sm outline-none"
+                                                className="bg-black/20 border border-white/10 rounded-xl px-4 py-2 text-sm outline-none focus:border-cyan-500/50 transition-colors"
                                             />
                                         </div>
-                                        <div className="flex gap-2">
-                                            <label className="flex-1 cursor-pointer bg-white/5 border border-white/10 rounded px-2 py-1 flex items-center justify-center text-xs text-slate-400 gap-2 hover:bg-white/10">
-                                                <Upload size={12} /> {prodFile ? prodFile.name : t('seller_dashboard.select_glb')}
+                                        <div className="flex gap-3">
+                                            <label className="flex-1 cursor-pointer bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 flex items-center justify-center text-xs font-bold tracking-wide text-slate-300 gap-2 hover:bg-white/10 hover:border-white/20 transition-all group">
+                                                <Upload size={14} className="group-hover:text-cyan-400 transition-colors" /> {prodFile ? <span className="text-cyan-400">{prodFile.name}</span> : t('seller_dashboard.select_glb')}
                                                 <input type="file" accept=".glb,.gltf" className="hidden" onChange={e => setProdFile(e.target.files[0])} />
                                             </label>
                                             <button
                                                 onClick={() => setShowAiGenerator(true)}
-                                                className="px-2 bg-purple-600/20 border border-purple-500/30 hover:bg-purple-600/30 rounded text-purple-200"
+                                                className="px-4 bg-purple-600/20 border border-purple-500/30 hover:bg-purple-600/30 rounded-xl text-purple-200 hover:text-purple-100 transition-colors hover:shadow-[0_0_15px_rgba(168,85,247,0.2)]"
                                                 title={t('seller_dashboard.ai_generate')}
                                             >
-                                                <Wand2 size={14} />
+                                                <Wand2 size={16} />
                                             </button>
                                             <button
                                                 onClick={() => stageProduct((prod) => setEditingPavilion({ ...editingPavilion, products: prod }), editingPavilion.products)}
                                                 disabled={uploading}
-                                                className="bg-blue-600 hover:bg-blue-500 text-white rounded px-4 py-1 text-xs font-bold disabled:opacity-50 disabled:cursor-not-allowed"
+                                                className="bg-cyan-600 hover:bg-cyan-500 text-white rounded-xl px-6 py-2.5 text-xs font-bold tracking-wider uppercase shadow-[0_0_20px_rgba(6,182,212,0.25)] hover:shadow-[0_0_30px_rgba(6,182,212,0.4)] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                                             >
-                                                {uploading ? t('seller_dashboard.uploading') : t('seller_dashboard.add_btn')}
+                                                {uploading ? <span className="animate-pulse">UPLOADING...</span> : t('seller_dashboard.add_btn')}
                                             </button>
                                         </div>
                                     </div>
@@ -580,174 +589,222 @@ export default function SellerDashboard({ user }) {
                 )
             }
 
-            <div className="relative">
-                <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-white/5 backdrop-blur-xl shadow-[0_20px_80px_rgba(0,0,0,0.45)] p-8 mb-10">
-                    <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/15 via-transparent to-purple-500/15" aria-hidden />
-                    <div className="absolute inset-0 cyber-grid opacity-10" aria-hidden />
-                    <div className="relative flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+            <div className="relative z-10">
+                {/* Hero Dashboard Card */}
+                <div className="relative overflow-hidden rounded-[2rem] border border-white/10 bg-white/5 backdrop-blur-xl shadow-[0_20px_80px_rgba(0,0,0,0.5)] p-10 mb-12 group">
+                    <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/10 via-transparent to-purple-500/10 opacity-50 group-hover:opacity-70 transition-opacity duration-700" aria-hidden />
+                    <div className="absolute top-0 right-0 w-96 h-96 bg-cyan-500/5 rounded-full blur-3xl pointer-events-none -mr-20 -mt-20" />
+
+                    <div className="relative flex flex-col md:flex-row md:items-end md:justify-between gap-8">
                         <div>
-                            <p className="text-xs uppercase tracking-[0.35em] text-cyan-300 mb-2">{t('seller_dashboard.title')}</p>
-                            <h1 className="text-3xl md:text-4xl font-black tracking-tight">{t('seller_dashboard.subtitle')}</h1>
-                            <p className="text-slate-300 mt-3">{t('cta')}</p>
-                        </div>
-                        <div className="flex gap-3 flex-wrap">
-                            <div className="rounded-2xl border border-white/20 bg-black/30 px-4 py-3 shadow-[0_0_25px_rgba(0,0,0,0.35)] min-w-[120px]">
-                                <p className="text-[10px] uppercase tracking-[0.35em] text-slate-400 mb-1">{t('seller_dashboard.deploy_new')}</p>
-                                <p className="text-2xl font-bold text-cyan-300">{totalPavilions}</p>
+                            <div className="flex items-center gap-3 mb-3">
+                                <div className="w-2 h-2 rounded-full bg-cyan-400 shadow-[0_0_10px_#22d3ee] animate-pulse"></div>
+                                <p className="text-xs font-bold uppercase tracking-[0.3em] text-cyan-300 drop-shadow-glow">Live Dashboard</p>
                             </div>
-                            <div className="rounded-2xl border border-white/20 bg-black/30 px-4 py-3 shadow-[0_0_25px_rgba(0,0,0,0.35)] min-w-[120px]">
-                                <p className="text-[10px] uppercase tracking-[0.35em] text-slate-400 mb-1">{t('seller_dashboard.products_catalog')}</p>
-                                <p className="text-2xl font-bold text-blue-200">{totalProducts}</p>
+                            <h1 className="text-4xl md:text-5xl font-black tracking-tight text-white mb-4 drop-shadow-xl">{t('seller_dashboard.subtitle')}</h1>
+                            <p className="text-lg text-slate-300 font-light tracking-wide max-w-xl">{t('cta')}</p>
+                        </div>
+                        <div className="flex gap-4 flex-wrap">
+                            <div className="rounded-2xl border border-white/10 bg-black/40 px-6 py-5 shadow-lg min-w-[140px] backdrop-blur-md hover:border-cyan-500/30 transition-colors group/card">
+                                <p className="text-[10px] font-bold uppercase tracking-[0.25em] text-slate-400 mb-2 group-hover/card:text-cyan-400 transition-colors">{t('seller_dashboard.deploy_new')}</p>
+                                <p className="text-3xl font-black text-white drop-shadow-md">{totalPavilions}</p>
+                            </div>
+                            <div className="rounded-2xl border border-white/10 bg-black/40 px-6 py-5 shadow-lg min-w-[140px] backdrop-blur-md hover:border-purple-500/30 transition-colors group/card">
+                                <p className="text-[10px] font-bold uppercase tracking-[0.25em] text-slate-400 mb-2 group-hover/card:text-purple-400 transition-colors">{t('seller_dashboard.products_catalog')}</p>
+                                <p className="text-3xl font-black text-white drop-shadow-md">{totalProducts}</p>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <div className="grid lg:grid-cols-[350px_1fr] gap-8">
+                <div className="grid lg:grid-cols-[380px_1fr] gap-10">
 
-                {/* LEFT COLUMN: CREATE */}
-                <div className="bg-gradient-to-b from-white/10 via-white/5 to-white/0 border border-cyan-500/20 p-6 rounded-2xl h-fit sticky top-24 shadow-[0_10px_40px_rgba(0,0,0,0.45)] backdrop-blur">
-                    <h2 className="text-lg font-bold text-blue-300 mb-4">{t('seller_dashboard.deploy_new')}</h2>
-                    <div className="space-y-4">
-                        <input
-                            placeholder={t('seller_dashboard.pavilion_title_placeholder')}
-                            value={createTitle}
-                            onChange={e => setCreateTitle(e.target.value)}
-                            className="w-full bg-black/20 border border-white/10 rounded-lg px-3 py-2 text-sm outline-none focus:border-blue-500"
-                        />
-                        <input
-                            placeholder={t('seller_dashboard.blurb_placeholder')}
-                            value={createBlurb}
-                            onChange={e => setCreateBlurb(e.target.value)}
-                            className="w-full bg-black/20 border border-white/10 rounded-lg px-3 py-2 text-sm outline-none focus:border-blue-500"
-                        />
-                        <div className="flex gap-2">
-                            {['#22d3ee', '#6366f1', '#f59e0b', '#10b981', '#ef4444', '#a855f7'].map(c => (
-                                <button
-                                    key={c}
-                                    onClick={() => setCreateColor(c)}
-                                    className={`w-6 h-6 rounded-full border-2 ${createColor === c ? 'border-white' : 'border-transparent'}`}
-                                    style={{ backgroundColor: c }}
-                                />
-                            ))}
+                    {/* LEFT COLUMN: CREATE */}
+                    <div className="bg-[#0f1623]/60 border border-white/10 p-8 rounded-[2rem] h-fit sticky top-32 shadow-[0_20px_60px_rgba(0,0,0,0.6)] backdrop-blur-xl">
+                        <div className="flex items-center gap-2 mb-6">
+                            <div className="w-1.5 h-1.5 rounded-full bg-cyan-400 shadow-[0_0_10px_#22d3ee]"></div>
+                            <h2 className="text-sm font-bold tracking-[0.2em] text-white uppercase drop-shadow-md">{t('seller_dashboard.deploy_new')}</h2>
                         </div>
 
-                        <div className="border-t border-white/10 pt-4">
-                            <p className="text-xs text-slate-500 mb-2 uppercase tracking-wider">{t('seller_dashboard.initial_products')}</p>
-                            <div className="grid grid-cols-2 gap-2 mb-2">
+                        <div className="space-y-5">
+                            <div className="space-y-2">
+                                <label className="text-[10px] font-bold uppercase tracking-wider text-slate-500 ml-1">Title & Concept</label>
                                 <input
-                                    placeholder={t('seller_dashboard.product_name_placeholder')}
-                                    value={prodName}
-                                    onChange={e => setProdName(e.target.value)}
-                                    className="bg-black/20 border border-white/10 rounded px-2 py-1 text-xs outline-none"
+                                    placeholder={t('seller_dashboard.pavilion_title_placeholder')}
+                                    value={createTitle}
+                                    onChange={e => setCreateTitle(e.target.value)}
+                                    className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 outline-none focus:border-cyan-500/50 focus:bg-white/5 transition-all"
                                 />
-                                <input
-                                    placeholder={t('seller_dashboard.product_price_placeholder')}
-                                    value={prodPrice}
-                                    onChange={e => setProdPrice(e.target.value)}
-                                    className="bg-black/20 border border-white/10 rounded px-2 py-1 text-xs outline-none"
+                                <textarea
+                                    placeholder={t('seller_dashboard.blurb_placeholder')}
+                                    value={createBlurb}
+                                    onChange={e => setCreateBlurb(e.target.value)}
+                                    rows={3}
+                                    className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 outline-none focus:border-cyan-500/50 focus:bg-white/5 transition-all resize-none"
                                 />
                             </div>
-                            <label className="cursor-pointer bg-white/5 border border-white/10 rounded px-2 py-2 flex items-center justify-center text-xs text-slate-400 gap-2 hover:bg-white/10 mb-2">
-                                <Upload size={12} /> {prodFile ? prodFile.name : t('seller_dashboard.upload_glb')}
-                                <input type="file" accept=".glb,.gltf" className="hidden" onChange={e => setProdFile(e.target.files[0])} />
-                            </label>
 
-                            <button
-                                onClick={() => setShowAiGenerator(true)}
-                                className="w-full flex items-center justify-center gap-2 py-2 bg-purple-600/20 border border-purple-500/30 hover:bg-purple-600/30 rounded text-purple-200 text-xs font-bold mb-2 transition shadow-[0_10px_30px_rgba(88,28,135,0.35)]"
-                            >
-                                <Wand2 size={12} /> {t('seller_dashboard.ai_generate')}
-                            </button>
-
-                            <button
-                                onClick={() => stageProduct(setCreateProducts, createProducts)}
-                                disabled={uploading}
-                                className="w-full py-1 bg-white/10 hover:bg-white/20 rounded text-xs font-bold mb-3 disabled:opacity-50 disabled:cursor-not-allowed"
-                            >
-                                {uploading ? t('seller_dashboard.uploading') : '+ ' + t('seller_dashboard.add_product_btn')}
-                            </button>
-
-                            {createProducts.length > 0 && (
-                                <div className="space-y-1 mb-4">
-                                    {createProducts.map(p => (
-                                        <div key={p.id} className="flex justify-between items-center text-xs bg-black/40 p-2 rounded">
-                                            <span>{p.name}</span>
-                                            <button onClick={() => removeProduct(p.id, setCreateProducts, createProducts)} className="text-red-400 hover:text-white"><Trash size={12} /></button>
-                                        </div>
+                            <div className="space-y-2">
+                                <label className="text-[10px] font-bold uppercase tracking-wider text-slate-500 ml-1">Theme Aesthetic</label>
+                                <div className="flex gap-3 p-3 bg-black/20 rounded-xl border border-white/5 justify-between">
+                                    {['#22d3ee', '#6366f1', '#f59e0b', '#10b981', '#ef4444', '#a855f7'].map(c => (
+                                        <button
+                                            key={c}
+                                            onClick={() => setCreateColor(c)}
+                                            className={`w-6 h-6 rounded-full border-2 transition-all duration-300 ${createColor === c ? 'border-white scale-125 shadow-[0_0_15px_' + c + ']' : 'border-transparent hover:scale-125 opacity-70 hover:opacity-100'}`}
+                                            style={{ backgroundColor: c }}
+                                        />
                                     ))}
                                 </div>
-                            )}
+                            </div>
 
-                            <button
-                                onClick={handleDeploy}
-                                disabled={loading || createProducts.length === 0}
-                                className="w-full py-2 bg-blue-600 hover:bg-blue-500 rounded-lg text-sm font-bold shadow-lg shadow-blue-500/20 disabled:opacity-50"
-                            >
-                                {loading ? t('seller_dashboard.deploying_btn') : t('seller_dashboard.deploy_btn')}
-                            </button>
+                            <div className="border-t border-white/10 pt-6">
+                                <div className="flex items-center justify-between mb-4">
+                                    <p className="text-[10px] text-cyan-400 font-bold uppercase tracking-widest">{t('seller_dashboard.initial_products')}</p>
+                                    <span className="text-[10px] px-2 py-0.5 rounded bg-white/10 text-white font-mono">{createProducts.length}</span>
+                                </div>
+
+                                <div className="grid grid-cols-2 gap-3 mb-3">
+                                    <input
+                                        placeholder={t('seller_dashboard.product_name_placeholder')}
+                                        value={prodName}
+                                        onChange={e => setProdName(e.target.value)}
+                                        className="bg-black/40 border border-white/10 rounded-lg px-3 py-2 text-xs text-white outline-none focus:border-cyan-500/50 transition-colors"
+                                    />
+                                    <input
+                                        placeholder={t('seller_dashboard.product_price_placeholder')}
+                                        value={prodPrice}
+                                        onChange={e => setProdPrice(e.target.value)}
+                                        className="bg-black/40 border border-white/10 rounded-lg px-3 py-2 text-xs text-white outline-none focus:border-cyan-500/50 transition-colors"
+                                    />
+                                </div>
+
+                                <label className="cursor-pointer bg-white/5 border border-white/10 rounded-xl px-3 py-3 flex items-center justify-center text-xs font-bold text-slate-400 gap-2 hover:bg-white/10 hover:border-white/20 hover:text-white transition-all mb-3 group">
+                                    <Upload size={14} className="group-hover:text-cyan-400 transition-colors" />
+                                    {prodFile ? <span className="text-cyan-400 truncate max-w-[150px]">{prodFile.name}</span> : t('seller_dashboard.upload_glb')}
+                                    <input type="file" accept=".glb,.gltf" className="hidden" onChange={e => setProdFile(e.target.files[0])} />
+                                </label>
+
+                                <div className="grid grid-cols-2 gap-3 mb-4">
+                                    <button
+                                        onClick={() => setShowAiGenerator(true)}
+                                        className="flex items-center justify-center gap-2 py-2.5 bg-purple-600/10 border border-purple-500/20 hover:bg-purple-600/20 rounded-xl text-purple-300 text-xs font-bold transition-all hover:shadow-[0_0_15px_rgba(168,85,247,0.15)]"
+                                    >
+                                        <Wand2 size={12} /> {t('seller_dashboard.ai_generate')}
+                                    </button>
+
+                                    <button
+                                        onClick={() => stageProduct(setCreateProducts, createProducts)}
+                                        disabled={uploading}
+                                        className="flex items-center justify-center py-2.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-white text-xs font-bold transition-all disabled:opacity-50"
+                                    >
+                                        {uploading ? '...' : '+ ' + t('seller_dashboard.add_btn')}
+                                    </button>
+                                </div>
+
+                                {createProducts.length > 0 && (
+                                    <div className="space-y-2 mb-6 max-h-[150px] overflow-y-auto custom-scrollbar pr-1">
+                                        {createProducts.map(p => (
+                                            <div key={p.id} className="flex justify-between items-center text-xs bg-black/40 p-3 rounded-lg border border-white/5 hover:border-white/10 transition-colors group">
+                                                <span className="text-slate-200 font-medium">{p.name}</span>
+                                                <button onClick={() => removeProduct(p.id, setCreateProducts, createProducts)} className="text-slate-500 hover:text-red-400 transition-colors"><Trash size={12} /></button>
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
+
+                                <button
+                                    onClick={handleDeploy}
+                                    disabled={loading || createProducts.length === 0}
+                                    className="w-full py-4 bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 rounded-xl text-sm font-bold tracking-widest uppercase text-white shadow-[0_0_20px_rgba(6,182,212,0.25)] hover:shadow-[0_0_40px_rgba(6,182,212,0.4)] transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 group"
+                                >
+                                    {loading ? (
+                                        <>
+                                            <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" /> {t('seller_dashboard.deploying_btn')}
+                                        </>
+                                    ) : (
+                                        <>
+                                            {t('seller_dashboard.deploy_btn')} <span className="group-hover:translate-x-1 transition-transform">→</span>
+                                        </>
+                                    )}
+                                </button>
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                {/* RIGHT COLUMN: LIST */}
-                <div className="space-y-6">
-                    {pavilions.length === 0 && (
-                        <div className="h-64 flex flex-col items-center justify-center border border-dashed border-white/10 rounded-2xl text-slate-500">
-                            <p>{t('seller_dashboard.no_pavilions')}</p>
-                        </div>
-                    )}
-                    {pavilions.map(p => (
-                        <div key={p.is_demo ? 'demo_' + p.id : p.id} className="bg-black/30 border border-white/10 rounded-2xl p-6 relative group hover:border-cyan-400/30 transition shadow-[0_10px_40px_rgba(0,0,0,0.45)] backdrop-blur">
-                            <div className="flex items-start justify-between mb-4">
-                                <div className="flex items-center gap-4">
-                                    <div className="w-12 h-12 rounded-xl shadow-lg" style={{ backgroundColor: p.color }} />
-                                    <div>
-                                        <h3 className="text-xl font-bold">{p.title}</h3>
-                                        <p className="text-slate-400 text-sm">{p.blurb}</p>
+                    {/* RIGHT COLUMN: LIST */}
+                    <div className="space-y-6">
+                        {pavilions.length === 0 && (
+                            <div className="h-64 flex flex-col items-center justify-center border border-dashed border-white/10 rounded-[2rem] text-slate-500 bg-white/5 backdrop-blur">
+                                <p className="font-light tracking-wide">{t('seller_dashboard.no_pavilions')}</p>
+                            </div>
+                        )}
+                        {pavilions.map(p => (
+                            <div key={p.is_demo ? 'demo_' + p.id : p.id} className="bg-[#0f1623]/80 border border-white/10 rounded-[2rem] p-8 relative group hover:border-cyan-400/30 transition-all duration-300 shadow-[0_20px_50px_rgba(0,0,0,0.4)] backdrop-blur-xl hover:-translate-y-1">
+                                <div className="absolute inset-x-0 -top-px h-px bg-gradient-to-r from-transparent via-cyan-500/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                                <div className="flex items-start justify-between mb-6">
+                                    <div className="flex items-center gap-6">
+                                        <div
+                                            className="w-16 h-16 rounded-2xl shadow-lg border border-white/10 flex-shrink-0 relative overflow-hidden group-hover:scale-105 transition-transform duration-500"
+                                            style={{ backgroundColor: p.color }}
+                                        >
+                                            <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent" />
+                                        </div>
+                                        <div>
+                                            <h3 className="text-xl font-bold tracking-wide text-white group-hover:text-cyan-400 transition-colors drop-shadow-sm">{p.title}</h3>
+                                            <p className="text-slate-400 text-sm mt-1 font-light leading-relaxed max-w-md">{p.blurb}</p>
+                                        </div>
+                                    </div>
+                                    <div className="flex gap-2">
+                                        <button
+                                            onClick={() => handleViewMessages(p)}
+                                            className="p-3 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 text-slate-400 hover:text-white transition-all hover:scale-105 hover:shadow-lg"
+                                            title={t('seller_dashboard.view_messages_title')}
+                                        >
+                                            <MessageSquare size={18} />
+                                        </button>
+                                        <button
+                                            onClick={() => handleEditPavilion(p)}
+                                            className="p-3 rounded-xl bg-blue-600/10 border border-blue-500/20 hover:bg-blue-600/20 text-blue-300 transition-all hover:scale-105 hover:shadow-[0_0_15px_rgba(59,130,246,0.2)]"
+                                            title={t('seller_dashboard.edit_pavilion_title')}
+                                        >
+                                            <Edit size={18} />
+                                        </button>
+                                        <button
+                                            onClick={() => handleDeletePavilion(p.id)}
+                                            className="p-3 rounded-xl bg-red-600/10 border border-red-500/20 hover:bg-red-600/20 text-red-300 transition-all hover:scale-105 hover:shadow-[0_0_15px_rgba(239,68,68,0.2)]"
+                                            title={t('seller_dashboard.delete_pavilion_title')}
+                                        >
+                                            <Trash size={18} />
+                                        </button>
                                     </div>
                                 </div>
-                                <div className="flex gap-2">
-                                    <button
-                                        onClick={() => handleViewMessages(p)}
-                                        className="p-2 rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 text-slate-300"
-                                        title={t('seller_dashboard.view_messages_title')}
-                                    >
-                                        <MessageSquare size={18} />
-                                    </button>
-                                    <button
-                                        onClick={() => handleEditPavilion(p)}
-                                        className="p-2 rounded-lg bg-blue-600/10 border border-blue-500/30 hover:bg-blue-600/20 text-blue-300"
-                                        title={t('seller_dashboard.edit_pavilion_title')}
-                                    >
-                                        <Edit size={18} />
-                                    </button>
-                                    <button
-                                        onClick={() => handleDeletePavilion(p.id)}
-                                        className="p-2 rounded-lg bg-red-600/10 border border-red-500/30 hover:bg-red-600/20 text-red-300"
-                                        title={t('seller_dashboard.delete_pavilion_title')}
-                                    >
-                                        <Trash size={18} />
-                                    </button>
-                                </div>
-                            </div>
 
-                            <div className="bg-black/20 rounded-xl p-4">
-                                <p className="text-xs uppercase tracking-wider text-slate-500 mb-3 font-semibold">{t('seller_dashboard.products_catalog')}</p>
-                                <div className="grid sm:grid-cols-2 gap-3">
-                                    {p.products.map(prod => (
-                                        <div key={prod.id} className="flex items-center justify-between p-3 bg-white/5 rounded-lg border border-white/5">
-                                            <div>
-                                                <p className="font-medium text-sm">{prod.name}</p>
-                                                <p className="text-xs text-slate-500">{prod.price}</p>
-                                            </div>
+                                <div className="bg-black/30 rounded-2xl p-5 border border-white/5">
+                                    <p className="text-[10px] uppercase tracking-widest text-slate-500 mb-4 font-bold flex items-center gap-2">
+                                        <span className="w-1 h-1 rounded-full bg-slate-500" /> {t('seller_dashboard.products_catalog')}
+                                    </p>
+                                    {p.products.length === 0 ? (
+                                        <p className="text-sm text-slate-600 italic pl-2">No products added yet.</p>
+                                    ) : (
+                                        <div className="grid sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-3">
+                                            {p.products.map(prod => (
+                                                <div key={prod.id} className="flex items-center justify-between p-3.5 bg-white/5 rounded-xl border border-white/5 hover:bg-white/10 transition-colors group/prod">
+                                                    <div>
+                                                        <p className="font-bold text-sm text-slate-200 group-hover/prod:text-white transition-colors">{prod.name}</p>
+                                                        <p className="text-[10px] text-cyan-400 font-mono mt-1">{prod.price}</p>
+                                                    </div>
+                                                    <div className="w-6 h-6 rounded-full bg-white/5 flex items-center justify-center opacity-0 group-hover/prod:opacity-100 transition-opacity">
+                                                        <span className="text-[10px] text-white">→</span>
+                                                    </div>
+                                                </div>
+                                            ))}
                                         </div>
-                                    ))}
+                                    )}
                                 </div>
                             </div>
-                        </div>
-                    ))}
-                </div>
+                        ))}
+                    </div>
                 </div>
             </div>
         </div>
