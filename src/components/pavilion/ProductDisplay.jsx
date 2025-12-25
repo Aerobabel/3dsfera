@@ -49,33 +49,38 @@ function ProceduralPedestal() {
 
 
 
+// --- HELPER COMPONENT FOR GLTF LOADING ---
+function GLTFModel({ path, scale, floating }) {
+    const gltf = useGLTF(path);
+    const scene = React.useMemo(() => gltf.scene.clone(), [gltf.scene]);
+
+    if (floating) {
+        return (
+            <Float speed={2} rotationIntensity={0.5} floatIntensity={0.5}>
+                <primitive object={scene} scale={[1.5, 1.5, 1.5]} />
+            </Float>
+        );
+    }
+
+    return <primitive object={scene} scale={[1.5, 1.5, 1.5]} />;
+}
+
 // --- MAIN COMPONENT ---
 
 export default function ProductDisplay({
     modelPath,
-    isTv = false, // Flag to render TV instead of loading a GLB
-    isRoboticArm = false, // Flag for custom sophisticated model
+    isTv = false,
+    isRoboticArm = false,
     position = [0, 0, 0],
     rotation = [0, 0, 0],
     scale = 1,
     floating = false,
-    hidePedestal = false, // New prop to optionally hide geometry
-    heightOffset = 0, // New prop for manual height adjustment
-    ...props // spread rest props (onClick, onPointerOver etc)
+    hidePedestal = false,
+    heightOffset = 0,
+    ...props
 }) {
-    // Only load GLB if modelPath is provided and NOT a TV
-    // We use a safe hook usage pattern: always call hook, but ignore result if not needed?
-    // Hooks cannot be conditional. So we must call useGLTF.
-    // Ensure we pass a valid path or handle null. 
-    // If isTv is true, we might pass a dummy or just use null if the hook supports it? 
-    // useGLTF crashes on null. We will pass modelPath if exists, else generic.
-
-    // BETTER APPROACH: Move GLB loading to a sub-component or just load it if path exists.
-    // Use a dummy path if null to avoid hook error? No, that causes network error.
-    // For now, valid use cases always have a path OR isTV.
-
-    // We will assume if isTv is false, modelPath IS provided.
-    const gltf = modelPath ? useGLTF(modelPath) : null;
+    // Note: We no longer call useGLTF here to avoid conditional hook rules violations.
+    // Instead we render GLTFModel only if we have a path.
 
     return (
         <group position={position} rotation={rotation} {...props}>
@@ -83,7 +88,7 @@ export default function ProductDisplay({
             {!hidePedestal && <ProceduralPedestal />}
 
             {/* The Product on Top - Scaled Independently */}
-            <group position={[0, (hidePedestal ? 0.5 : 2.55) + (heightOffset || 0), 0]} scale={scale}> {/* Applied heightOffset here */}
+            <group position={[0, (hidePedestal ? 0.5 : 2.55) + (heightOffset || 0), 0]} scale={scale}>
                 {isTv ? (
                     <Television scale={1.2} />
                 ) : isRoboticArm ? (
@@ -91,21 +96,7 @@ export default function ProductDisplay({
                 ) : props.isMicrowave ? (
                     <Microwave scale={0.8} />
                 ) : (
-                    gltf && (
-                        floating ? (
-                            <Float speed={2} rotationIntensity={0.5} floatIntensity={0.5}>
-                                <primitive
-                                    object={gltf.scene.clone()}
-                                    scale={[1.5, 1.5, 1.5]}
-                                />
-                            </Float>
-                        ) : (
-                            <primitive
-                                object={gltf.scene.clone()}
-                                scale={[1.5, 1.5, 1.5]}
-                            />
-                        )
-                    )
+                    modelPath && <GLTFModel path={modelPath} floating={floating} />
                 )}
             </group>
         </group>
