@@ -4,10 +4,13 @@ import { supabase } from './lib/supabaseClient';
 import './index.css';
 import AuthModal from './components/AuthModal';
 import LanguageSwitcher from './components/LanguageSwitcher';
-import SellerDashboard from './components/SellerDashboard';
-import VerifiedPavilion from './components/VerifiedPavilion';
 import { LogIn, LogOut, LayoutDashboard, ShieldCheck, Calendar } from 'lucide-react';
 import CalendarModal from './components/CalendarModal';
+
+// --- LAZY LOADED COMPONENTS ---
+const VerifiedPavilion = React.lazy(() => import('./components/VerifiedPavilion'));
+const SellerDashboard = React.lazy(() => import('./components/SellerDashboard'));
+const AssetPreloader = React.lazy(() => import('./components/AssetPreloader'));
 
 // --- PARTICLE COMPONENT ---
 function ReactiveParticleFooter() {
@@ -145,6 +148,8 @@ function App() {
     };
   }, []);
 
+
+
   const handleLogout = async () => {
     if (!supabase) return;
     await supabase.auth.signOut();
@@ -163,13 +168,24 @@ function App() {
             <button onClick={handleLogout} className="p-2 border border-white/10 rounded-lg hover:bg-white/10"><LogOut size={16} /></button>
           </div>
         </header>
-        <SellerDashboard user={user} />
+        <React.Suspense fallback={<div className="flex h-screen items-center justify-center text-white">Loading Dashboard...</div>}>
+          <SellerDashboard user={user} />
+        </React.Suspense>
       </div>
     );
   }
 
   if (view === 'verified_test') {
-    return <VerifiedPavilion onBack={() => setView('home')} user={user} />;
+    return (
+      <React.Suspense fallback={
+        <div className="flex h-screen items-center justify-center bg-black text-white flex-col gap-4">
+          <div className="w-16 h-16 border-4 border-cyan-500/30 border-t-cyan-500 rounded-full animate-spin"></div>
+          <div className="text-cyan-500 tracking-widest uppercase text-sm font-bold">Initializing Engine...</div>
+        </div>
+      }>
+        <VerifiedPavilion onBack={() => setView('home')} user={user} />
+      </React.Suspense>
+    );
   }
 
   return (
@@ -177,6 +193,11 @@ function App() {
       {/* Cyberpunk Background Layers */}
       <div className="absolute inset-0 cyber-grid opacity-30 pointer-events-none"></div>
       <div className="absolute inset-0 scanlines opacity-10 pointer-events-none z-50"></div>
+
+      {/* BACKGROUND ASSET LOADING */}
+      <React.Suspense fallback={null}>
+        {view === 'home' && <AssetPreloader />}
+      </React.Suspense>
 
       {/* REACTIVE FOOTER */}
       <ReactiveParticleFooter />
