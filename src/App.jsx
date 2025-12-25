@@ -6,7 +6,8 @@ import AuthModal from './components/AuthModal';
 import LanguageSwitcher from './components/LanguageSwitcher';
 import SellerDashboard from './components/SellerDashboard';
 import VerifiedPavilion from './components/VerifiedPavilion';
-import { LogIn, LogOut, LayoutDashboard, ShieldCheck } from 'lucide-react';
+import { LogIn, LogOut, LayoutDashboard, ShieldCheck, Calendar } from 'lucide-react';
+import CalendarModal from './components/CalendarModal';
 
 // --- PARTICLE COMPONENT ---
 function ReactiveParticleFooter() {
@@ -124,6 +125,7 @@ function App() {
   const [view, setView] = useState('home'); // home | dashboard | verified_test
   const [user, setUser] = useState(null);
   const [isAuthOpen, setIsAuthOpen] = useState(false);
+  const [showCalendar, setShowCalendar] = useState(false);
 
   useEffect(() => {
     if (!supabase) return;
@@ -180,6 +182,10 @@ function App() {
       <ReactiveParticleFooter />
 
       <AuthModal isOpen={isAuthOpen} onClose={() => setIsAuthOpen(false)} />
+      {showCalendar && <CalendarModal onClose={() => setShowCalendar(false)} />}
+
+      {/* TOP GLOW EFFECT */}
+      <div className="absolute top-0 left-0 right-0 h-32 bg-gradient-to-b from-cyan-500/10 to-transparent pointer-events-none z-0" />
 
       <header className="relative z-10 max-w-7xl mx-auto px-6 pt-16 pb-12 flex flex-col md:flex-row md:items-center md:justify-between gap-10">
         <div>
@@ -198,6 +204,16 @@ function App() {
             >
               {t('launch_tour')}
             </button>
+
+            {/* CALENDAR BUTTON */}
+            <button
+              onClick={() => setShowCalendar(true)}
+              className="px-6 py-4 rounded-none border border-white/10 hover:border-cyan-400/50 text-slate-400 hover:text-cyan-300 transition tracking-wider flex items-center gap-2 group"
+            >
+              <Calendar size={18} className="group-hover:text-cyan-400 transition-colors" />
+              <span>{t('calendar', 'Calendar')}</span>
+            </button>
+
             <button className="px-6 py-4 rounded-none border border-white/10 hover:border-white/30 text-slate-400 hover:text-white transition tracking-wider">
               {t('learn_more')}
             </button>

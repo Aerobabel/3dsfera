@@ -6,6 +6,7 @@ import * as THREE from 'three';
 import ProductModel from './ProductModel';
 import SoundManager from './SoundManager';
 import LiveChat from './LiveChat';
+import FeaturesModal from './FeaturesModal';
 
 // ... imports
 import { HeavyDutyRobot } from './subsystems/HeavyDutyRobot';
@@ -144,6 +145,7 @@ export default function ShowroomView({ pavilionData, onBack, user }) {
     const { t } = useTranslation();
     const [activeIndex, setActiveIndex] = useState(0);
     const [showChat, setShowChat] = useState(false);
+    const [showFeatures, setShowFeatures] = useState(false);
     const products = useMemo(() => pavilionData?.products || [], [pavilionData]);
     const currentProduct = products[activeIndex] || {};
     const pavilionSlug = pavilionData?.slug || pavilionData?.id;
@@ -263,8 +265,14 @@ export default function ShowroomView({ pavilionData, onBack, user }) {
                         >
                             {isSeller ? t('pavilion_ui.buyer_only_here') : t('pavilion_ui.inquire_now')}
                         </button>
-                        <button className="px-6 py-3 border border-white/20 hover:border-white text-white font-bold text-xs uppercase tracking-widest transition-colors backdrop-blur-md bg-black/30">
-                            Specs
+                        <button
+                            onClick={() => {
+                                SoundManager.playClick();
+                                setShowFeatures(true);
+                            }}
+                            className="px-6 py-3 border border-white/20 hover:border-white text-white font-bold text-xs uppercase tracking-widest transition-colors backdrop-blur-md bg-black/30"
+                        >
+                            {t('pavilion_ui.features')}
                         </button>
                     </div>
                 </div>
@@ -322,6 +330,14 @@ export default function ShowroomView({ pavilionData, onBack, user }) {
                         <LiveChat pavilionId={pavilionData?.id} pavilionSlug={pavilionSlug} user={user} />
                     </div>
                 </div>
+            )}
+
+            {showFeatures && (
+                <FeaturesModal
+                    features={currentProduct.features}
+                    title={productTitle}
+                    onClose={() => setShowFeatures(false)}
+                />
             )}
 
             <Loader dataInterpolation={(p) => `Loading Collection ${p.toFixed(0)}% `} />

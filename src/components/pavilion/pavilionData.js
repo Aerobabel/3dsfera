@@ -37,7 +37,14 @@ export const PAVILIONS = {
                 modelPath: null,
                 isMicrowave: true,
                 scale: 1.0,
-                position: [0, 0, 0]
+                position: [0, 0, 0],
+                features: [
+                    'AI Cooking Sensors',
+                    'Smart Inverter Technology',
+                    'EasyClean Antibacterial Coating',
+                    'Hexagonal Stable Ring',
+                    'Bright LED Interior Light'
+                ]
             },
             {
                 id: 'oled_tv',
@@ -51,7 +58,14 @@ export const PAVILIONS = {
                 modelPath: null,
                 isTelevision: true,
                 scale: 1.2,
-                position: [5, 0, 0]
+                position: [5, 0, 0],
+                features: [
+                    'Self-lit OLED Pixels',
+                    'α9 Gen5 AI Processor 4K',
+                    'Dolby Vision IQ & Dolby Atmos',
+                    'NVIDIA G-SYNC Compatible',
+                    'ThinQ AI with Voice Control'
+                ]
             }
         ]
     },
@@ -80,7 +94,14 @@ export const PAVILIONS = {
                 },
                 modelPath: VALVE_PATH,
                 scale: 0.9,
-                position: [0, 0, 0]
+                position: [0, 0, 0],
+                features: [
+                    'Titanium-X Alloy Body',
+                    'Thermal Shock Resistance',
+                    'Precision Flow Control',
+                    '2500°C Max Operating Temp',
+                    'ISO 9001 Certified'
+                ]
             },
             {
                 id: 'pneumatic_system',
@@ -95,7 +116,14 @@ export const PAVILIONS = {
                 modelPath: PNEUMATIC_PATH,
                 scale: 1.3,
                 rotation: [0, 1.57, 0],
-                position: [5, 0, 0]
+                position: [5, 0, 0],
+                features: [
+                    'Heavy-Duty Stainless Steel 316L',
+                    'Rapid Response Actuation (0.05s)',
+                    'High Pressure Tolerance (350 Bar)',
+                    'Corrosion Resistant Coating',
+                    'Integrated Position Feedback'
+                ]
             }
         ]
     },
@@ -124,7 +152,14 @@ export const PAVILIONS = {
                 },
                 modelPath: null,
                 isRoboticArm: true,
-                position: [0, 0, 0]
+                position: [0, 0, 0],
+                features: [
+                    '6-Axis Freedom of Movement',
+                    '2.3 Ton Payload Capacity',
+                    'Sub-millimeter Precision',
+                    'Integrated Vision System',
+                    'IP67 Rated Protection'
+                ]
             },
             {
                 id: 'mobile_crane',
@@ -138,7 +173,14 @@ export const PAVILIONS = {
                 },
                 modelPath: CRANE_MACHINE_PATH,
                 scale: 1.1,
-                position: [-5, 0, 0]
+                position: [-5, 0, 0],
+                features: [
+                    '40 Ton Lift Capacity',
+                    'Hybrid Diesel-Electric Drive',
+                    '32m Telescopic Boom',
+                    '360° Continuous Rotation',
+                    'Advanced Load Moment Limiter'
+                ]
             }
         ]
     }

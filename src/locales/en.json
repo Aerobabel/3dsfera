@@ -141,11 +141,17 @@
         "pavilion_label": "PAVILION",
         "enter_pavilion": "ENTER PAVILION",
         "company": "COMPANY",
+        "features": "Features",
         "no_description": "No description available.",
         "exit_showroom": "Exit Showroom"
     },
+    "calendar_ui": {
+        "schedule": "EXHIBITION SCHEDULE",
+        "no_events": "No upcoming exhibitions scheduled for this month."
+    },
+    "calendar": "Calendar",
     "verified_pavilion": {
-        "test_btn": "TEST VERIFIED PAVILION",
+        "test_btn": "VISIT EXHIBITION HALL",
         "ui": {
             "exit": "EXIT SCENE",
             "connection_est": "Live Connection Est.",

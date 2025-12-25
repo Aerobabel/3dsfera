@@ -4,6 +4,10 @@ import * as THREE from 'three';
 
 // --- SUB-COMPONENTS ---
 
+import { HeavyDutyRobot } from './subsystems/HeavyDutyRobot';
+import { Microwave } from './subsystems/Microwave';
+import { Television } from './subsystems/Television';
+
 function ProceduralPedestal() {
     return (
         <group>
@@ -41,65 +45,9 @@ function ProceduralPedestal() {
     );
 }
 
-function TvModel() {
-    return (
-        <group>
-            {/* Screen */}
-            <RoundedBox args={[2.5, 1.5, 0.1]} radius={0.05} smoothness={4}>
-                <meshStandardMaterial color="#111" metalness={0.9} roughness={0.1} />
-            </RoundedBox>
-            {/* Display Glow */}
-            <mesh position={[0, 0, 0.051]}>
-                <planeGeometry args={[2.4, 1.4]} />
-                <meshBasicMaterial color="#222" />
-            </mesh>
-            {/* Stand */}
-            <mesh position={[0, -0.85, 0]}>
-                <cylinderGeometry args={[0.1, 0.4, 0.3]} /> {/* Conical stand base */}
-                <meshStandardMaterial color="#222" metalness={0.8} />
-            </mesh>
-        </group>
-    );
-}
 
-function RoboticArm() {
-    return (
-        <group position={[0, -0.5, 0]}>
-            {/* Base */}
-            <mesh position={[0, 0.2, 0]}>
-                <cylinderGeometry args={[0.7, 0.8, 0.4, 32]} />
-                <meshStandardMaterial color="#333" />
-            </mesh>
-            {/* Swivel Joint */}
-            <mesh position={[0, 0.6, 0]}>
-                <cylinderGeometry args={[0.5, 0.5, 0.4, 32]} />
-                <meshStandardMaterial color="#ffaa00" />
-            </mesh>
-            {/* Lower Arm */}
-            <mesh position={[0.2, 1.5, 0]} rotation={[0, 0, -0.2]}>
-                <boxGeometry args={[0.3, 1.8, 0.4]} />
-                <meshStandardMaterial color="#ffaa00" />
-            </mesh>
-            {/* Elbow Joint */}
-            <mesh position={[0.4, 2.4, 0]} rotation={[Math.PI / 2, 0, 0]}>
-                <cylinderGeometry args={[0.35, 0.35, 0.5, 32]} />
-                <meshStandardMaterial color="#333" />
-            </mesh>
-            {/* Upper Arm */}
-            <group position={[0.4, 2.4, 0]} rotation={[0, 0, 0.5]}>
-                <mesh position={[0, 0.8, 0]}>
-                    <boxGeometry args={[0.25, 1.6, 0.3]} />
-                    <meshStandardMaterial color="#ffaa00" />
-                </mesh>
-                {/* Claw Head */}
-                <mesh position={[0, 1.7, 0]}>
-                    <cylinderGeometry args={[0.2, 0.3, 0.4, 16]} />
-                    <meshStandardMaterial color="#111" />
-                </mesh>
-            </group>
-        </group>
-    );
-}
+
+
 
 // --- MAIN COMPONENT ---
 
@@ -137,9 +85,11 @@ export default function ProductDisplay({
             {/* The Product on Top - Scaled Independently */}
             <group position={[0, (hidePedestal ? 0.5 : 2.55) + (heightOffset || 0), 0]} scale={scale}> {/* Applied heightOffset here */}
                 {isTv ? (
-                    <TvModel />
+                    <Television scale={1.2} />
                 ) : isRoboticArm ? (
-                    <RoboticArm />
+                    <HeavyDutyRobot position={[0, -0.95, 0]} />
+                ) : props.isMicrowave ? (
+                    <Microwave scale={0.8} />
                 ) : (
                     gltf && (
                         floating ? (

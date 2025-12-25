@@ -1,42 +1,60 @@
 /*
 * Television.jsx
-* Procedural Flat Screen TV.
+* High-fidelity procedural OLED TV with Ambilight effect.
 */
 import React from 'react';
-import { Box, Cylinder } from '@react-three/drei';
+import { Box, Cylinder, RoundedBox } from '@react-three/drei';
+import * as THREE from 'three';
 
-export function Television() {
+export function Television({ scale = 1, position = [0, 0, 0], rotation = [0, 0, 0] }) {
     return (
-        <group>
-            {/* Screen Bezel */}
-            <Box args={[3.2, 1.9, 0.1]} position={[0, 0, 0]}>
-                <meshStandardMaterial color="#111" metalness={0.7} roughness={0.3} />
-            </Box>
+        <group scale={scale} position={position} rotation={rotation}>
+            {/* --- SCREEN PANEL --- */}
+            <group position={[0, 0.3, 0]}>
+                {/* Main Body (Ultra thin) */}
+                <RoundedBox args={[3.4, 2.0, 0.05]} radius={0.02} smoothness={4}>
+                    <meshStandardMaterial color="#111" metalness={0.8} roughness={0.2} />
+                </RoundedBox>
 
-            {/* The Actual Screen */}
-            <Box args={[3.1, 1.8, 0.02]} position={[0, 0, 0.05]}>
-                <meshStandardMaterial color="#050510" metalness={0.9} roughness={0.1} />
-            </Box>
-            {/* Reflection/Image Placeholder (Blue Glint) */}
-            <mesh position={[0, 0, 0.061]}>
-                <planeGeometry args={[3.0, 1.7]} />
-                <meshBasicMaterial color="#000044" opacity={0.3} transparent />
-            </mesh>
+                {/* The Display Surface (OLED Black) */}
+                <group position={[0, 0, 0.026]}>
+                    <mesh>
+                        <planeGeometry args={[3.35, 1.95]} />
+                        <meshPhysicalMaterial
+                            color="#000"
+                            roughness={0.05}
+                            metalness={0.2}
+                            clearcoat={1}
+                            clearcoatRoughness={0}
+                        />
+                    </mesh>
+                    {/* Fake Reflection / Glint */}
+                    <mesh position={[0.5, 0.5, 0.001]} rotation={[0, 0, -0.5]}>
+                        <planeGeometry args={[2, 0.1]} />
+                        <meshBasicMaterial color="#ffffff" opacity={0.03} transparent />
+                    </mesh>
+                </group>
 
-            {/* Stand Stem */}
-            <Cylinder args={[0.1, 0.1, 0.6, 16]} position={[0, -1.0, -0.1]}>
-                <meshStandardMaterial color="#222" metalness={0.5} roughness={0.5} />
-            </Cylinder>
+                {/* Back Electronics Bump (Lower half) */}
+                <RoundedBox args={[1.5, 1.2, 0.1]} radius={0.05} position={[0, -0.3, -0.08]}>
+                    <meshStandardMaterial color="#1a1a1a" roughness={0.6} />
+                </RoundedBox>
 
-            {/* Stand Base */}
-            <Box args={[1.2, 0.05, 0.6]} position={[0, -1.3, -0.1]}>
-                <meshStandardMaterial color="#222" metalness={0.5} roughness={0.5} />
-            </Box>
+                {/* Ambilight Glow (Back) */}
+                <pointLight position={[0, 0, -0.5]} color="#4444ff" intensity={1} distance={3} decay={2} />
+            </group>
 
-            {/* Back Panel Electronics bump */}
-            <Box args={[1.5, 1.0, 0.3]} position={[0, -0.2, -0.2]}>
-                <meshStandardMaterial color="#111" />
-            </Box>
+            {/* --- STAND --- */}
+            <group position={[0, -0.8, -0.1]}>
+                {/* Stem */}
+                <Box args={[0.4, 0.4, 0.05]} position={[0, 0.2, 0]} rotation={[-0.2, 0, 0]}>
+                    <meshStandardMaterial color="#222" metalness={0.7} roughness={0.3} />
+                </Box>
+                {/* Base Plate */}
+                <RoundedBox args={[1.2, 0.04, 0.6]} radius={0.02} position={[0, 0, 0.1]}>
+                    <meshStandardMaterial color="#333" metalness={0.8} roughness={0.2} />
+                </RoundedBox>
+            </group>
         </group>
     );
 }

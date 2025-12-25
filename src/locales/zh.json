@@ -141,11 +141,17 @@
         "pavilion_label": "展馆",
         "enter_pavilion": "进入展馆",
         "company": "公司",
+        "features": "功能特点",
         "no_description": "暂无描述。",
         "exit_showroom": "退出展厅"
     },
+    "calendar_ui": {
+        "schedule": "展览日程",
+        "no_events": "本月暂无展览安排。"
+    },
+    "calendar": "日历",
     "verified_pavilion": {
-        "test_btn": "测试进入验证展馆",
+        "test_btn": "参观展览馆",
         "ui": {
             "exit": "退出场景",
             "connection_est": "连接已建立",
