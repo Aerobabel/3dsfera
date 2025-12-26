@@ -26,6 +26,7 @@ import { FactoryPartition } from './pavilion/subsystems/FactoryPartition';
 import { HeavyDutyRobot } from './pavilion/subsystems/HeavyDutyRobot';
 import { HazardZone } from './pavilion/subsystems/HazardZone';
 import CrateStack from './pavilion/subsystems/CrateStack';
+import { Escavator } from './pavilion/subsystems/Escavator';
 
 // Assets
 import tractorVideoUrl from '../assets/videos/Cyberpunk_Tractor_Video_Generation.mp4';
@@ -38,11 +39,13 @@ const PNEUMATIC_PATH = '/objects/Pneumatic.glb';
 const CRANE_PATH = '/objects/mobile_crane.glb';
 const CRANE_MACHINE_PATH = '/objects/crane_machine.glb';
 const VALVE_PATH = '/objects/valve.glb';
+const ESCAVATOR_PATH = '/objects/escavator.glb';
 
 // Pre-load assets
 useGLTF.preload(TURBO_ENGINE_PATH);
 useGLTF.preload(CRANE_PATH);
 useGLTF.preload(CRANE_MACHINE_PATH);
+useGLTF.preload(ESCAVATOR_PATH);
 
 // Helper to ensure scene is actually rendered before hiding loader
 function SceneReadyNotifier({ onReady }) {
@@ -320,10 +323,10 @@ export default function VerifiedPavilion({ onBack, user }) {
                             <FactoryPartition position={[4, 0, -3]} rotation={[0, 0, 0]} width={6} />
                         </group>
 
-                        {/* Zone 2: Heavy Robotics (Right Foreground) */}
-                        <group position={[12, 0, 12]} rotation={[0, -Math.PI / 3, 0]}>
-                            <HazardZone width={5} length={5} position={[0, 0.02, 0]} rotation={[-Math.PI / 2, 0, 0]} />
-                            <HeavyDutyRobot scale={1.2} />
+                        {/* 3DSFERA foyer mat: place excavator on the yellow pad to the right-front of the central kiosk */}
+                        <group position={[9, 0, 12]} rotation={[0, 0, 0]}>
+                            <HazardZone width={6} length={8} position={[0, 0.02, 0]} rotation={[-Math.PI / 2, 0, 0]} />
+                            <Escavator position={[15, 1, 4]} scale={1.0} rotation={[0, Math.PI / 5, 0]} />
                         </group>
 
                         {/* Zone 3: Storage Area (Back Left) */}
@@ -337,7 +340,6 @@ export default function VerifiedPavilion({ onBack, user }) {
                             <HazardZone width={10} length={10} position={[0, 0.02, 0]} />
                             <CrateStack position={[-2, 0, -2]} rotation={[0, 0.1, 0]} />
                             <CrateStack position={[3, 0, 2]} rotation={[0, -0.2, 0]} />
-                            <HeavyDutyRobot position={[4, 0, -3]} scale={0.8} rotation={[0, Math.PI, 0]} />
                         </group>
 
                         {/* --- BOOTHS / KIOSKS (Default Cyberpunk) --- */}
@@ -412,15 +414,17 @@ export default function VerifiedPavilion({ onBack, user }) {
                         <KioskUnit
                             position={[22, 0, 0]}
                             rotation={[0, -Math.PI / 6, 0]}
-                            title="HEAVY LIFT"
-                            glowColor="#ffaa00"
+                            title="HEAVY MACHINERY"
+                            glowColor="#00aaff"
                             roofColor="white"
-                            imageUrl={liftWallUrl} // Custom wall image
-                            // modelPath={CRANE_MACHINE_PATH} 
-                            isRoboticArm={true} // Restored Industrial Robot
-                            modelPosition={[0, 0, 0]} // Reset position
+                            imageUrl={liftWallUrl}
+                            modelPath={ESCAVATOR_PATH} // Restore excavator inside kiosk for inspection
+                            productScale={1.6}
+                            modelPosition={[0, 0.1, 0]}
                             hideSideModels={true}
-                            hideMainPedestal={true} // Hide standard pedestal so robot sits on floor
+                            hideMainPedestal={true} // Keep on floor
+                            heightOffset={0.2}
+                            useEscavator={false}
                             onClick={(e) => {
                                 e.stopPropagation();
                                 const position = [22, 0, 0];

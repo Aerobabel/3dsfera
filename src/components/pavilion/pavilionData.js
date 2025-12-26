@@ -129,57 +129,47 @@ export const PAVILIONS = {
     },
     'heavy': {
         id: 'heavy',
-        name: 'HEAVY LIFT INC',
-        description: 'Global leader in heavy machinery and industrial robotics. Providing cutting-edge lifting solutions and automation systems for construction, mining, and manufacturing industries.',
-        stats: {
-            'Max Load Capacity': '500 Tons',
-            'Boom Reach': '120m',
-            'Safety Rating': 'A+',
-            'Projects Completed': '8,500+'
-        },
-        glowColor: '#ffaa00',
-        imageUrl: liftWallUrl,
+        name: 'PREMIUM ESCALATORS',
+        slug: 'heavy',
+        description: 'Vertical transportation solutions for modern infrastructure.',
         products: [
             {
-                id: 'robotic_arm',
-                title: '6-Axis Industrial Robot',
-                description: 'State-of-the-art robotic arm with exceptional precision and payload capacity. Perfect for automated manufacturing and assembly lines.',
+                id: 'excavator_Main',
+                title: 'Excavator X-200',
+                name: 'Excavator X-200',
+                description: 'Heavy-duty hydraulic excavator designed for large-scale mining and construction. Features 360-degree rotation and advanced hydraulic systems for maximum digging force.',
+                price: '$350,000',
+                modelPath: '/objects/escavator.glb',
+                isRoboticArm: false,
+                rotation: [0, -Math.PI / 4, 0],
                 stats: {
-                    'Payload': '2.3 Tons',
-                    'Degrees of Freedom': '6-Axis',
-                    'Repeatability': '±0.1mm',
-                    'Reach': '3.2m'
+                    weight: '22 Tons',
+                    digDepth: '6.5 m',
+                    power: '160 HP'
                 },
-                modelPath: null,
-                isRoboticArm: true,
-                position: [0, 0, 0],
                 features: [
-                    '6-Axis Freedom of Movement',
-                    '2.3 Ton Payload Capacity',
-                    'Sub-millimeter Precision',
-                    'Integrated Vision System',
-                    'IP67 Rated Protection'
+                    { title: 'High-Torque Swing', text: 'Rapid cycle times for increased productivity.' },
+                    { title: 'Reinforced Bucket', text: 'Wear-resistant steel for rock and hard soil.' },
+                    { title: 'Operator Cab', text: 'Climate-controlled with ergonomic controls and panoramic view.' }
                 ]
             },
             {
-                id: 'mobile_crane',
+                id: 'mobile_crane_heavy',
                 title: 'Mobile Crane MC-500',
+                name: 'Mobile Crane MC-500',
                 description: 'Heavy-duty mobile crane for construction and industrial applications. Diesel-electric hybrid power system for maximum efficiency.',
+                price: '$850,000',
+                modelPath: '/objects/mobile_crane.glb',
                 stats: {
                     'Lift Capacity': '40 Tons',
                     'Boom Length': '32m',
                     'Power System': 'Diesel-Electric',
                     'Mobility': 'All-Terrain'
                 },
-                modelPath: CRANE_MACHINE_PATH,
-                scale: 1.1,
-                position: [-5, 0, 0],
                 features: [
-                    '40 Ton Lift Capacity',
-                    'Hybrid Diesel-Electric Drive',
-                    '32m Telescopic Boom',
-                    '360° Continuous Rotation',
-                    'Advanced Load Moment Limiter'
+                    { title: '40 Ton Lift Capacity', text: 'Capable of lifting heavy loads.' },
+                    { title: 'Hybrid Drive', text: 'Diesel-Electric system.' },
+                    { title: '32m Boom', text: 'Extended telescopic range.' }
                 ]
             }
         ]

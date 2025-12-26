@@ -146,7 +146,7 @@ function Hologram({ color = "#00ffff" }) {
     )
 }
 
-function KioskUnit({ position, rotation, title = "PREMIUM SUPPLIER", glowColor = "#00ffff", hasHologram = false, platformColor = "#111", roofColor, videoUrl, imageUrl, modelPath, modelPosition, hideSideModels = false, isTv = false, isRoboticArm = false, hideMainPedestal = false, productScale = 0.8, hideRoof = false, onClick = () => { }, onProductClick, style = "cyberpunk" }) {
+function KioskUnit({ position, rotation, title = "PREMIUM SUPPLIER", glowColor = "#00ffff", hasHologram = false, platformColor = "#111", roofColor, videoUrl, imageUrl, modelPath, modelPosition, hideSideModels = false, isTv = false, isRoboticArm = false, hideMainPedestal = false, productScale = 0.8, hideRoof = false, heightOffset = 0, useEscavator = false, onClick = () => { }, onProductClick, style = "cyberpunk" }) {
     const isSciFi = style === "scifi";
 
     // Sci-Fi Theme Colors (White/Silver/Clean) vs Cyberpunk (Dark/Neon)
@@ -233,13 +233,15 @@ function KioskUnit({ position, rotation, title = "PREMIUM SUPPLIER", glowColor =
 
                 {/* 6. Content (Model or Hologram) */}
                 <group position={[0, 0, 0]}> {/* Lowered from 0.4 to 0 so pedestal sits on floor */}
-                    {modelPath || isTv ? (
+                    {modelPath || isTv || useEscavator ? (
                         <ProductDisplay
                             modelPath={modelPath}
                             isTv={isTv}
                             hidePedestal={hideMainPedestal}
                             position={[0, 0, 0]}
                             scale={0.8} // Scaled to fit in kiosk
+                            heightOffset={heightOffset}
+                            useEscavator={useEscavator}
                         />
                     ) : hasHologram ? (
                         <group position={[0, 1, 0]}>
@@ -472,11 +474,11 @@ function KioskUnit({ position, rotation, title = "PREMIUM SUPPLIER", glowColor =
                 modelPath && !hideSideModels && (
                     <>
                         <group position={[5, 1.5, 2]} onClick={onProductClick || onClick} onPointerOver={handlePointerOver} onPointerOut={handlePointerOut}>
-                            <ProductDisplay modelPath={modelPath} scale={0.6} />
+                            <ProductDisplay modelPath={modelPath} scale={0.6} heightOffset={heightOffset} useEscavator={useEscavator} />
                         </group>
 
                         <group position={[-5, 1.5, 2]} onClick={onProductClick || onClick} onPointerOver={handlePointerOver} onPointerOut={handlePointerOut}>
-                            <ProductDisplay modelPath={modelPath} scale={0.6} />
+                            <ProductDisplay modelPath={modelPath} scale={0.6} heightOffset={heightOffset} useEscavator={useEscavator} />
                         </group>
                     </>
                 )
@@ -484,7 +486,7 @@ function KioskUnit({ position, rotation, title = "PREMIUM SUPPLIER", glowColor =
 
             {/* 5. Center Showcase */}
             {
-                modelPath || isTv || isRoboticArm ? (
+                modelPath || isTv || isRoboticArm || useEscavator ? (
                     <group position={[0, 0.2, 0]} onClick={onProductClick || onClick} onPointerOver={handlePointerOver} onPointerOut={handlePointerOut}> {/* Lowered to 0.2 to sit on the 0.2m high platform */}
                         <ProductDisplay
                             modelPath={modelPath}
@@ -493,6 +495,8 @@ function KioskUnit({ position, rotation, title = "PREMIUM SUPPLIER", glowColor =
                             hidePedestal={hideMainPedestal}
                             position={[0, 0, 0]}
                             scale={productScale}
+                            heightOffset={heightOffset}
+                            useEscavator={useEscavator}
                         />
                     </group>
                 ) : hasHologram ? (

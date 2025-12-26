@@ -11,7 +11,8 @@ export function FactoryPartition({ width = 4, height = 3, position = [0, 0, 0], 
     return (
         <group position={position} rotation={rotation}>
             {/* Glass Panel */}
-            <Box args={[width - frameThickness * 2, height - frameThickness * 2, 0.05]} position={[0, height / 2, 0]}>
+            <mesh position={[0, height / 2, 0]} raycast={() => null}>
+                <boxGeometry args={[width - frameThickness * 2, height - frameThickness * 2, 0.05]} />
                 <meshPhysicalMaterial
                     color="#aaddff"
                     transparent
@@ -21,7 +22,7 @@ export function FactoryPartition({ width = 4, height = 3, position = [0, 0, 0], 
                     transmission={0.8}
                     thickness={0.1}
                 />
-            </Box>
+            </mesh>
 
             {/* Frame - Top */}
             <Box args={[width, frameThickness, 0.1]} position={[0, height - frameThickness / 2, 0]} castShadow>

@@ -7,6 +7,7 @@ import * as THREE from 'three';
 import { HeavyDutyRobot } from './subsystems/HeavyDutyRobot';
 import { Microwave } from './subsystems/Microwave';
 import { Television } from './subsystems/Television';
+import { Escavator } from './subsystems/Escavator';
 
 function ProceduralPedestal() {
     return (
@@ -71,6 +72,7 @@ export default function ProductDisplay({
     modelPath,
     isTv = false,
     isRoboticArm = false,
+    useEscavator = false,
     position = [0, 0, 0],
     rotation = [0, 0, 0],
     scale = 1,
@@ -93,6 +95,8 @@ export default function ProductDisplay({
                     <Television scale={1.2} />
                 ) : isRoboticArm ? (
                     <HeavyDutyRobot position={[0, -0.95, 0]} />
+                ) : useEscavator ? (
+                    <Escavator />
                 ) : props.isMicrowave ? (
                     <Microwave scale={0.8} />
                 ) : (

@@ -29,9 +29,16 @@ export default function FeaturesModal({ features, onClose, title }) {
                         features.map((feature, idx) => (
                             <li key={idx} className="flex items-start gap-3 group">
                                 <div className="mt-1.5 w-1.5 h-1.5 rounded-full bg-cyan-500 shadow-[0_0_8px_#06b6d4] group-hover:scale-150 transition-transform" />
-                                <span className="text-gray-300 text-sm leading-relaxed font-light tracking-wide">
-                                    {feature}
-                                </span>
+                                <div className="text-gray-300 text-sm leading-relaxed font-light tracking-wide">
+                                    {typeof feature === 'object' ? (
+                                        <>
+                                            <span className="font-bold text-white block mb-0.5">{feature.title}</span>
+                                            <span className="text-white/70">{feature.text}</span>
+                                        </>
+                                    ) : (
+                                        feature
+                                    )}
+                                </div>
                             </li>
                         ))
                     ) : (
