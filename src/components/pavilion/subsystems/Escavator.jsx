@@ -12,14 +12,27 @@ export function Escavator(props) {
     const scene = useMemo(() => gltf.scene.clone(true), [gltf.scene]);
     const ref = useRef();
 
-    useLayoutEffect(() => {
-        // Center the model at the origin and rest it on the ground
-        const box = new THREE.Box3().setFromObject(scene);
-        const center = new THREE.Vector3();
-        box.getCenter(center);
-        scene.position.sub(center);
-        scene.position.y -= box.min.y; // lift so the lowest point sits on y=0
+    // Auto-centering removed as it was causing offset issues
+    // useLayoutEffect(() => {
+    //     // Center the model at the origin and rest it on the ground
+    //     const box = new THREE.Box3().setFromObject(scene);
+    //     const center = new THREE.Vector3();
+    //     box.getCenter(center);
+    //     scene.position.sub(center);
+    //     scene.position.y -= box.min.y; // lift so the lowest point sits on y=0
 
+    //     scene.traverse((child) => {
+    //         if (child.isMesh) {
+    //             child.castShadow = true;
+    //             child.receiveShadow = true;
+    //             if (child.material) {
+    //                 child.material.envMapIntensity = 1;
+    //             }
+    //         }
+    //     });
+    // }, [scene]);
+
+    useLayoutEffect(() => {
         scene.traverse((child) => {
             if (child.isMesh) {
                 child.castShadow = true;

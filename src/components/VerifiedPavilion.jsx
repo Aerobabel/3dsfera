@@ -200,7 +200,7 @@ export default function VerifiedPavilion({ onBack, user }) {
                             3DSFERA
                         </div>
                         <div className="text-[11px] text-slate-200/80 tracking-[0.18em] font-semibold mt-1">
-                            {t('verified_pavilion.ui.verified_supplier_pavilion', 'Verified Supplier Pavilion')}
+                            Verified Supplier Pavilion
                         </div>
                     </div>
                 </div>
@@ -329,7 +329,7 @@ export default function VerifiedPavilion({ onBack, user }) {
                         {/* 3DSFERA foyer mat: place excavator on the yellow pad to the right-front of the central kiosk */}
                         <group position={[9, 0, 12]} rotation={[0, 0, 0]}>
                             <HazardZone width={6} length={8} position={[0, 0.02, 0]} rotation={[-Math.PI / 2, 0, 0]} />
-                            <Escavator position={[15, 1, 4]} scale={1.0} rotation={[0, Math.PI / 5, 0]} />
+                            <Escavator position={[0, 1.5, 0]} scale={2.5} rotation={[0, -Math.PI / 2, 0]} />
                         </group>
 
                         {/* Zone 3: Storage Area (Back Left) */}
@@ -382,7 +382,7 @@ export default function VerifiedPavilion({ onBack, user }) {
                         <KioskUnit
                             position={[-22, 0, 0]}
                             rotation={[0, Math.PI / 6, 0]}
-                            title={t('verified_pavilion.ui.aero_dynamics', 'AERO DYNAMICS')}
+                            title="AERO DYNAMICS"
                             glowColor="#ff0055"
                             roofColor="white"
                             imageUrl={aeroWallUrl} // Static Image
@@ -417,7 +417,7 @@ export default function VerifiedPavilion({ onBack, user }) {
                         <KioskUnit
                             position={[22, 0, 0]}
                             rotation={[0, -Math.PI / 6, 0]}
-                            title={t('verified_pavilion.ui.heavy_machinery', 'HEAVY MACHINERY')}
+                            title="HEAVY MACHINERY"
                             glowColor="#00aaff"
                             roofColor="white"
                             imageUrl={liftWallUrl}
