@@ -18,7 +18,7 @@ const HomePage = ({ t, onNavigate, user, onOpenAuth, onLogout }) => {
             {/* Navigation Bar - Refined Glass */}
             <nav className="relative z-10 flex items-center justify-between px-8 py-6 max-w-7xl mx-auto w-full">
                 <div className="flex items-center gap-2 group cursor-pointer">
-                    <span className="text-2xl font-bold tracking-widest text-white group-hover:text-cyan-50 transition-colors duration-300">SFERA <span className="text-orange-500 group-hover:text-orange-400 transition-colors">3D</span></span>
+                    <span className="text-2xl font-bold tracking-widest text-white group-hover:text-cyan-50 transition-colors duration-300"><span className="text-orange-500 group-hover:text-orange-400 transition-colors">3D</span>SFERA</span>
                 </div>
 
                 <div className="hidden md:flex items-center gap-10 text-sm font-semibold text-white/90 drop-shadow-md">
