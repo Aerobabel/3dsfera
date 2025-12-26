@@ -159,7 +159,7 @@ export const PAVILIONS = {
                 name: 'Mobile Crane MC-500',
                 description: 'Heavy-duty mobile crane for construction and industrial applications. Diesel-electric hybrid power system for maximum efficiency.',
                 price: '$850,000',
-                modelPath: '/objects/mobile_crane.glb',
+                modelPath: CRANE_MACHINE_PATH,
                 stats: {
                     'Lift Capacity': '40 Tons',
                     'Boom Length': '32m',
