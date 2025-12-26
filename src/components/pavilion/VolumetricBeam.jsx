@@ -48,7 +48,7 @@ export default function VolumetricBeam({ color = '#00ffff', height = 10, width =
     });
 
     return (
-        <mesh position={[0, height / 2, 0]}>
+        <mesh position={[0, height / 2, 0]} raycast={() => null}>
             <cylinderGeometry args={[width, width, height, 32, 1, true]} />
             <shaderMaterial
                 ref={materialRef}

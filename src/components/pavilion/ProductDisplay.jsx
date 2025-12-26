@@ -91,6 +91,12 @@ export default function ProductDisplay({
 
             {/* The Product on Top - Scaled Independently */}
             <group position={[0, (hidePedestal ? 0.5 : 2.55) + (heightOffset || 0), 0]} scale={scale}>
+                {/* Hit Box for easier clicking - Invisible but catches raycasts */}
+                {/* Hit Box for easier clicking - Must be visible to catch raycasts, but fully transparent */}
+                <mesh>
+                    <cylinderGeometry args={[1.5, 1.5, 4, 16]} />
+                    <meshBasicMaterial transparent opacity={0} depthWrite={false} color="red" side={THREE.DoubleSide} />
+                </mesh>
                 {isTv ? (
                     <Television scale={1.2} />
                 ) : isRoboticArm ? (

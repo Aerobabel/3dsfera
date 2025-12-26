@@ -277,9 +277,12 @@ export default function VerifiedPavilion({ onBack, user }) {
                             floating={true}
                             heightOffset={0.8} // Raise it up a bit from pedestal
                             onClick={(e) => {
-                                e.stopPropagation();
                                 const position = [15, 0.1, 18];
-                                if (inspectMode && orbitTarget && orbitTarget[0] === position[0] && orbitTarget[2] === position[2]) return;
+                                if (inspectMode && orbitTarget && orbitTarget[0] === position[0] && orbitTarget[2] === position[2]) {
+                                    return;
+                                }
+                                e.stopPropagation();
+                                console.log("Clicked Crane - Taking selection");
                                 SoundManager.playClick();
                                 setSelectedObject(PAVILIONS['heavy']);
                                 setInspectMode(true);
@@ -298,9 +301,9 @@ export default function VerifiedPavilion({ onBack, user }) {
                             scale={0.15} // Reduced size by a lot
                             heightOffset={-0.9} // Reduce distance to pedestal
                             onClick={(e) => {
-                                e.stopPropagation();
                                 const position = [-10, 0, 10];
                                 if (inspectMode && orbitTarget && orbitTarget[0] === position[0] && orbitTarget[2] === position[2]) return;
+                                e.stopPropagation();
                                 SoundManager.playClick();
                                 setSelectedObject(PAVILIONS['aero']);
                                 setInspectMode(true);
@@ -354,9 +357,9 @@ export default function VerifiedPavilion({ onBack, user }) {
                             roofColor="white"
                             isTv={true} // Enable TV display inside kiosk
                             onClick={(e) => {
-                                e.stopPropagation();
                                 const position = [0, 0, -5];
                                 if (inspectMode && orbitTarget && orbitTarget[0] === position[0] && orbitTarget[2] === position[2]) return;
+                                e.stopPropagation();
                                 SoundManager.playClick();
                                 setSelectedObject(PAVILIONS['3dsfera']);
                                 setInspectMode(true);
@@ -389,9 +392,9 @@ export default function VerifiedPavilion({ onBack, user }) {
                             hideSideModels={true} // Only one per request
                             // hideMainPedestal={true} // Restored pedestal per "on the custom pedestals" request
                             onClick={(e) => {
-                                e.stopPropagation();
                                 const position = [-22, 0, 0];
                                 if (inspectMode && orbitTarget && orbitTarget[0] === position[0] && orbitTarget[2] === position[2]) return;
+                                e.stopPropagation();
                                 SoundManager.playClick();
                                 setSelectedObject(PAVILIONS['aero']);
                                 setInspectMode(true);
@@ -426,9 +429,11 @@ export default function VerifiedPavilion({ onBack, user }) {
                             heightOffset={0.2}
                             useEscavator={false}
                             onClick={(e) => {
-                                e.stopPropagation();
                                 const position = [22, 0, 0];
-                                if (inspectMode && orbitTarget && orbitTarget[0] === position[0] && orbitTarget[2] === position[2]) return;
+                                if (inspectMode && orbitTarget && orbitTarget[0] === position[0] && orbitTarget[2] === position[2]) {
+                                    return; // Allow propagation if already selected
+                                }
+                                e.stopPropagation(); // Stop only if taking action
                                 SoundManager.playClick();
                                 setSelectedObject(PAVILIONS['heavy']);
                                 setInspectMode(true);
