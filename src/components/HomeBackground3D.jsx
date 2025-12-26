@@ -7,7 +7,7 @@ function SceneContent() {
     return (
         <>
             {/* --- Environment & Lighting --- */}
-            <Environment preset="city" blur={1} />
+            <Environment files="/hdris/convertio.in_image.hdr" blur={1} />
             <ambientLight intensity={0.5} color="#001533" />
 
             {/* Main Ceiling Light - Visible Glowing Fixture */}
