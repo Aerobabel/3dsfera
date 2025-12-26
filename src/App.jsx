@@ -53,7 +53,7 @@ function App() {
       <div className="min-h-screen bg-[#03040a] text-white">
         <header className="fixed top-0 w-full z-50 px-8 py-4 flex justify-between items-center bg-black/20 backdrop-blur-md border-b border-white/10">
           <button onClick={() => setView('home')} className="text-sm font-bold tracking-wider text-slate-300 hover:text-white transition-colors flex items-center gap-2">
-            <span className="text-cyan-400">←</span> BACK TO HOME
+            <span className="text-cyan-400">←</span> {t('app.back_to_home', 'BACK TO HOME')}
           </button>
           <div className="flex items-center gap-6">
             <div className="flex items-center gap-3 bg-white/5 px-4 py-2 rounded-full border border-white/10">
@@ -69,7 +69,7 @@ function App() {
             </button>
           </div>
         </header>
-        <React.Suspense fallback={<div className="flex h-screen items-center justify-center text-white font-bold tracking-widest animate-pulse">LOADING DASHBOARD...</div>}>
+        <React.Suspense fallback={<div className="flex h-screen items-center justify-center text-white font-bold tracking-widest animate-pulse">{t('app.loading_dashboard', 'LOADING DASHBOARD...')}</div>}>
           <SellerDashboard user={user} />
         </React.Suspense>
       </div>
@@ -81,7 +81,7 @@ function App() {
       <React.Suspense fallback={
         <div className="flex h-screen items-center justify-center bg-black text-white flex-col gap-4">
           <div className="w-16 h-16 border-4 border-cyan-500/30 border-t-cyan-500 rounded-full animate-spin"></div>
-          <div className="text-cyan-500 tracking-widest uppercase text-sm font-bold">Initializing Engine...</div>
+          <div className="text-cyan-500 tracking-widest uppercase text-sm font-bold">{t('app.initializing_engine', 'Initializing Engine...')}</div>
         </div>
       }>
         <VerifiedPavilion onBack={() => setView('home')} user={user} />

@@ -1,4 +1,5 @@
 import React, { useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useFrame } from '@react-three/fiber';
 import { useVideoTexture, RoundedBox, Text, Sparkles, Torus, Float, useTexture } from '@react-three/drei';
 import * as THREE from 'three';
@@ -27,6 +28,7 @@ function StaticScreen({ imageUrl }) {
 
 // 2. Dynamic Screen Component (Video)
 function DynamicScreen({ videoUrl }) {
+    const { t } = useTranslation();
     // START MUTED to ensure autoplay works on all browsers
     const [muted, setMuted] = useState(true);
 
@@ -99,7 +101,7 @@ function DynamicScreen({ videoUrl }) {
                     anchorX="center"
                     anchorY="middle"
                 >
-                    {muted ? "SOUND OFF" : "SOUND ON"}
+                    {muted ? t('verified_pavilion.ui.sound_off', "SOUND OFF") : t('verified_pavilion.ui.sound_on', "SOUND ON")}
                 </Text>
             </group>
         </group>
@@ -147,6 +149,7 @@ function Hologram({ color = "#00ffff" }) {
 }
 
 function KioskUnit({ position, rotation, title = "PREMIUM SUPPLIER", glowColor = "#00ffff", hasHologram = false, platformColor = "#111", roofColor, videoUrl, imageUrl, modelPath, modelPosition, hideSideModels = false, isTv = false, isRoboticArm = false, hideMainPedestal = false, productScale = 0.8, hideRoof = false, heightOffset = 0, useEscavator = false, onClick = () => { }, onProductClick, style = "cyberpunk" }) {
+    const { t } = useTranslation();
     const isSciFi = style === "scifi";
 
     // Sci-Fi Theme Colors (White/Silver/Clean) vs Cyberpunk (Dark/Neon)
@@ -221,7 +224,7 @@ function KioskUnit({ position, rotation, title = "PREMIUM SUPPLIER", glowColor =
                         anchorX="center"
                         anchorY="middle"
                     >
-                        VERIFIED SUPPLIER
+                        {t('verified_pavilion.ui.verified_supplier', 'VERIFIED SUPPLIER')}
                         <meshStandardMaterial
                             color={effectiveGlow}
                             emissive={effectiveGlow}
@@ -439,7 +442,7 @@ function KioskUnit({ position, rotation, title = "PREMIUM SUPPLIER", glowColor =
                             anchorX="center"
                             anchorY="middle"
                         >
-                            VERIFIED SUPPLIER
+                            {t('verified_pavilion.ui.verified_supplier', 'VERIFIED SUPPLIER')}
                             <meshStandardMaterial
                                 color={effectiveGlow}
                                 emissive={effectiveGlow}
@@ -467,9 +470,6 @@ function KioskUnit({ position, rotation, title = "PREMIUM SUPPLIER", glowColor =
                     </group>
                 </group>
             )}
-
-
-            {/* 4. Product Pods */}
             {
                 modelPath && !hideSideModels && (
                     <>

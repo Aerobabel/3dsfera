@@ -194,13 +194,13 @@ export default function VerifiedPavilion({ onBack, user }) {
                     <div className="text-right px-5 py-4 bg-gradient-to-br from-[#0a192f]/70 via-[#0c223d]/60 to-[#0a1020]/70 backdrop-blur-xl border border-cyan-400/15 rounded-2xl shadow-[0_20px_60px_rgba(0,0,0,0.55)] animate-fadeIn">
                         <div className="flex items-center justify-end gap-2">
                             <div className="w-2 h-2 rounded-full bg-cyan-300 shadow-[0_0_12px_rgba(34,211,238,0.9)]" />
-                            <span className="text-[11px] tracking-[0.25em] text-cyan-200/80 uppercase">live link</span>
+                            <span className="text-[11px] tracking-[0.25em] text-cyan-200/80 uppercase">{t('verified_pavilion.ui.live_link', 'LIVE LINK')}</span>
                         </div>
                         <div className="mt-2 text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-200 via-blue-300 to-indigo-400 tracking-tight drop-shadow-[0_0_12px_rgba(56,189,248,0.45)] font-[Orbitron]">
                             3DSFERA
                         </div>
                         <div className="text-[11px] text-slate-200/80 tracking-[0.18em] font-semibold mt-1">
-                            Verified Supplier Pavilion
+                            {t('verified_pavilion.ui.verified_supplier_pavilion', 'Verified Supplier Pavilion')}
                         </div>
                     </div>
                 </div>
@@ -382,7 +382,7 @@ export default function VerifiedPavilion({ onBack, user }) {
                         <KioskUnit
                             position={[-22, 0, 0]}
                             rotation={[0, Math.PI / 6, 0]}
-                            title="AERO DYNAMICS"
+                            title={t('verified_pavilion.ui.aero_dynamics', 'AERO DYNAMICS')}
                             glowColor="#ff0055"
                             roofColor="white"
                             imageUrl={aeroWallUrl} // Static Image
@@ -417,7 +417,7 @@ export default function VerifiedPavilion({ onBack, user }) {
                         <KioskUnit
                             position={[22, 0, 0]}
                             rotation={[0, -Math.PI / 6, 0]}
-                            title="HEAVY MACHINERY"
+                            title={t('verified_pavilion.ui.heavy_machinery', 'HEAVY MACHINERY')}
                             glowColor="#00aaff"
                             roofColor="white"
                             imageUrl={liftWallUrl}

@@ -161,7 +161,14 @@
             "system_integrity": "系统完整性",
             "secure_v3": "SECURE.V.3",
             "establishing": "正在建立通道...",
-            "seller_chat_hint": "买家在此发起聊天，卖家请在后台回复。"
+            "seller_chat_hint": "买家在此发起聊天。请从卖家仪表板回复。",
+            "live_link": "实时链接",
+            "verified_supplier_pavilion": "认证供应商展馆",
+            "sound_on": "声音开启",
+            "sound_off": "声音关闭",
+            "verified_supplier": "认证供应商",
+            "heavy_machinery": "重型机械",
+            "aero_dynamics": "空气动力学"
         },
         "ui_nav": {
             "nav_title": "导航",
@@ -327,9 +334,47 @@
         },
         "stats": {
             "Global Reach": "全球覆盖",
-            "Product SKUs": "商品SKU",
+            "Product SKUs": "产品 SKU",
             "Platform Uptime": "平台正常运行时间",
             "Verified Suppliers": "认证供应商"
+        }
+    },
+    "app": {
+        "back_to_home": "返回首页",
+        "loading_dashboard": "加载仪表板...",
+        "initializing_engine": "正在初始化引擎...",
+        "dashboard": "仪表板",
+        "login_signup": "登录 / 注册",
+        "logout": "登出"
+    },
+    "homepage": {
+        "nav": {
+            "home": "首页",
+            "exhibitions": "展览",
+            "products": "产品",
+            "services": "服务",
+            "contact": "联系我们"
+        },
+        "hero": {
+            "title_prefix": "欢迎来到 SFERA 3D",
+            "title_suffix": "- 通往认证中国产品的门户。",
+            "subtitle": "利用世界各地的尖端 3D 技术。",
+            "cta_visit": "参观展厅",
+            "welcome_exhibition": "欢迎来到在线 3D 展览",
+            "description": "认识作为中国产品和服务全球市场领导者的公司，以及易于全球访问的中国产品和服务工作室。"
+        },
+        "floating": {
+            "title": "即将举行的展览",
+            "live_now": "正在直播",
+            "tab_home": "首页",
+            "tab_next": "下一个",
+            "tab_world": "世界",
+            "tab_trade": "贸易"
+        },
+        "footer": {
+            "terms": "服务条款",
+            "privacy": "隐私政策",
+            "support": "支持"
         }
     }
 }

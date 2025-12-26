@@ -22,10 +22,10 @@ const HomePage = ({ t, onNavigate, user, onOpenAuth, onLogout }) => {
                 </div>
 
                 <div className="hidden md:flex items-center gap-10 text-sm font-semibold text-white/90 drop-shadow-md">
-                    {['Home', 'Exhibitions', 'Products', 'Services', 'Contact'].map((item) => (
+                    {['home', 'exhibitions', 'products', 'services', 'contact'].map((item) => (
                         <button key={item} className="relative hover:text-white transition-colors duration-300 flex items-center gap-1 group">
-                            {item}
-                            {['Home', 'Exhibitions', 'Products'].includes(item) && <ChevronDown size={14} className="opacity-70 group-hover:opacity-100 transition-opacity" />}
+                            {t ? t(`homepage.nav.${item}`) : item}
+                            {['home', 'exhibitions', 'products'].includes(item) && <ChevronDown size={14} className="opacity-70 group-hover:opacity-100 transition-opacity" />}
                             <span className="absolute -bottom-1 left-0 w-0 h-px bg-cyan-400 transition-all duration-300 group-hover:w-full"></span>
                         </button>
                     ))}
@@ -45,7 +45,7 @@ const HomePage = ({ t, onNavigate, user, onOpenAuth, onLogout }) => {
                                     className="flex items-center gap-2 px-3 py-2 bg-purple-600/30 hover:bg-purple-600/50 border border-purple-500/40 rounded-lg text-purple-100 text-xs font-bold uppercase tracking-wider transition-all backdrop-blur-md"
                                 >
                                     <LayoutDashboard size={14} />
-                                    <span>Dashboard</span>
+                                    <span>{t ? t('app.dashboard', 'Dashboard') : 'Dashboard'}</span>
                                 </button>
                             )}
 
@@ -67,7 +67,7 @@ const HomePage = ({ t, onNavigate, user, onOpenAuth, onLogout }) => {
                             className="flex items-center gap-2 px-5 py-2.5 bg-white/10 hover:bg-white/20 border border-white/30 rounded-full text-white text-xs font-bold uppercase tracking-wider shadow-[0_0_15px_rgba(255,255,255,0.1)] hover:shadow-[0_0_25px_rgba(255,255,255,0.2)] transition-all backdrop-blur-md"
                         >
                             <LogIn size={14} />
-                            <span>Login / Sign Up</span>
+                            <span>{t ? t('app.login_signup', 'Login / Sign Up') : 'Login / Sign Up'}</span>
                         </button>
                     )}
                 </div>
@@ -80,17 +80,19 @@ const HomePage = ({ t, onNavigate, user, onOpenAuth, onLogout }) => {
                     <div className="space-y-10 relative">
                         {/* Left side nav list (vertical) - Refined */}
                         <div className="absolute left-0 top-1/2 -translate-y-1/2 hidden xl:flex flex-col gap-8 text-xs font-bold tracking-widest uppercase text-slate-600 -ml-32">
-                            {['Home', 'Exhibitions', 'Products', 'Services', 'Contact'].map((item, idx) => (
-                                <a key={item} href="#" className={`hover:text-cyan-400 hover:translate-x-2 transition-all duration-300 origin-left ${idx === 0 ? 'text-white border-l-2 border-cyan-500 pl-3' : 'hover:border-l-2 hover:border-cyan-500/50 hover:pl-3'}`}>{item}</a>
+                            {['home', 'exhibitions', 'products', 'services', 'contact'].map((item, idx) => (
+                                <a key={item} href="#" className={`hover:text-cyan-400 hover:translate-x-2 transition-all duration-300 origin-left ${idx === 0 ? 'text-white border-l-2 border-cyan-500 pl-3' : 'hover:border-l-2 hover:border-cyan-500/50 hover:pl-3'}`}>
+                                    {t ? t(`homepage.nav.${item}`) : item}
+                                </a>
                             ))}
                         </div>
 
                         <div className="space-y-8">
                             <h1 className="text-5xl md:text-6xl lg:text-[4rem] font-bold leading-[1.1] tracking-tight max-w-3xl text-white drop-shadow-[0_4px_6px_rgba(0,0,0,0.9)]">
-                                {t ? t('title') : "Welcome to SFERA 3D"} - Your Gateway to Verified Chinese Products.
+                                {t ? t('homepage.hero.title_prefix') : "Welcome to SFERA 3D"} {t ? t('homepage.hero.title_suffix') : "- Your Gateway to Verified Chinese Products."}
                             </h1>
                             <p className="text-xl text-slate-300 max-w-2xl font-light leading-relaxed">
-                                Utilizing Cutting-Edge 3D Technology from Anywhere in the World breakdown.
+                                {t ? t('homepage.hero.subtitle') : "Utilizing Cutting-Edge 3D Technology from Anywhere in the World breakdown."}
                             </p>
 
                             <div className="pt-6 relative inline-block">
@@ -101,7 +103,7 @@ const HomePage = ({ t, onNavigate, user, onOpenAuth, onLogout }) => {
                                     className="group relative px-12 py-5 bg-transparent border border-white/20 text-white font-bold text-lg tracking-wider hover:bg-white/5 transition-all duration-500 rounded-sm overflow-hidden backdrop-blur-md shadow-[0_0_50px_rgba(0,100,255,0.1)] hover:shadow-[0_0_80px_rgba(0,255,255,0.3)]"
                                 >
                                     <span className="relative z-10 flex items-center gap-3">
-                                        Visit Exhibition Hall
+                                        {t ? t('homepage.hero.cta_visit', 'Visit Exhibition Hall') : 'Visit Exhibition Hall'}
                                         <ArrowRight size={20} className={`transform transition-transform duration-300 ${isHoveringCTA ? 'translate-x-1' : ''}`} />
                                     </span>
 
@@ -116,9 +118,9 @@ const HomePage = ({ t, onNavigate, user, onOpenAuth, onLogout }) => {
                         </div>
 
                         <div className="pt-16 space-y-4 max-w-lg">
-                            <h2 className="text-lg font-medium text-cyan-200">Welcome to Online 3D Exhibition</h2>
+                            <h2 className="text-lg font-medium text-cyan-200">{t ? t('homepage.hero.welcome_exhibition') : "Welcome to Online 3D Exhibition"}</h2>
                             <p className="text-slate-400 text-sm leading-relaxed border-l border-white/20 pl-4">
-                                Meet company as a global market leader for Chinese products and services and Chinese products and services workshop that is easily accessible press and extraction accessible for worldwide.
+                                {t ? t('homepage.hero.description') : "Meet company as a global market leader for Chinese products and services and Chinese products and services workshop that is easily accessible press and extraction accessible for worldwide."}
                             </p>
                         </div>
                     </div>
@@ -134,16 +136,16 @@ const HomePage = ({ t, onNavigate, user, onOpenAuth, onLogout }) => {
                             </div>
 
                             <div className="flex justify-between items-center mb-8">
-                                <h3 className="text-xl font-bold tracking-wide text-white drop-shadow-md">Upcoming Exhibitions</h3>
-                                <span className="text-[10px] font-bold uppercase tracking-widest text-emerald-400 px-3 py-1 bg-emerald-900/40 border border-emerald-500/20 rounded-full">Live Now</span>
+                                <h3 className="text-xl font-bold tracking-wide text-white drop-shadow-md">{t ? t('homepage.floating.title') : "Upcoming Exhibitions"}</h3>
+                                <span className="text-[10px] font-bold uppercase tracking-widest text-emerald-400 px-3 py-1 bg-emerald-900/40 border border-emerald-500/20 rounded-full">{t ? t('homepage.floating.live_now') : "Live Now"}</span>
                             </div>
 
                             {/* Tabs */}
                             <div className="flex border-b border-white/10 mb-6 gap-6 text-xs font-semibold tracking-wider text-slate-500">
-                                <button className="text-white border-b-2 border-cyan-500 pb-2 -mb-px px-1 transition-colors">Home</button>
-                                <button className="hover:text-white transition-colors pb-2 px-1">Next</button>
-                                <button className="hover:text-white transition-colors pb-2 px-1">World</button>
-                                <button className="hover:text-white transition-colors pb-2 px-1">Trade</button>
+                                <button className="text-white border-b-2 border-cyan-500 pb-2 -mb-px px-1 transition-colors">{t ? t('homepage.floating.tab_home') : "Home"}</button>
+                                <button className="hover:text-white transition-colors pb-2 px-1">{t ? t('homepage.floating.tab_next') : "Next"}</button>
+                                <button className="hover:text-white transition-colors pb-2 px-1">{t ? t('homepage.floating.tab_world') : "World"}</button>
+                                <button className="hover:text-white transition-colors pb-2 px-1">{t ? t('homepage.floating.tab_trade') : "Trade"}</button>
                             </div>
 
                             {/* List with staggered animation feeling */}
@@ -179,9 +181,9 @@ const HomePage = ({ t, onNavigate, user, onOpenAuth, onLogout }) => {
             <footer className="relative z-10 py-8 px-8 border-t border-white/5 mt-auto bg-black/20 backdrop-blur-sm">
                 <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6 text-xs font-medium text-slate-500 tracking-wide uppercase">
                     <div className="flex gap-8">
-                        <a href="#" className="hover:text-cyan-400 transition-colors">Terms of Service</a>
-                        <a href="#" className="hover:text-cyan-400 transition-colors">Privacy Policy</a>
-                        <a href="#" className="hover:text-cyan-400 transition-colors">Support</a>
+                        <a href="#" className="hover:text-cyan-400 transition-colors">{t ? t('homepage.footer.terms') : "Terms of Service"}</a>
+                        <a href="#" className="hover:text-cyan-400 transition-colors">{t ? t('homepage.footer.privacy') : "Privacy Policy"}</a>
+                        <a href="#" className="hover:text-cyan-400 transition-colors">{t ? t('homepage.footer.support') : "Support"}</a>
                     </div>
 
                     <div className="flex gap-6">

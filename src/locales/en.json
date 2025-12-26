@@ -161,7 +161,14 @@
             "system_integrity": "SYSTEM INTEGRITY",
             "secure_v3": "SECURE.V.3",
             "establishing": "ESTABLISHING UPLINK...",
-            "seller_chat_hint": "Buyers start chats here. Reply from your Seller Dashboard."
+            "seller_chat_hint": "Buyers start chats here. Reply from your Seller Dashboard.",
+            "live_link": "LIVE LINK",
+            "verified_supplier_pavilion": "Verified Supplier Pavilion",
+            "sound_on": "SOUND ON",
+            "sound_off": "SOUND OFF",
+            "verified_supplier": "VERIFIED SUPPLIER",
+            "heavy_machinery": "HEAVY MACHINERY",
+            "aero_dynamics": "AERO DYNAMICS"
         },
         "ui_nav": {
             "nav_title": "Navigation",
@@ -330,6 +337,44 @@
             "Product SKUs": "Product SKUs",
             "Platform Uptime": "Platform Uptime",
             "Verified Suppliers": "Verified Suppliers"
+        }
+    },
+    "app": {
+        "back_to_home": "BACK TO HOME",
+        "loading_dashboard": "LOADING DASHBOARD...",
+        "initializing_engine": "Initializing Engine...",
+        "dashboard": "Dashboard",
+        "login_signup": "Login / Sign Up",
+        "logout": "Logout"
+    },
+    "homepage": {
+        "nav": {
+            "home": "Home",
+            "exhibitions": "Exhibitions",
+            "products": "Products",
+            "services": "Services",
+            "contact": "Contact"
+        },
+        "hero": {
+            "title_prefix": "Welcome to SFERA 3D",
+            "title_suffix": "- Your Gateway to Verified Chinese Products.",
+            "subtitle": "Utilizing Cutting-Edge 3D Technology from Anywhere in the World.",
+            "cta_visit": "Visit Exhibition Hall",
+            "welcome_exhibition": "Welcome to Online 3D Exhibition",
+            "description": "Meet company as a global market leader for Chinese products and services and Chinese products and services workshop that is easily accessible press and extraction accessible for worldwide."
+        },
+        "floating": {
+            "title": "Upcoming Exhibitions",
+            "live_now": "Live Now",
+            "tab_home": "Home",
+            "tab_next": "Next",
+            "tab_world": "World",
+            "tab_trade": "Trade"
+        },
+        "footer": {
+            "terms": "Terms of Service",
+            "privacy": "Privacy Policy",
+            "support": "Support"
         }
     }
 }
