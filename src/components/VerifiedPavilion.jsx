@@ -500,7 +500,7 @@ export default function VerifiedPavilion({ onBack, user }) {
                         <KioskUnit
                             position={[-25, 0, -5]}
                             rotation={[0, Math.PI / 4, 0]}
-                            title="AERO DYNAMICS"
+                            title="W&T ENGINEERING"
                             glowColor="#ff0055"
                             roofColor="white"
                             imageUrl={aeroWallUrl} // Static Image
@@ -534,7 +534,7 @@ export default function VerifiedPavilion({ onBack, user }) {
                         <KioskUnit
                             position={[25, 0, -5]}
                             rotation={[0, -Math.PI / 4, 0]}
-                            title="HEAVY MACHINERY"
+                            title="TITAN HEAVY INDUSTRIES"
                             glowColor="#00aaff"
                             roofColor="white"
                             imageUrl={liftWallUrl}
@@ -580,7 +580,7 @@ export default function VerifiedPavilion({ onBack, user }) {
                         <KioskUnit
                             position={[-20, 0, -35]}
                             rotation={[0, Math.PI / 6, 0]}
-                            title="ENERGY"
+                            title="VOLT ENERGY"
                             glowColor="#ffaa00"
                             roofColor="white"
                             videoUrl={null}
@@ -616,7 +616,7 @@ export default function VerifiedPavilion({ onBack, user }) {
                         <KioskUnit
                             position={[20, 0, -35]}
                             rotation={[0, -Math.PI / 6, 0]}
-                            title="LOGISTICS"
+                            title="VELOCITY LOGISTICS"
                             glowColor="#00ff55"
                             roofColor="white"
                             videoUrl={null}
@@ -668,7 +668,7 @@ export default function VerifiedPavilion({ onBack, user }) {
                         <KioskUnit
                             position={[-25, 0, 20]}
                             rotation={[0, Math.PI / 2, 0]}
-                            title="SECURITY"
+                            title="AEGIS SECURITY"
                             glowColor="#e63946"
                             hideSideModels={false} // Show Drone on side
                             videoUrl={null}
@@ -708,7 +708,7 @@ export default function VerifiedPavilion({ onBack, user }) {
                         <KioskUnit
                             position={[25, 0, 20]}
                             rotation={[0, -Math.PI / 2, 0]}
-                            title="RESEARCH"
+                            title="GENESIS BIO-LABS"
                             glowColor="#7209b7"
                             videoUrl={null}
                             imageUrl={kioskResearchUrl}
@@ -720,7 +720,7 @@ export default function VerifiedPavilion({ onBack, user }) {
                         <KioskUnit
                             position={[0, 0, -50]}
                             rotation={[0, 0, 0]}
-                            title="DATA"
+                            title="QUANTUM DATA CORP"
                             glowColor="#4361ee"
                             hideSideModels={true}
                             modelPath={PAVILIONS['data'].products[0].modelPath}
@@ -744,7 +744,7 @@ export default function VerifiedPavilion({ onBack, user }) {
                         <KioskUnit
                             position={[30, 0, -25]}
                             rotation={[0, -Math.PI / 4, 0]}
-                            title="MANUFACTURING"
+                            title="SYNTHETIC MINDS"
                             glowColor="#fb8500"
                             videoUrl={null}
                             imageUrl={kioskManufacturingUrl}

@@ -7,11 +7,11 @@ import * as THREE from 'three';
 import { useTranslation } from 'react-i18next';
 
 const DEFAULT_ROOMS = [
-  { id: 'industrial', title: 'Industrial Core', blurb: 'Robotics, pneumatics, and precision tooling.', color: '#22d3ee' },
-  { id: 'techno', title: 'Techno Demo', blurb: 'Neon prototypes and immersive control decks.', color: '#6366f1' },
-  { id: 'lux', title: 'Luxury Goods', blurb: 'Glass displays for premium accessories.', color: '#f59e0b' },
-  { id: 'mobility', title: 'Mobility Hub', blurb: 'EV drivetrains, aero drones, smart transit.', color: '#10b981' },
-  { id: 'sustain', title: 'Sustain Lab', blurb: 'Clean tech, recycled composites, bio materials.', color: '#a855f7' },
+  { id: 'industrial', title: 'IRON FOUNDRY', blurb: 'Robotics, pneumatics, and precision tooling.', color: '#22d3ee' },
+  { id: 'techno', title: 'NEXUS SYSTEMS', blurb: 'Neon prototypes and immersive control decks.', color: '#6366f1' },
+  { id: 'lux', title: 'AURUM PRESTIGE', blurb: 'Glass displays for premium accessories.', color: '#f59e0b' },
+  { id: 'mobility', title: 'VORTEX MOTORS', blurb: 'EV drivetrains, aero drones, smart transit.', color: '#10b981' },
+  { id: 'sustain', title: 'ECO SYNERGY', blurb: 'Clean tech, recycled composites, bio materials.', color: '#a855f7' },
 ];
 
 function WalkingControls({ speed = 3, bounds = { x: 11, z: 10 }, onLockChange, controlsRef, orbitRef, cameraRef }) {

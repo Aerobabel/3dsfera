@@ -32,23 +32,23 @@
     },
     "rooms": {
         "techno": {
-            "name": "科技演示",
+            "name": "NEXUS SYSTEMS",
             "blurb": "霓虹原型与沉浸控制台。"
         },
         "lux": {
-            "name": "奢品馆",
+            "name": "AURUM PRESTIGE",
             "blurb": "玻璃展台呈现高端配饰与穿戴。"
         },
         "mobility": {
-            "name": "移动枢纽",
+            "name": "VORTEX MOTORS",
             "blurb": "电驱、航空无人机与智能交通。"
         },
         "industrial": {
-            "name": "工业核心",
+            "name": "IRON FOUNDRY",
             "blurb": "机器人、气动设备与精密工具。"
         },
         "sustain": {
-            "name": "可持续实验室",
+            "name": "ECO SYNERGY",
             "blurb": "清洁科技、再生复材与生物材料。"
         }
     },
@@ -168,7 +168,7 @@
             "sound_off": "声音关闭",
             "verified_supplier": "认证供应商",
             "heavy_machinery": "重型机械",
-            "aero_dynamics": "空气动力学"
+            "aero_dynamics": "W&T ENGINEERING"
         },
         "ui_nav": {
             "nav_title": "导航",
@@ -223,7 +223,7 @@
                 "stat_integration": "集成"
             },
             "aero": {
-                "title": "AERO DYNAMICS",
+                "title": "W&T ENGINEERING",
                 "desc": "航空级推进系统与涡轮技术。",
                 "stat_thrust": "推力",
                 "stat_efficiency": "效率",
@@ -237,7 +237,7 @@
                 "stat_warranty": "质保"
             },
             "heavy": {
-                "title": "HEAVY LIFT INC.",
+                "title": "TITAN HEAVY INDUSTRIES",
                 "desc": "面向大型项目的工业吊装与重载方案。",
                 "stat_load": "最大载荷",
                 "stat_reach": "臂展",
@@ -283,12 +283,12 @@
                 "description": "复古抓娃娃机，带全息奖品展示。"
             },
             "agri": {
-                "title": "农技展台",
+                "title": "HARVEST ROBOTICS",
                 "type": "金牌赞助商",
                 "description": "新一代农业机器人与自动化种植解决方案。"
             },
             "pneumatic": {
-                "title": "工业气动",
+                "title": "ATMOS SYSTEMS",
                 "type": "银牌赞助商",
                 "description": "先进的气压系统，适用于大规模自动化。"
             }

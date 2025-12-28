@@ -76,7 +76,7 @@ export const PAVILIONS = {
     },
     'aero': {
         id: 'aero',
-        name: 'AERO DYNAMICS',
+        name: 'W&T ENGINEERING',
         description: 'Specialized manufacturer of high-performance turbine engines and precision valves for aerospace and industrial applications. Engineering excellence since 1987.',
         stats: {
             'Engine Thrust': '240kN',
@@ -134,7 +134,7 @@ export const PAVILIONS = {
     },
     'heavy': {
         id: 'heavy',
-        name: 'PREMIUM ESCALATORS',
+        name: 'TITAN HEAVY INDUSTRIES',
         slug: 'heavy',
         description: 'Vertical transportation solutions for modern infrastructure.',
         products: [
@@ -181,7 +181,7 @@ export const PAVILIONS = {
     },
     'logistics': {
         id: 'logistics',
-        name: 'GLOBAL LOGISTICS',
+        name: 'VELOCITY LOGISTICS',
         description: 'Advanced automated logistics and supply chain management solutions. Optimizing global trade with AI-driven sorting and pneumatics.',
         stats: {
             'Throughput': '10k/hr',
@@ -216,7 +216,7 @@ export const PAVILIONS = {
     },
     'security': {
         id: 'security',
-        name: 'CYBER SECURITY',
+        name: 'AEGIS SECURITY',
         description: 'Next-generation surveillance and threat detection systems.',
         glowColor: '#e63946',
         products: [{
@@ -231,7 +231,7 @@ export const PAVILIONS = {
     },
     'data': {
         id: 'data',
-        name: 'DATA SYSTEMS',
+        name: 'QUANTUM DATA CORP',
         description: 'Scalable cloud infrastructure and high-density server solutions.',
         glowColor: '#4361ee',
         products: [{
@@ -246,7 +246,7 @@ export const PAVILIONS = {
     },
     'biotech': {
         id: 'biotech',
-        name: 'BIO GENETICS',
+        name: 'GENESIS BIO-LABS',
         description: 'Precision laboratory equipment for genetic sequencing and analysis.',
         glowColor: '#2a9d8f',
         products: [{
@@ -261,7 +261,7 @@ export const PAVILIONS = {
     },
     'ai_systems': {
         id: 'ai_systems',
-        name: 'AI ROBOTICS',
+        name: 'SYNTHETIC MINDS',
         description: 'Autonomous drones and robotic systems for industrial automation.',
         glowColor: '#caf0f8',
         products: [{

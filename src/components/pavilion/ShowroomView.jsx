@@ -200,6 +200,14 @@ export default function ShowroomView({ pavilionData, onBack, user }) {
         if (isSeller) setShowChat(false);
     }, [isSeller]);
 
+    // VIEW MODE LOGIC
+    const [viewMode, setViewMode] = useState('list'); // 'list' | 'detail'
+
+    // Reset to list when data changes
+    useEffect(() => {
+        setViewMode('list');
+    }, [pavilionData]);
+
     // Carousel Navigation
     const nextProduct = () => {
         if (products.length === 0) return;
@@ -212,6 +220,97 @@ export default function ShowroomView({ pavilionData, onBack, user }) {
         SoundManager.playClick();
         setActiveIndex((prev) => (prev - 1 + products.length) % products.length);
     };
+
+    if (!pavilionData) return null;
+
+    // --- LIST VIEW ---
+    if (viewMode === 'list') {
+        return (
+            <div className="relative w-full h-full bg-[#111] overflow-hidden flex flex-col">
+                {/* Background Grid */}
+                <div className="absolute inset-0 bg-[url('/assets/images/grid_bg.png')] bg-cover opacity-20 pointer-events-none" />
+                <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-transparent to-black/80 pointer-events-none" />
+
+                {/* Header */}
+                <div className="relative z-10 w-full p-8 flex justify-between items-center bg-black/40 backdrop-blur-md border-b border-white/5">
+                    <button
+                        onClick={onBack}
+                        className="group flex items-center gap-3 transition-all hover:opacity-80"
+                    >
+                        <div className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center group-hover:bg-red-500/20 group-hover:border-red-500/50 transition-colors text-white">
+                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M6 18L18 6M6 6l12 12" /></svg>
+                        </div>
+                        <span className="text-xs font-bold tracking-[0.2em] uppercase text-white/60 group-hover:text-white">
+                            {t('pavilion_ui.close', 'Close')}
+                        </span>
+                    </button>
+
+                    <div className="text-right">
+                        <h1 className="text-3xl md:text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white to-slate-400 font-[Orbitron] tracking-tighter">
+                            {pavilionData.name}
+                        </h1>
+                        <p className="text-cyan-400 text-[10px] font-bold tracking-[0.3em] uppercase mt-1">
+                            {t('pavilion_ui.products_catalog', 'Product Catalog')}
+                        </p>
+                    </div>
+                </div>
+
+                {/* Scrollable Content */}
+                <div className="relative z-10 flex-1 overflow-y-auto p-4 md:p-12 custom-scrollbar">
+                    <div className="max-w-7xl mx-auto space-y-12">
+                        {/* Intro Blurb */}
+                        <div className="max-w-3xl">
+                            <p className="text-xl md:text-2xl text-slate-300 font-light leading-relaxed">
+                                {t(`pavilion_content.pavilions.${pavilionData.slug || pavilionData.id}.description`, { defaultValue: pavilionData.description })}
+                            </p>
+                        </div>
+
+                        {/* Product Grid */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            {products.map((product, idx) => (
+                                <button
+                                    key={product.id}
+                                    onClick={() => {
+                                        SoundManager.playClick();
+                                        setActiveIndex(idx);
+                                        setViewMode('detail');
+                                    }}
+                                    className="group relative flex flex-col text-left h-full bg-white/5 border border-white/10 hover:border-cyan-500/50 hover:bg-white/10 transition-all duration-300 rounded-xl overflow-hidden shadow-lg hover:shadow-cyan-500/10"
+                                >
+                                    {/* Image Placeholder area */}
+                                    <div className="h-48 w-full bg-black/50 relative overflow-hidden group-hover:opacity-90 transition-opacity">
+                                        <div className="absolute inset-0 flex items-center justify-center text-white/10 group-hover:text-cyan-500/20 transition-colors">
+                                            <svg className="w-16 h-16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M14 10l-2 1m0 0l-2-1m2 1v2.5M20 7l-2 1m2-1l-2-1m2 1v2.5M14 4l-2-1-2 1M4 7l2-1M4 7l2 1M4 7v2.5M12 21l-2-1m2 1l2-1m-2 1v-2.5M6 18l-2-1v-2.5M18 18l2-1v-2.5" /></svg>
+                                        </div>
+                                        <div className="absolute bottom-3 left-3 px-2 py-1 bg-black/60 rounded text-[10px] font-mono text-cyan-400 border border-cyan-500/30">
+                                            3D MODEL
+                                        </div>
+                                    </div>
+
+                                    {/* Content */}
+                                    <div className="p-6 flex flex-col flex-1">
+                                        <h3 className="text-xl font-bold text-white mb-2 font-[Orbitron] group-hover:text-cyan-400 transition-colors">
+                                            {t(`pavilion_content.products.${product.id}.title`, { defaultValue: product.title })}
+                                        </h3>
+                                        <p className="text-sm text-slate-400 leading-relaxed mb-6 line-clamp-3 flex-1">
+                                            {t(`pavilion_content.products.${product.id}.description`, { defaultValue: product.description })}
+                                        </p>
+
+                                        <div className="flex items-center justify-between mt-auto pt-4 border-t border-white/5">
+                                            <span className="text-xs text-slate-500 font-mono">ID: {product.id.split('_').pop().toUpperCase()}</span>
+                                            <div className="flex items-center gap-2 text-cyan-400 text-xs font-bold uppercase tracking-wider group-hover:translate-x-1 transition-transform">
+                                                {t('pavilion_ui.view_details', 'View 3D')} <span className="text-lg">→</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        );
+    }
 
     if (!currentProduct.id && products.length > 0) return null; // Safety
 
@@ -247,7 +346,10 @@ export default function ShowroomView({ pavilionData, onBack, user }) {
             {/* Header */}
             <div className="absolute top-0 left-0 w-full p-8 z-50 flex justify-between items-start pointer-events-none">
                 <button
-                    onClick={onBack}
+                    onClick={() => {
+                        SoundManager.playClick();
+                        setViewMode('list');
+                    }}
                     className="pointer-events-auto group flex items-center gap-3 transition-all hover:scale-105"
                 >
                     <div className="flex items-center gap-3 bg-black/40 backdrop-blur-md border border-white/10 rounded-full pl-1 pr-6 py-1 hover:bg-black/60 hover:border-white/30 transition-colors">
@@ -255,7 +357,7 @@ export default function ShowroomView({ pavilionData, onBack, user }) {
                             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
                         </div>
                         <span className="text-xs font-bold tracking-[0.2em] uppercase text-white/80 group-hover:text-white" style={{ fontFamily: 'Inter, "Segoe UI", Arial, sans-serif' }}>
-                            {t('pavilion_ui.exit_showroom', 'Exit Showroom')}
+                            {t('pavilion_ui.back', 'Back to List')}
                         </span>
                     </div>
                 </button>

@@ -32,23 +32,23 @@
     },
     "rooms": {
         "techno": {
-            "name": "Техно демо",
+            "name": "NEXUS SYSTEMS",
             "blurb": "Неоновые прототипы и иммерсивные панели."
         },
         "lux": {
-            "name": "Премиум товары",
+            "name": "AURUM PRESTIGE",
             "blurb": "Стеклянные подиумы для аксессуаров и гаджетов."
         },
         "mobility": {
-            "name": "Мобильность",
+            "name": "VORTEX MOTORS",
             "blurb": "Электродвигатели, аэродроны и умный транспорт."
         },
         "industrial": {
-            "name": "Индустриальное ядро",
+            "name": "IRON FOUNDRY",
             "blurb": "Робототехника, пневматика и точный инструмент."
         },
         "sustain": {
-            "name": "Лаборатория устойчивости",
+            "name": "ECO SYNERGY",
             "blurb": "Чистые технологии, переработанные композиты, биоматериалы."
         }
     },
@@ -168,7 +168,7 @@
             "sound_off": "ЗВУК ВЫКЛ",
             "verified_supplier": "ПРОВЕРЕННЫЙ ПОСТАВЩИК",
             "heavy_machinery": "ТЯЖЕЛАЯ ТЕХНИКА",
-            "aero_dynamics": "АЭРОДИНАМИКА"
+            "aero_dynamics": "W&T ENGINEERING"
         },
         "ui_nav": {
             "nav_title": "Навигация",
@@ -223,7 +223,7 @@
                 "stat_integration": "Интеграции"
             },
             "aero": {
-                "title": "AERO DYNAMICS",
+                "title": "W&T ENGINEERING",
                 "desc": "Авиадвигатели и турбинные технологии аэрокосмического уровня.",
                 "stat_thrust": "Тяга",
                 "stat_efficiency": "Эффективность",
@@ -237,7 +237,7 @@
                 "stat_warranty": "Гарантия"
             },
             "heavy": {
-                "title": "HEAVY LIFT INC.",
+                "title": "TITAN HEAVY INDUSTRIES",
                 "desc": "Решения по кранам и тяжелым подъемам для мегапроектов.",
                 "stat_load": "Макс. нагрузка",
                 "stat_reach": "Вылет",
@@ -283,12 +283,12 @@
                 "description": "Игровой автомат с голографическими призами."
             },
             "agri": {
-                "title": "АГРОТЕХ СТЕНД",
+                "title": "HARVEST ROBOTICS",
                 "type": "Золотой спонсор",
                 "description": "Роботизированные решения для автоматизации сельского хозяйства."
             },
             "pneumatic": {
-                "title": "ПРОМЫШЛЕННАЯ ПНЕВМАТИКА",
+                "title": "ATMOS SYSTEMS",
                 "type": "Серебряный спонсор",
                 "description": "Продвинутые пневмосистемы для крупной автоматизации."
             }

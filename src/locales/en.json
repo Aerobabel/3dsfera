@@ -32,23 +32,23 @@
     },
     "rooms": {
         "techno": {
-            "name": "Techno Demo",
+            "name": "NEXUS SYSTEMS",
             "blurb": "Neon-lit prototypes and immersive control decks."
         },
         "lux": {
-            "name": "Luxury Goods",
+            "name": "AURUM PRESTIGE",
             "blurb": "Glass podiums for premium accessories and wearables."
         },
         "mobility": {
-            "name": "Mobility Hub",
+            "name": "VORTEX MOTORS",
             "blurb": "EV drivetrains, aero drones, and smart transit."
         },
         "industrial": {
-            "name": "Industrial Core",
+            "name": "IRON FOUNDRY",
             "blurb": "Robotics, pneumatics, and precision tooling."
         },
         "sustain": {
-            "name": "Sustain Lab",
+            "name": "ECO SYNERGY",
             "blurb": "Clean tech, recycled composites, bio materials."
         }
     },
@@ -168,7 +168,7 @@
             "sound_off": "SOUND OFF",
             "verified_supplier": "VERIFIED SUPPLIER",
             "heavy_machinery": "HEAVY MACHINERY",
-            "aero_dynamics": "AERO DYNAMICS"
+            "aero_dynamics": "W&T ENGINEERING"
         },
         "ui_nav": {
             "nav_title": "Navigation",
@@ -223,7 +223,7 @@
                 "stat_integration": "Integration"
             },
             "aero": {
-                "title": "AERO DYNAMICS",
+                "title": "W&T ENGINEERING",
                 "desc": "Aerospace-grade propulsion systems and turbine technology.",
                 "stat_thrust": "Thrust",
                 "stat_efficiency": "Efficiency",
@@ -237,7 +237,7 @@
                 "stat_warranty": "Warranty"
             },
             "heavy": {
-                "title": "HEAVY LIFT INC.",
+                "title": "TITAN HEAVY INDUSTRIES",
                 "desc": "Industrial crane and heavy lifting solutions for mega-projects.",
                 "stat_load": "Max Load",
                 "stat_reach": "Reach",
@@ -283,12 +283,12 @@
                 "description": "Retro-fitted crane game machine with holographic prize display."
             },
             "agri": {
-                "title": "AGRI-TECH BOOTH",
+                "title": "HARVEST ROBOTICS",
                 "type": "Gold Sponsor",
                 "description": "Next-gen agricultural robotics and automated farming solutions."
             },
             "pneumatic": {
-                "title": "INDUSTRIAL PNEUMATICS",
+                "title": "ATMOS SYSTEMS",
                 "type": "Silver Sponsor",
                 "description": "Advanced air pressure systems for large scale automation."
             }
