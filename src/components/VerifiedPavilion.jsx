@@ -106,6 +106,7 @@ export default function VerifiedPavilion({ onBack, user }) {
     const [minHoldDone, setMinHoldDone] = useState(false);
     const [sceneReady, setSceneReady] = useState(false);
     const [showLoader, setShowLoader] = useState(true);
+    const [showWelcome, setShowWelcome] = useState(true); // New Welcome State
 
     // Tank Controls don't need pointer lock state for navigation
     const cameraRef = useRef();
@@ -247,7 +248,7 @@ export default function VerifiedPavilion({ onBack, user }) {
             <KeyboardControls map={keyboardMap}>
                 <Canvas
                     shadows
-                    camera={{ position: [0, 1.7, 15], fov: 60 }}
+                    camera={{ position: [0, 2.5, 45], fov: 60 }}
                     dpr={[1, 1.5]}
                     gl={{
                         antialias: false,
@@ -1028,6 +1029,47 @@ export default function VerifiedPavilion({ onBack, user }) {
                         }}
                         user={user}
                     />
+                </div>
+            )}
+
+            {/* WELCOME OVERLAY */}
+            {showWelcome && !showLoader && (
+                <div className="absolute inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center animate-in fade-in duration-700">
+                    <div className="bg-[#0a0a0a] border border-white/10 p-12 max-w-2xl text-center rounded-3xl shadow-[0_0_100px_rgba(0,0,0,0.8)] relative overflow-hidden">
+                        {/* Decorative background glow */}
+                        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-1/2 bg-cyan-500/10 blur-[100px] pointer-events-none" />
+
+                        <div className="relative z-10 flex flex-col items-center gap-6">
+                            <div className="w-16 h-16 rounded-full bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center mb-2 shadow-[0_0_30px_rgba(34,211,238,0.2)]">
+                                <div className="w-2 h-2 rounded-full bg-cyan-400 shadow-[0_0_10px_#22d3ee] animate-pulse" />
+                            </div>
+
+                            <h1 className="text-4xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-b from-white to-slate-400 font-[Orbitron] tracking-tight">
+                                VERIFIED PAVILION
+                            </h1>
+
+                            <p className="text-lg text-slate-400 font-light leading-relaxed max-w-lg">
+                                Welcome to the 3DSFERA Exhibition. Explore premium industrial suppliers, inspect verified machinery in 3D, and connect directly with manufacturers.
+                            </p>
+
+                            <div className="h-px w-24 bg-gradient-to-r from-transparent via-white/20 to-transparent my-4" />
+
+                            <button
+                                onClick={() => {
+                                    SoundManager.playClick();
+                                    setShowWelcome(false);
+                                }}
+                                className="group relative px-10 py-4 bg-white text-black font-bold uppercase tracking-[0.2em] text-sm overflow-hidden transition-all hover:scale-105 hover:shadow-[0_0_40px_rgba(255,255,255,0.3)]"
+                            >
+                                <span className="relative z-10">Enter Exhibition</span>
+                                <div className="absolute inset-0 bg-cyan-400 mix-blend-overlay opacity-0 group-hover:opacity-100 transition-opacity" />
+                            </button>
+
+                            <p className="text-[10px] text-slate-600 uppercase tracking-widest mt-4">
+                                Use WASD to Walk • Click Items to Inspect
+                            </p>
+                        </div>
+                    </div>
                 </div>
             )}
         </div >
