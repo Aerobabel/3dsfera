@@ -5,10 +5,10 @@ import {
     UltimateFloor,
     IndustrialCeilingDetailsFixed,
     CeilingLights,
-    RealisticWall
+    RealisticWall,
+    NeonCeiling
 } from './PavilionEnvironment';
 import { FactoryPartition } from './subsystems/FactoryPartition';
-import { TexturedWall } from './PavilionUtils';
 
 export function PavilionArchitecture() {
     return (
@@ -53,7 +53,10 @@ export function PavilionArchitecture() {
 
             <UltimateFloor />
             <IndustrialCeilingDetailsFixed height={14} width={150} depth={150} />
+            <UltimateFloor />
+            <IndustrialCeilingDetailsFixed height={14} width={150} depth={150} />
             <CeilingLights />
+            <NeonCeiling />
 
             {/* The Sun / Sphere */}
             <group position={[0, 25, 0]}>

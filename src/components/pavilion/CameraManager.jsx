@@ -41,17 +41,27 @@ export function CameraManager({ inspectMode, captureReq, onCapture, savedState, 
     // 3. Smooth Restore Animation
     useFrame((state, delta) => {
         if (isRestoring.current && savedState) {
-            const damp = 4 * delta; // Slightly slower for heavier "retract" feel
-            camera.position.lerp(savedState.position, damp);
-            camera.quaternion.slerp(savedState.quaternion, damp); // Restore Rotation
+            // Exponential Damping
+            const lambda = 6; // Reduced slightly for less "snap"
+            const t = 1 - Math.exp(-lambda * delta);
 
-            if (controls) controls.target.lerp(savedState.target, damp);
+            camera.position.lerp(savedState.position, t);
+
+            // Prevent going underground (The "Underground" bug)
+            if (camera.position.y < 0.5) camera.position.y = 0.5;
+
+            // Ensure smooth rotation
+            camera.quaternion.slerp(savedState.quaternion, t);
+
+            if (controls) {
+                controls.target.lerp(savedState.target, t);
+            }
 
             // Distance Check
             const posDist = camera.position.distanceTo(savedState.position);
             const rotDist = camera.quaternion.angleTo(savedState.quaternion);
 
-            if (posDist < 0.1 && rotDist < 0.05) {
+            if (posDist < 0.2 && rotDist < 0.1) {
                 camera.position.copy(savedState.position);
                 camera.quaternion.copy(savedState.quaternion);
                 if (controls) controls.target.copy(savedState.target);

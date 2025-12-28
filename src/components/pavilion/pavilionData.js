@@ -6,14 +6,14 @@ const logoVideoUrl = '/videos/Logo_Video_Generation.mp4';
 import aeroWallUrl from '../../assets/images/aerowall.png';
 import liftWallUrl from '../../assets/images/liftwall.png';
 
-const TURBO_ENGINE_PATH = '/objects/turbo_schaft_engine_ivchenko_al-20.glb'; // Kept for reference or removal
+const TURBO_ENGINE_PATH = '/objects/turbo_schaft_engine_ivchenko_al-20.glb';
 const PNEUMATIC_PATH = '/objects/Pneumatic.glb';
-const CRANE_MACHINE_PATH = '/objects/crane_machine.glb';
-const ROAD_GRADER_PATH = '/objects/road_grader_optimized.glb';
+const CRANE_MACHINE_PATH = '/objects/optimized/crane_machine.glb';
+const ROAD_GRADER_PATH = '/objects/optimized/road_grader.glb';
 const VALVE_PATH = '/objects/valve.glb';
-const CAMERA_PATH = '/objects/camera.glb';
+const CAMERA_PATH = '/objects/optimized/camera.glb';
 const DRONE_PATH = '/objects/drone.glb';
-const MICROSCOPE_PATH = '/objects/microscope.glb';
+const MICROSCOPE_PATH = '/objects/optimized/microscope.glb';
 const SERVER_RACK_PATH = '/objects/network_server_rack.glb';
 
 export const PAVILIONS = {
