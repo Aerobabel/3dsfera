@@ -1,7 +1,7 @@
 import React, { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useFrame } from '@react-three/fiber';
-import { useVideoTexture, RoundedBox, Text, Sparkles, Torus, Float, useTexture } from '@react-three/drei';
+import { useVideoTexture, RoundedBox, Text, Sparkles, Torus, Float, useTexture, Gltf, Center } from '@react-three/drei';
 import * as THREE from 'three';
 import ProductModel from './ProductModel';
 import ProductDisplay from './ProductDisplay';
@@ -9,6 +9,48 @@ import VolumetricBeam from './VolumetricBeam';
 import videoUrlDefault from '../../assets/videos/Cyberpunk_Holographic_Girl_Video_Generation.mp4';
 
 // The screen inside the booth
+// The screen inside the booth
+const DataDashboardScreen = ({ width, height }) => {
+    const fontUrl = "https://fonts.gstatic.com/s/inter/v12/UcCO3FwrK3iLTeHuS_fvQtMwCp50KnMw2boKoduKmMEVuLyfAZ9hjp-Ek-_EeA.woff";
+
+    // Centered label, clean look
+    const Ticker = ({ label, value, position, color = "#00ffff" }) => (
+        <group position={position}>
+            <Text position={[0, 0.2, 0]} fontSize={0.25} color="#888888" font={fontUrl} anchorX="center">
+                {label}
+            </Text>
+            <Text position={[0, -0.15, 0]} fontSize={0.45} color={color} font={fontUrl} anchorX="center" letterSpacing={0.05} fontWeight="bold">
+                {value}
+                <meshBasicMaterial color={color} toneMapped={false} />
+            </Text>
+        </group>
+    )
+
+    return (
+        <group position={[0, 0, 0.05]}>
+            {/* Background */}
+            <mesh position={[0, 0, -0.01]}>
+                <planeGeometry args={[width, height]} />
+                <meshBasicMaterial color="#050510" />
+            </mesh>
+
+            {/* Left Data Column */}
+            <Ticker label="ACTIVE NODES" value="8,492" position={[-width / 3.2, height / 4, 0]} />
+            <Ticker label="BTC / USD" value="$98,420" position={[-width / 3.2, -height / 4, 0]} />
+
+            {/* Right Data Column */}
+            <Ticker label="NETWORK LATENCY" value="12ms" position={[width / 3.2, height / 4, 0]} />
+            <Ticker label="SYSTEM STATUS" value="ONLINE" position={[width / 3.2, -height / 4, 0]} color="#00ff00" />
+
+            {/* Aesthetic Divider Lines */}
+            <mesh position={[0, 0, 0]}>
+                <planeGeometry args={[width * 0.9, 0.02]} />
+                <meshBasicMaterial color="#111111" />
+            </mesh>
+        </group>
+    )
+};
+
 // 1. Static Screen Component (Image)
 function StaticScreen({ imageUrl }) {
     const texture = useTexture(imageUrl);
@@ -151,57 +193,174 @@ function Hologram({ color = "#00ffff" }) {
 // 3. Info Desk Component with Hologram
 // 3. Info Desk Component with Hologram
 // 3. Info Desk Component with Hologram
+// 3. Info Desk Component with Hologram (V2: Neural Command Center)
+// 3. Info Desk Component - Reference Style (White & Blue)
 function InfoDesk() {
-    // Cyberpunk Holographic Girl
-    const texture = useVideoTexture(videoUrlDefault, { mute: true, loop: true, start: true });
+    return (
+        <group position={[0, 0, 1.5]}>
+            {/* Main Desk Body - Solid White Curve */}
+            <mesh position={[0, 0.55, 0]}>
+                <cylinderGeometry args={[2.0, 2.0, 1.1, 64, 1, false, Math.PI, Math.PI]} />
+                <meshStandardMaterial color="#ffffff" roughness={0.2} metalness={0.1} />
+            </mesh>
 
-    React.useEffect(() => {
-        if (texture) {
-            texture.generateMipmaps = false;
-            texture.needsUpdate = true;
-        }
-    }, [texture]);
+            {/* Blue Accent Groove - REMOVED per user request */}
+
+            {/* Counter Top */}
+            <mesh position={[0, 1.1, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+                <ringGeometry args={[1.5, 2.2, 64, 1, Math.PI, Math.PI]} />
+                <meshStandardMaterial color="#ffffff" roughness={0.1} metalness={0.1} />
+            </mesh>
+
+            {/* Hologram Projector Base (Hidden inside desk) */}
+            <mesh position={[0, 0.5, -0.5]}>
+                <cylinderGeometry args={[0.5, 0.5, 0.1, 32]} />
+                <meshBasicMaterial color="#0055ff" />
+            </mesh>
+        </group>
+    )
+}
+
+
+
+
+// 4. Corporate Pavilion Structure (Match Reference)
+// 4. Corporate Pavilion Structure (Match Reference)
+function CorporatePavilion({ width = 14, height = 7, depth = 8 }) {
+    const fontUrl = "https://fonts.gstatic.com/s/inter/v12/UcCO3FwrK3iLTeHuS_fvQtMwCp50KnMw2boKoduKmMEVuLyfAZ9hjp-Ek-_EeA.woff";
+
+    const logoRef = useRef();
+
+    // Rotation animation removed per user request
+
+    // Angular Shard Panel Helper
+    const ShardPanel = ({ position, rotation, mirror = false }) => (
+        <group position={position} rotation={rotation}>
+            {/* Frame */}
+            <mesh position={[0, height / 2, 0]}>
+                <boxGeometry args={[0.2, height, depth]} />
+                <meshStandardMaterial color="#111111" roughness={0.2} metalness={0.8} />
+            </mesh>
+            {/* Blue Geometric Inset (Simulated) */}
+            <mesh position={[mirror ? -0.15 : 0.15, height / 2, 0]} rotation={[0, 0, mirror ? -0.1 : 0.1]}>
+                <boxGeometry args={[0.1, height * 0.8, depth * 0.8]} />
+                <meshStandardMaterial color="#0044aa" roughness={0.2} metalness={0.8} />
+            </mesh>
+            {/* Accent Line */}
+            <mesh position={[mirror ? -0.16 : 0.16, height / 2, 0]} rotation={[0, 0, mirror ? 0.3 : -0.3]}>
+                <boxGeometry args={[0.12, height, 0.5]} />
+                <meshBasicMaterial color="#00aaff" toneMapped={false} />
+            </mesh>
+        </group>
+    )
 
     return (
-        <group position={[0, 0, 0]}>
-            {/* Sleek Curved Desk - Sitting on Platform (Y=0.6) */}
-            <group position={[0, 0.6, 1.5]}>
-                {/* Desk Body - Full Circle */}
-                <mesh position={[0, 0.3, 0]}>
-                    <cylinderGeometry args={[2.0, 2.2, 0.6, 64]} />
-                    <meshStandardMaterial color="#ffffff" metalness={0.8} roughness={0.1} side={THREE.DoubleSide} />
-                </mesh>
-                {/* Desk Surface - Full Ring */}
-                <mesh position={[0, 0.605, 0]} rotation={[-Math.PI / 2, 0, 0]}>
-                    <ringGeometry args={[1.5, 2.3, 64]} />
-                    <meshStandardMaterial color="#111" metalness={0.8} side={THREE.DoubleSide} />
-                </mesh>
+        <group>
+            {/* 1. Floor Base - Premium Dark Obsidian */}
+            <group position={[0, 0.1, 0]}>
+                <RoundedBox args={[width + 2, 0.2, depth + 2]} radius={1} smoothness={4}>
+                    <meshPhysicalMaterial
+                        color="#050505"
+                        roughness={0.1}
+                        metalness={0.9}
+                        clearcoat={1}
+                        clearcoatRoughness={0.1}
+                    />
+                </RoundedBox>
             </group>
 
-            {/* Hologram Projector Base */}
-            <mesh position={[0, 0.7, 0]}>
-                <cylinderGeometry args={[0.8, 1, 0.2, 32]} />
-                <meshStandardMaterial color="#222" />
-            </mesh>
+            {/* 2. Back Wall - High-End Display Surface */}
+            <group position={[0, height / 2, -depth / 2 + 0.5]}>
+                <mesh receiveShadow>
+                    <boxGeometry args={[width, height, 0.5]} />
+                    <meshStandardMaterial color="#080808" roughness={0.2} metalness={0.8} />
+                </mesh>
 
-            {/* Hologram Plane (Asian Female / Tech Girl Video) */}
-            <mesh position={[0, 2.5, 0]}>
-                <planeGeometry args={[1.8, 3.2]} />
-                <meshBasicMaterial
-                    map={texture}
-                    transparent
-                    opacity={0.95}
-                    side={THREE.DoubleSide}
-                    color="#ffffff"
-                    blending={THREE.AdditiveBlending}
-                    depthWrite={false}
-                />
-            </mesh>
+                {/* NEW: Data Dashboard Background */}
+                <group position={[0, 0, 0.26]}>
+                    <DataDashboardScreen width={width * 0.8} height={height * 0.7} />
+                </group>
+
+                {/* 3D Kinetic Brand Centerpiece */}
+                <group position={[0, -1.5, 1]} rotation={[0, 1.66, 0]}> {/* Rotated 95 deg */}
+                    <group ref={logoRef}>
+                        <Center>
+                            <Gltf src="/objects/hologram.glb" scale={10} />
+                        </Center>
+                    </group>
+
+                    {/* Minimalist Brand Signature - LARGER */}
+                    <Text
+                        position={[0, -2.8, 0]}
+                        fontSize={2.0}
+                        color="#ffffff"
+                        anchorX="center"
+                        anchorY="middle"
+                        font={fontUrl}
+                        letterSpacing={0.15}
+                        fontWeight="normal"
+                        outlineWidth={0.01}
+                        outlineColor="#00aaff"
+                    >
+                        3DSFERA
+                    </Text>
+                    <mesh position={[0, -3.8, 0]}>
+                        <planeGeometry args={[1.5, 0.05]} />
+                        <meshBasicMaterial color="#00aaff" toneMapped={false} />
+                    </mesh>
+                </group>
+            </group>
+
+            {/* 3. Roof Canopy - Suspended Dark Structure */}
+            <group position={[0, height, 0]}>
+                <RoundedBox args={[width + 2, 0.3, depth + 2]} radius={1} smoothness={8}>
+                    <meshStandardMaterial color="#111111" roughness={0.2} metalness={0.8} />
+                </RoundedBox>
+                {/* Subtle Downlighting */}
+                <rectAreaLight position={[0, -0.5, 0]} rotation={[-Math.PI / 2, 0, 0]} args={[width - 2, depth - 2]} intensity={1} color="#ffffff" />
+                <mesh position={[0, -0.1, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+                    <planeGeometry args={[width - 1, depth - 1]} />
+                    <meshBasicMaterial color="#222222" />
+                </mesh>
+
+                {/* Top Branding Strip - SPLIT */}
+                <group position={[0, 0, depth / 2 + 1.1]}>
+                    <Text
+                        position={[-2.5, 0, 0]} // Shift left
+                        fontSize={0.6}
+                        color="#00ffff"
+                        anchorX="center"
+                        anchorY="middle"
+                        font={fontUrl}
+                        letterSpacing={0.1}
+                    >
+                        WELCOME TO
+                        <meshBasicMaterial color="#00ffff" toneMapped={false} />
+                    </Text>
+                    <Text
+                        position={[3.0, 0, 0]} // Shift right and BIGGER
+                        fontSize={1.0} // Increased size
+                        color="#ffffff" // White
+                        anchorX="center"
+                        anchorY="middle"
+                        font={fontUrl}
+                        letterSpacing={0.1}
+                        fontWeight="bold"
+                    >
+                        3DSFERA
+                        <meshBasicMaterial color="#ffffff" toneMapped={false} />
+                    </Text>
+                </group>
+            </group>
+
+            {/* 4. Side Wing Panels - REMOVED */}
+
+            {/* 5. Reception Desk (Central Element) */}
+            <InfoDesk />
 
         </group>
     );
 }
-
 
 function KioskUnit({
     position,
@@ -430,116 +589,146 @@ function KioskUnit({
     return (
         <group ref={groupRef} position={position} rotation={rotation}>
             {/* Top Down Spot - Focused and cleaner */}
-            <spotLight position={[0, 8, 2]} angle={0.5} penumbra={0.4} intensity={25} color={effectiveGlow} distance={15} />
+            <spotLight position={[0, 8, 2]} angle={0.5} penumbra={0.4} intensity={2} color={effectiveGlow} distance={15} />
 
-            {/* 0. Floor Reflection/Shadow Blob */}
-            <mesh position={[0, 0.02, 0]} rotation={[-Math.PI / 2, 0, 0]}>
-                <circleGeometry args={[8, 64]} />
-                <meshBasicMaterial color="#000000" transparent opacity={0.6} toneMapped={false} />
-            </mesh>
-
-            {/* 1. Main Base Platform - Tiered & Detailed Design */}
-            <group position={[0, 0, 0]} onClick={onClick}>
-                {/* Lower Base (Matte dark metal) */}
-                <mesh position={[0, 0.15, 0]} castShadow receiveShadow>
-                    <boxGeometry args={[16, 0.3, 10]} />
-                    <meshStandardMaterial
-                        color="#111111"
-                        roughness={0.7}
-                        metalness={0.5}
-                    />
-                </mesh>
-
-                {/* Tech Vents on Base Sides (Detailing) */}
-                <mesh position={[0, 0.15, 5.01]}>
-                    <planeGeometry args={[14, 0.15]} />
-                    <meshStandardMaterial color="black" emissive="#000000" />
-                </mesh>
-                <mesh position={[0, 0.15, -5.01]}>
-                    <planeGeometry args={[14, 0.15]} />
-                    <meshStandardMaterial color="black" emissive="#000000" />
-                </mesh>
-
-                {/* Upper Deck (Polished Obsidian/Glass look) */}
-                <RoundedBox position={[0, 0.45, 0]} args={[15, 0.3, 9]} radius={0.05} smoothness={4}>
-                    <meshPhysicalMaterial
-                        color="#050505"
-                        roughness={0.1}
-                        metalness={0.9}
-                        clearcoat={1}
-                        clearcoatRoughness={0.1}
-                    />
-                </RoundedBox>
-
-                {/* Underglow Strip (Between layers) */}
-                <mesh position={[0, 0.3, 0]}>
-                    <boxGeometry args={[15.2, 0.05, 9.2]} />
-                    <meshBasicMaterial color={effectiveGlow} toneMapped={false} />
-                </mesh>
-
-                {/* Neon Channels on the floor */}
-                <mesh position={[7, 0.61, 0]} rotation={[-Math.PI / 2, 0, 0]}>
-                    <planeGeometry args={[0.2, 9]} />
-                    <meshBasicMaterial color={effectiveGlow} toneMapped={false} opacity={0.8} transparent />
-                </mesh>
-                <mesh position={[-7, 0.61, 0]} rotation={[-Math.PI / 2, 0, 0]}>
-                    <planeGeometry args={[0.2, 9]} />
-                    <meshBasicMaterial color={effectiveGlow} toneMapped={false} opacity={0.8} transparent />
-                </mesh>
-            </group>
-
-            {/* 2. Back Wall Structure - High Tech Glass */}
-            <group ref={backWallGroupRef} position={[0, 3.5, -4.5]} onClick={onClick}>
-                {/* Frame */}
-                <mesh position={[0, 0, 0]}>
-                    <boxGeometry args={[16, 6, 0.2]} />
-                    <meshStandardMaterial ref={backWallMatRef} color={type === 'info-desk' ? "#ffffff" : "#222"} roughness={type === 'info-desk' ? 0.1 : 0.2} metalness={0.8} transparent />
-                </mesh>
-
-                {/* Glass Panel Content Holder */}
-                <group position={[0, 0, 0.15]}>
-                    {/* The Screen - No overlay per user request */}
-                    {type !== 'info-desk' && <TechScreen videoUrl={videoUrl} imageUrl={imageUrl} />}
-                </group>
-
-                {/* Vertical Support Struts - TRUSS Design */}
-                <group position={[-7.8, 0, 0.5]}>
-                    {/* Main Pole */}
-                    <mesh>
-                        <boxGeometry args={[0.2, 6, 0.2]} />
-                        <meshStandardMaterial color={type === 'info-desk' ? "#ffffff" : "#333"} metalness={0.9} roughness={0.1} />
+            {type === 'info-desk' ? (
+                <CorporatePavilion />
+            ) : (
+                <>
+                    {/* 0. Floor Reflection/Shadow Blob */}
+                    <mesh position={[0, 0.02, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+                        <circleGeometry args={[8, 64]} />
+                        <meshBasicMaterial color="#000000" transparent opacity={0.6} toneMapped={false} />
                     </mesh>
-                    {/* Cross Bracing */}
-                    <mesh position={[0, 1, 0]} rotation={[0, 0, 0.5]}>
-                        <boxGeometry args={[0.1, 2, 0.1]} />
-                        <meshStandardMaterial color={type === 'info-desk' ? "#cccccc" : "#222"} metalness={0.8} />
-                    </mesh>
-                    <mesh position={[0, -1, 0]} rotation={[0, 0, -0.5]}>
-                        <boxGeometry args={[0.1, 2, 0.1]} />
-                        <meshStandardMaterial color={type === 'info-desk' ? "#cccccc" : "#222"} metalness={0.8} />
-                    </mesh>
-                </group>
 
-                <group position={[7.8, 0, 0.5]}>
-                    {/* Main Pole */}
-                    <mesh>
-                        <boxGeometry args={[0.2, 6, 0.2]} />
-                        <meshStandardMaterial color={type === 'info-desk' ? "#ffffff" : "#333"} metalness={0.9} roughness={0.1} />
-                    </mesh>
-                    {/* Cross Bracing */}
-                    <mesh position={[0, 1, 0]} rotation={[0, 0, -0.5]}>
-                        <boxGeometry args={[0.1, 2, 0.1]} />
-                        <meshStandardMaterial color={type === 'info-desk' ? "#cccccc" : "#222"} metalness={0.8} />
-                    </mesh>
-                    <mesh position={[0, -1, 0]} rotation={[0, 0, 0.5]}>
-                        <boxGeometry args={[0.1, 2, 0.1]} />
-                        <meshStandardMaterial color={type === 'info-desk' ? "#cccccc" : "#222"} metalness={0.8} />
-                    </mesh>
-                </group>
-            </group>
+                    {/* 1. Main Base Platform - Tiered & Detailed Design */}
+                    <group position={[0, 0, 0]} onClick={onClick}>
+                        {/* Lower Base (Matte dark metal) */}
+                        <mesh position={[0, 0.15, 0]} castShadow receiveShadow>
+                            <boxGeometry args={[16, 0.3, 10]} />
+                            <meshStandardMaterial
+                                color="#111111"
+                                roughness={0.7}
+                                metalness={0.5}
+                            />
+                        </mesh>
+
+                        {/* Tech Vents on Base Sides (Detailing) */}
+                        <mesh position={[0, 0.15, 5.01]}>
+                            <planeGeometry args={[14, 0.15]} />
+                            <meshStandardMaterial color="black" emissive="#000000" />
+                        </mesh>
+                        <mesh position={[0, 0.15, -5.01]}>
+                            <planeGeometry args={[14, 0.15]} />
+                            <meshStandardMaterial color="black" emissive="#000000" />
+                        </mesh>
+
+                        {/* Upper Deck (Polished Obsidian/Glass look) */}
+                        <RoundedBox position={[0, 0.45, 0]} args={[15, 0.3, 9]} radius={0.05} smoothness={4}>
+                            <meshPhysicalMaterial
+                                color="#050505"
+                                roughness={0.1}
+                                metalness={0.9}
+                                clearcoat={1}
+                                clearcoatRoughness={0.1}
+                            />
+                        </RoundedBox>
+
+                        {/* Underglow Strip (Between layers) */}
+                        <mesh position={[0, 0.3, 0]}>
+                            <boxGeometry args={[15.2, 0.05, 9.2]} />
+                            <meshBasicMaterial color={effectiveGlow} toneMapped={false} />
+                        </mesh>
+
+                        {/* Neon Channels on the floor */}
+                        <mesh position={[7, 0.61, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+                            <planeGeometry args={[0.2, 9]} />
+                            <meshBasicMaterial color={effectiveGlow} toneMapped={false} opacity={0.8} transparent />
+                        </mesh>
+                        <mesh position={[-7, 0.61, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+                            <planeGeometry args={[0.2, 9]} />
+                            <meshBasicMaterial color={effectiveGlow} toneMapped={false} opacity={0.8} transparent />
+                        </mesh>
+                    </group>
+
+                    {/* 2. Back Wall Structure - High Tech Glass */}
+                    <group ref={backWallGroupRef} position={[0, 3.5, -4.5]} onClick={onClick}>
+                        {/* Frame */}
+                        <mesh position={[0, 0, 0]}>
+                            <boxGeometry args={[16, 6, 0.2]} />
+                            <meshStandardMaterial
+                                ref={backWallMatRef}
+                                color={type === 'info-desk' ? "#ffffff" : "#222"}
+                                roughness={type === 'info-desk' ? 0.05 : 0.2}
+                                metalness={type === 'info-desk' ? 0.2 : 0.8}
+                                transparent
+                            />
+                        </mesh>
+
+                        {/* Vertical Data Strips (V2 Overlay) */}
+                        {type === 'info-desk' && (
+                            <group position={[0, 0, 0.11]}>
+                                <mesh position={[-4, 0, 0]}>
+                                    <planeGeometry args={[0.2, 5.8]} />
+                                    <meshBasicMaterial color="#00ffff" toneMapped={false} />
+                                </mesh>
+                                <mesh position={[4, 0, 0]}>
+                                    <planeGeometry args={[0.2, 5.8]} />
+                                    <meshBasicMaterial color="#00ffff" toneMapped={false} />
+                                </mesh>
+                                <mesh position={[0, 0, 0]}>
+                                    <planeGeometry args={[0.05, 5.8]} />
+                                    <meshBasicMaterial color="#00ffff" opacity={0.5} transparent toneMapped={false} />
+                                </mesh>
+                            </group>
+                        )}
+
+                        {/* Glass Panel Content Holder */}
+                        <group position={[0, 0, 0.15]}>
+                            {/* The Screen - No overlay per user request */}
+                            {type !== 'info-desk' && <TechScreen videoUrl={videoUrl} imageUrl={imageUrl} />}
+                        </group>
+
+                        {/* Vertical Support Struts - TRUSS Design */}
+                        <group position={[-7.8, 0, 0.5]}>
+                            {/* Main Pole */}
+                            <mesh>
+                                <boxGeometry args={[0.2, 6, 0.2]} />
+                                <meshStandardMaterial color={type === 'info-desk' ? "#ffffff" : "#333"} metalness={0.9} roughness={0.1} />
+                            </mesh>
+                            {/* Cross Bracing */}
+                            <mesh position={[0, 1, 0]} rotation={[0, 0, 0.5]}>
+                                <boxGeometry args={[0.1, 2, 0.1]} />
+                                <meshStandardMaterial color={type === 'info-desk' ? "#cccccc" : "#222"} metalness={0.8} />
+                            </mesh>
+                            <mesh position={[0, -1, 0]} rotation={[0, 0, -0.5]}>
+                                <boxGeometry args={[0.1, 2, 0.1]} />
+                                <meshStandardMaterial color={type === 'info-desk' ? "#cccccc" : "#222"} metalness={0.8} />
+                            </mesh>
+                        </group>
+
+                        <group position={[7.8, 0, 0.5]}>
+                            {/* Main Pole */}
+                            <mesh>
+                                <boxGeometry args={[0.2, 6, 0.2]} />
+                                <meshStandardMaterial color={type === 'info-desk' ? "#ffffff" : "#333"} metalness={0.9} roughness={0.1} />
+                            </mesh>
+                            {/* Cross Bracing */}
+                            <mesh position={[0, 1, 0]} rotation={[0, 0, -0.5]}>
+                                <boxGeometry args={[0.1, 2, 0.1]} />
+                                <meshStandardMaterial color={type === 'info-desk' ? "#cccccc" : "#222"} metalness={0.8} />
+                            </mesh>
+                            <mesh position={[0, -1, 0]} rotation={[0, 0, 0.5]}>
+                                <boxGeometry args={[0.1, 2, 0.1]} />
+                                <meshStandardMaterial color={type === 'info-desk' ? "#cccccc" : "#222"} metalness={0.8} />
+                            </mesh>
+                        </group>
+                    </group>
+                </>
+            )}
 
             {/* 3. Roof Structure - Floating & Detailed */}
-            {!hideRoof && (
+            {!hideRoof && type !== 'info-desk' && (
                 <group ref={roofGroupRef} position={[0, type === 'info-desk' ? 8.5 : 6.5, -0.5]} onClick={handleInteraction}>
                     {/* Main Canopy - Thin & Clean */}
                     <mesh position={[0, 0, 0]}>
