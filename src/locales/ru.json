@@ -133,7 +133,7 @@
         "exit": "Выход",
         "view_details": "Подробнее",
         "back": "Назад",
-        "inquire_now": "Отправить запрос",
+        "inquire_now": "Чат",
         "seller_dashboard_only": "Продавцы отвечают через панель продавца.",
         "buyer_only_here": "Чат доступен только покупателям в этом режиме.",
         "products_in_showroom": "Товары в павильоне",
@@ -143,7 +143,26 @@
         "company": "Компания",
         "features": "Характеристики",
         "no_description": "Описание отсутствует.",
-        "exit_showroom": "Выйти из шоурума"
+        "exit_showroom": "Выйти из шоурума",
+        "products_catalog": "Каталог товаров",
+        "order": "Заказ",
+        "showroom": {
+            "add_to_order": "В заказ",
+            "added": "Добавлено",
+            "request_quote": "ЗАПРОСИТЬ ЦЕНУ",
+            "selected_items": "Выбранные товары",
+            "remove": "Удалить",
+            "form_name": "ФИО",
+            "form_name_placeholder": "Введите ваше имя",
+            "form_phone": "Номер телефона",
+            "form_phone_placeholder": "+7 (999) 000-0000",
+            "form_email": "Email адрес",
+            "form_email_placeholder": "name@company.com",
+            "submit": "Отправить запрос",
+            "order_completed": "Заказ оформлен!",
+            "order_contact_msg": "Менеджер скоро свяжется с вами.",
+            "close": "Закрыть"
+        }
     },
     "calendar_ui": {
         "schedule": "РАСПИСАНИЕ ВЫСТАВОК",
@@ -151,6 +170,12 @@
     },
     "calendar": "Календарь",
     "verified_pavilion": {
+        "welcome": {
+            "title": "ВЕРИФИЦИРОВАННЫЙ ПАВИЛЬОН",
+            "subtitle": "Добро пожаловать на выставку 3DSFERA. Изучайте премиальных поставщиков, осматривайте технику в 3D и связывайтесь с производителями напрямую.",
+            "btn_enter": "Войти на выставку",
+            "controls_hint": "WASD для ходьбы • Клик для осмотра"
+        },
         "test_btn": "ПОСЕТИТЬ ВЫСТАВКУ",
         "ui": {
             "exit": "ВЫЙТИ ИЗ СЦЕНЫ",
@@ -161,8 +186,8 @@
             "system_integrity": "ЦЕЛОСТНОСТЬ СИСТЕМЫ",
             "secure_v3": "SECURE.V.3",
             "establishing": "УСТАНАВЛИВАЕМ КАНАЛ...",
-            "seller_chat_hint": "Покупатели начинают чат здесь. Отвечайте из панели продавца.",
-            "live_link": "ПРЯМАЯ СВЯЗЬ",
+            "seller_chat_hint": "Свяжитесь с продавцом напрямую",
+            "live_link": "Онлайн",
             "verified_supplier_pavilion": "Павильон проверенного поставщика",
             "sound_on": "ЗВУК ВКЛ",
             "sound_off": "ЗВУК ВЫКЛ",
@@ -172,26 +197,26 @@
         },
         "ui_nav": {
             "nav_title": "Навигация",
-            "nav_forward": "W / ↑ - Вперед",
+            "nav_forward": "Движение вперед",
             "nav_backward": "S / ↓ - Назад",
-            "nav_orbit": "A / ← - Орбита влево | D / → - Орбита вправо",
+            "nav_orbit": "Вращение камеры",
             "nav_inspect": "Клик по продукту - Осмотр - Открыть Инфо + Чат",
-            "nav_hint": "A / ← и D / → для орбиты | W / ↑ и S / ↓ для движения"
+            "nav_hint": "Вернуться на выставку"
         },
         "loader": {
-            "title": "Инициализация проверенного павильона",
-            "asset": "Загрузка промышленных моделей и неонового освещения...",
-            "chat": "Синхронизация чата — покупатели могут писать вживую.",
-            "standby": "Ожидайте: {{state}}",
-            "state_streaming": "поток моделей",
-            "state_priming": "подготовка сцены",
             "controls": "Управление",
-            "forward": "Движение вперед",
-            "backward": "Движение назад",
-            "orbit_left": "Орбита влево",
-            "orbit_right": "Орбита вправо",
-            "inspect_hint": "Кликните на продукт для осмотра, затем откройте Инфо + Чат.",
-            "exit_inspection": "Выйти из осмотра"
+            "forward": "Вперед",
+            "backward": "Назад",
+            "orbit_left": "Вращение влево",
+            "orbit_right": "Вращение вправо",
+            "inspect_hint": "Кликните объект для осмотра",
+            "exit_inspection": "Выйти из осмотра",
+            "title": "ЗАГРУЗКА",
+            "asset": "Загрузка данных павильона",
+            "chat": "Подключение агента",
+            "standby": "Статус: {state}",
+            "state_streaming": "Потоковая передача",
+            "state_priming": "Подготовка"
         },
         "items": {
             "crane": {
@@ -399,62 +424,6 @@
             "terms": "Условия использования",
             "privacy": "Политика конфиденциальности",
             "support": "Поддержка"
-        }
-    },
-    "pavilion_ui": {
-        "back": "Назад",
-        "view_details": "Осмотр 3D",
-        "close": "Закрыть",
-        "products_catalog": "Каталог товаров",
-        "order": "Заказ",
-        "showroom": {
-            "add_to_order": "В заказ",
-            "added": "Добавлено",
-            "request_quote": "ЗАПРОСИТЬ ЦЕНУ",
-            "selected_items": "Выбранные товары",
-            "remove": "Удалить",
-            "form_name": "ФИО",
-            "form_name_placeholder": "Введите ваше имя",
-            "form_phone": "Номер телефона",
-            "form_phone_placeholder": "+7 (999) 000-0000",
-            "form_email": "Email адрес",
-            "form_email_placeholder": "name@company.com",
-            "submit": "Отправить запрос",
-            "order_completed": "Заказ оформлен!",
-            "order_contact_msg": "Менеджер скоро свяжется с вами.",
-            "close": "Закрыть"
-        }
-    },
-    "verified_pavilion": {
-        "welcome": {
-            "title": "ВЕРИФИЦИРОВАННЫЙ ПАВИЛЬОН",
-            "subtitle": "Добро пожаловать на выставку 3DSFERA. Изучайте премиальных поставщиков, осматривайте технику в 3D и связывайтесь с производителями напрямую.",
-            "btn_enter": "Войти на выставку",
-            "controls_hint": "WASD для ходьбы • Клик для осмотра"
-        },
-        "ui": {
-            "live_link": "Онлайн"
-        },
-        "ui_nav": {
-            "nav_title": "Навигация",
-            "nav_forward": "Движение вперед",
-            "nav_orbit": "Вращение камеры",
-            "nav_hint": "Вернуться на выставку"
-        },
-        "loader": {
-            "controls": "Управление",
-            "forward": "Вперед",
-            "backward": "Назад",
-            "orbit_left": "Вращение влево",
-            "orbit_right": "Вращение вправо",
-            "inspect_hint": "Кликните объект для осмотра",
-            "exit_inspection": "Выйти из осмотра",
-            "title": "ЗАГРУЗКА",
-            "asset": "Загрузка данных павильона",
-            "chat": "Подключение агента",
-            "standby": "Статус: {state}",
-            "state_streaming": "Потоковая передача",
-            "state_priming": "Подготовка"
         }
     }
 }

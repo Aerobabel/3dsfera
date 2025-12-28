@@ -143,7 +143,26 @@
         "company": "COMPANY",
         "features": "Features",
         "no_description": "No description available.",
-        "exit_showroom": "Exit Showroom"
+        "exit_showroom": "Exit Showroom",
+        "products_catalog": "Product Catalog",
+        "order": "Order",
+        "showroom": {
+            "add_to_order": "Add to Order",
+            "added": "Added",
+            "request_quote": "REQUEST QUOTE",
+            "selected_items": "Selected Items",
+            "remove": "Remove",
+            "form_name": "Full Name",
+            "form_name_placeholder": "Enter your name",
+            "form_phone": "Phone Number",
+            "form_phone_placeholder": "+1 (555) 000-0000",
+            "form_email": "Email Address",
+            "form_email_placeholder": "name@company.com",
+            "submit": "Submit Request",
+            "order_completed": "Order Completed!",
+            "order_contact_msg": "Company manager will contact you soon.",
+            "close": "Close"
+        }
     },
     "calendar_ui": {
         "schedule": "EXHIBITION SCHEDULE",
@@ -151,6 +170,12 @@
     },
     "calendar": "Calendar",
     "verified_pavilion": {
+        "welcome": {
+            "title": "VERIFIED PAVILION",
+            "subtitle": "Welcome to the 3DSFERA Exhibition. Explore premium industrial suppliers, inspect verified machinery in 3D, and connect directly with manufacturers.",
+            "btn_enter": "Enter Exhibition",
+            "controls_hint": "Use WASD to Walk • Click Items to Inspect"
+        },
         "test_btn": "VISIT EXHIBITION HALL",
         "ui": {
             "exit": "EXIT SCENE",
@@ -161,8 +186,8 @@
             "system_integrity": "SYSTEM INTEGRITY",
             "secure_v3": "SECURE.V.3",
             "establishing": "ESTABLISHING UPLINK...",
-            "seller_chat_hint": "Buyers start chats here. Reply from your Seller Dashboard.",
-            "live_link": "LIVE LINK",
+            "seller_chat_hint": "Chat with seller directly",
+            "live_link": "Live Link",
             "verified_supplier_pavilion": "Verified Supplier Pavilion",
             "sound_on": "SOUND ON",
             "sound_off": "SOUND OFF",
@@ -172,26 +197,26 @@
         },
         "ui_nav": {
             "nav_title": "Navigation",
-            "nav_forward": "W / Up - Move forward",
-            "nav_backward": "S / Down - Move backward",
-            "nav_orbit": "A / Left - Orbit left | D / Right - Orbit right",
+            "nav_forward": "Move forward",
+            "nav_backward": "Move backward",
+            "nav_orbit": "Orbit Camera",
             "nav_inspect": "Click product - Inspect - Open Info + Chat from panel",
-            "nav_hint": "A / Left & D / Right to Orbit | W / Up & S / Down to Move"
+            "nav_hint": "Return to Exhibition"
         },
         "loader": {
-            "title": "Initializing Verified Pavilion",
-            "asset": "Loading industrial assets & neon lighting rig...",
-            "chat": "Syncing chat uplink - buyers can reach sellers live.",
-            "standby": "Stand by: {{state}}",
-            "state_streaming": "streaming models",
-            "state_priming": "priming scene",
             "controls": "Controls",
-            "forward": "Move forward",
-            "backward": "Move backward",
-            "orbit_left": "Orbit left",
-            "orbit_right": "Orbit right",
-            "inspect_hint": "Click a product to inspect, then open Info + Chat.",
-            "exit_inspection": "Exit inspection"
+            "forward": "Forward",
+            "backward": "Backward",
+            "orbit_left": "Rotate Left",
+            "orbit_right": "Rotate Right",
+            "inspect_hint": "Click object to inspect details",
+            "exit_inspection": "Exit Inspection",
+            "title": "INITIALIZING",
+            "asset": "Loading Pavilion Data",
+            "chat": "Connecting to Agent",
+            "standby": "State: {state}",
+            "state_streaming": "Streaming",
+            "state_priming": "Priming"
         },
         "items": {
             "crane": {
@@ -399,62 +424,6 @@
             "terms": "Terms of Service",
             "privacy": "Privacy Policy",
             "support": "Support"
-        }
-    },
-    "pavilion_ui": {
-        "back": "Back",
-        "view_details": "Inspect 3D",
-        "close": "Close",
-        "products_catalog": "Product Catalog",
-        "order": "Order",
-        "showroom": {
-            "add_to_order": "Add to Order",
-            "added": "Added",
-            "request_quote": "REQUEST QUOTE",
-            "selected_items": "Selected Items",
-            "remove": "Remove",
-            "form_name": "Full Name",
-            "form_name_placeholder": "Enter your name",
-            "form_phone": "Phone Number",
-            "form_phone_placeholder": "+1 (555) 000-0000",
-            "form_email": "Email Address",
-            "form_email_placeholder": "name@company.com",
-            "submit": "Submit Request",
-            "order_completed": "Order Completed!",
-            "order_contact_msg": "Company manager will contact you soon.",
-            "close": "Close"
-        }
-    },
-    "verified_pavilion": {
-        "welcome": {
-            "title": "VERIFIED PAVILION",
-            "subtitle": "Welcome to the 3DSFERA Exhibition. Explore premium industrial suppliers, inspect verified machinery in 3D, and connect directly with manufacturers.",
-            "btn_enter": "Enter Exhibition",
-            "controls_hint": "Use WASD to Walk • Click Items to Inspect"
-        },
-        "ui": {
-            "live_link": "Live Link"
-        },
-        "ui_nav": {
-            "nav_title": "Navigation",
-            "nav_forward": "Move forward",
-            "nav_orbit": "Orbit Camera",
-            "nav_hint": "Return to Exhibition"
-        },
-        "loader": {
-            "controls": "Controls",
-            "forward": "Forward",
-            "backward": "Backward",
-            "orbit_left": "Rotate Left",
-            "orbit_right": "Rotate Right",
-            "inspect_hint": "Click object to inspect details",
-            "exit_inspection": "Exit Inspection",
-            "title": "INITIALIZING",
-            "asset": "Loading Pavilion Data",
-            "chat": "Connecting to Agent",
-            "standby": "State: {state}",
-            "state_streaming": "Streaming",
-            "state_priming": "Priming"
         }
     }
 }

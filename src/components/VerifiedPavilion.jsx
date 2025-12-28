@@ -16,7 +16,7 @@ import InfographicOverlay from './pavilion/InfographicOverlay';
 import { PAVILIONS } from './pavilion/pavilionData';
 import { IndustrialCeilingDetailsFixed, UltimateFloor, CeilingLights } from './pavilion/PavilionEnvironment';
 import { ControlsWrapper, CameraPitchClamp } from './pavilion/PavilionControls';
-import { CameraSmoother, FloatingAnnotation } from './pavilion/PavilionInteraction';
+import { CameraSmoother, InspectionCard } from './pavilion/PavilionInteraction';
 import { OrbitControls } from '@react-three/drei';
 
 import ProductDisplay from './pavilion/ProductDisplay';
@@ -511,24 +511,24 @@ export default function VerifiedPavilion({ onBack, user }) {
                             hideSideModels={true} // Only one per request
                             heightOffset={1} // Safely above pedestal
                             onClick={(e) => {
-                                const position = [-22, 0, 0];
-                                if (inspectMode && orbitTarget && orbitTarget[0] === position[0] && orbitTarget[2] === position[2]) return;
+                                const target = [-25, 1.5, -5]; // True Kiosk Product Center
+                                if (inspectMode && orbitTarget && orbitTarget[0] === target[0] && orbitTarget[2] === target[2]) return;
                                 e.stopPropagation();
                                 SoundManager.playClick();
                                 setSelectedObject(PAVILIONS['aero']);
                                 setInspectMode(true);
-                                setOrbitTarget(position);
-                                setCameraPosition([position[0], position[1] + 2.5, position[2] + 8.0]);
+                                setOrbitTarget(target);
+                                setCameraPosition([-20, 3.5, 0]); // Comfortable viewing angle
                             }}
                             onProductClick={(e) => {
                                 e.stopPropagation();
                                 if (inspectMode && selectedObject === PAVILIONS['aero']) return;
                                 SoundManager.playClick();
-                                const position = [-22, 0, 0];
+                                const target = [-25, 1.5, -5];
                                 setSelectedObject(PAVILIONS['aero']);
                                 setInspectMode(true);
-                                setOrbitTarget(position);
-                                setCameraPosition([position[0], position[1] + 2.5, position[2] + 8.0]);
+                                setOrbitTarget(target);
+                                setCameraPosition([-20, 3.5, 0]);
                             }}
                         />
 
@@ -580,7 +580,7 @@ export default function VerifiedPavilion({ onBack, user }) {
 
                         {/* 4. Rear Left Corner: ENERGY */}
                         <KioskUnit
-                            position={[-20, 0, -35]}
+                            position={[-21, 0, -38]}
                             rotation={[0, Math.PI / 6, 0]}
                             title="VOLT ENERGY"
                             glowColor="#ffaa00"
@@ -616,7 +616,7 @@ export default function VerifiedPavilion({ onBack, user }) {
 
                         {/* 5. Rear Right Corner: LOGISTICS */}
                         <KioskUnit
-                            position={[20, 0, -35]}
+                            position={[21, 0, -38]}
                             rotation={[0, -Math.PI / 6, 0]}
                             title="VELOCITY LOGISTICS"
                             glowColor="#00ff55"
@@ -629,24 +629,24 @@ export default function VerifiedPavilion({ onBack, user }) {
                             hideSideModels={true}
                             heightOffset={1} // Fix floating (was -0.95)
                             onClick={(e) => {
-                                const position = [17, 0, -32]; // Closer to kiosk [20, 0, -35]
-                                if (inspectMode && orbitTarget && orbitTarget[0] === position[0] && orbitTarget[2] === position[2]) return;
+                                const target = [21, 1.5, -38]; // True Kiosk Product Center
+                                if (inspectMode && orbitTarget && orbitTarget[0] === target[0] && orbitTarget[2] === target[2]) return;
                                 e.stopPropagation();
                                 SoundManager.playClick();
                                 setSelectedObject(PAVILIONS['logistics']); // Correct Data Key
                                 setInspectMode(true);
-                                setOrbitTarget(position);
-                                setCameraPosition([position[0], position[1] + 2.5, position[2] + 8.0]);
+                                setOrbitTarget(target);
+                                setCameraPosition([17, 3.5, -32]); // -4, +2, +6 offset roughly
                             }}
                             onProductClick={(e) => {
                                 e.stopPropagation();
-                                const position = [17, 0, -32];
-                                if (inspectMode && orbitTarget && orbitTarget[0] === position[0] && orbitTarget[2] === position[2]) return;
+                                const target = [21, 1.5, -38];
+                                if (inspectMode && orbitTarget && orbitTarget[0] === target[0] && orbitTarget[2] === target[2]) return;
                                 SoundManager.playClick();
                                 setSelectedObject(PAVILIONS['logistics']); // Correct Data Key
                                 setInspectMode(true);
-                                setOrbitTarget(position);
-                                setCameraPosition([position[0], position[1] + 2.5, position[2] + 8.0]);
+                                setOrbitTarget(target);
+                                setCameraPosition([17, 3.5, -32]);
                             }}
                         />
 
@@ -744,7 +744,7 @@ export default function VerifiedPavilion({ onBack, user }) {
 
                         {/* 9. Deep Back Right: MANUFACTURING */}
                         <KioskUnit
-                            position={[30, 0, -25]}
+                            position={[34, 0, -22]}
                             rotation={[0, -Math.PI / 4, 0]}
                             title="SYNTHETIC MINDS"
                             glowColor="#fb8500"
@@ -756,7 +756,7 @@ export default function VerifiedPavilion({ onBack, user }) {
 
                         {/* 10. Deep Back Left: AI SYSTEMS */}
                         <KioskUnit
-                            position={[-30, 0, -25]}
+                            position={[-34, 0, -22]}
                             rotation={[0, Math.PI / 4, 0]}
                             title="AI SYSTEMS"
                             glowColor="#caf0f8"
@@ -910,17 +910,7 @@ export default function VerifiedPavilion({ onBack, user }) {
                             isActive={inspectMode}
                         />
 
-                        {/* 3D Floating UI - Offset to the SIDE */}
-                        <FloatingAnnotation
-                            visible={inspectMode && selectedObject && !isOpen && !isShowroomOpen}
-                            pavilionName={selectedObject?.name}
-                            title={selectedObject?.title}
-                            description={selectedObject?.description}
-                            stats={selectedObject?.stats}
-                            // Move UI 3.5 units to the Right (X) and slightly up (Y) relative to target
-                            position={orbitTarget ? [orbitTarget[0] + 3.5, orbitTarget[1] + 1.0, orbitTarget[2]] : [0, 0, 0]}
-                            onDetailsClick={openFullOverlay}
-                        />
+
 
                         <Preload all />
                     </Suspense>
@@ -1031,6 +1021,16 @@ export default function VerifiedPavilion({ onBack, user }) {
                     />
                 </div>
             )}
+
+            {/* 2D HUD Inspection Card (Fixed Positioning) */}
+            <InspectionCard
+                visible={inspectMode && selectedObject && !isOpen && !isShowroomOpen}
+                pavilionName={selectedObject?.name}
+                title={selectedObject?.title}
+                description={selectedObject?.description}
+                stats={selectedObject?.stats}
+                onDetailsClick={openFullOverlay}
+            />
 
             {/* WELCOME OVERLAY */}
             {showWelcome && !showLoader && (

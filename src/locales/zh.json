@@ -143,7 +143,26 @@
         "company": "公司",
         "features": "功能特点",
         "no_description": "暂无描述。",
-        "exit_showroom": "退出展厅"
+        "exit_showroom": "退出展厅",
+        "products_catalog": "产品目录",
+        "order": "下单",
+        "showroom": {
+            "add_to_order": "加入订单",
+            "added": "已添加",
+            "request_quote": "询问报价",
+            "selected_items": "已选项目",
+            "remove": "移除",
+            "form_name": "全名",
+            "form_name_placeholder": "输入您的姓名",
+            "form_phone": "电话号码",
+            "form_phone_placeholder": "+1 (555) 000-0000",
+            "form_email": "电子邮箱",
+            "form_email_placeholder": "name@company.com",
+            "submit": "提交请求",
+            "order_completed": "订单已完成！",
+            "order_contact_msg": "公司经理将很快联系您。",
+            "close": "关闭"
+        }
     },
     "calendar_ui": {
         "schedule": "展览日程",
@@ -151,6 +170,12 @@
     },
     "calendar": "日历",
     "verified_pavilion": {
+        "welcome": {
+            "title": "认证展馆",
+            "subtitle": "欢迎来到 3DSFERA 展览。探索优质工业供应商，以 3D 方式检视认证机械，并直接联系制造商。",
+            "btn_enter": "进入展览",
+            "controls_hint": "使用 WASD 行走 • 点击物品检视"
+        },
         "test_btn": "参观展览馆",
         "ui": {
             "exit": "退出场景",
@@ -161,8 +186,8 @@
             "system_integrity": "系统完整性",
             "secure_v3": "SECURE.V.3",
             "establishing": "正在建立通道...",
-            "seller_chat_hint": "买家在此发起聊天。请从卖家仪表板回复。",
-            "live_link": "实时链接",
+            "seller_chat_hint": "直接联系卖家",
+            "live_link": "现场链接",
             "verified_supplier_pavilion": "认证供应商展馆",
             "sound_on": "声音开启",
             "sound_off": "声音关闭",
@@ -172,26 +197,26 @@
         },
         "ui_nav": {
             "nav_title": "导航",
-            "nav_forward": "W / ↑ - 前进",
+            "nav_forward": "向前移动",
             "nav_backward": "S / ↓ - 后退",
-            "nav_orbit": "A / ← - 左旋 | D / → - 右旋",
+            "nav_orbit": "旋转相机",
             "nav_inspect": "点击产品 - 查看 - 打开信息与聊天",
-            "nav_hint": "A / ← 与 D / → 旋转 | W / ↑ 与 S / ↓ 移动"
+            "nav_hint": "返回展览"
         },
         "loader": {
-            "title": "正在初始化验证展馆",
-            "asset": "加载工业模型与霓虹灯光...",
-            "chat": "同步聊天链路——买家可实时联系。",
-            "standby": "请稍候：{{state}}",
-            "state_streaming": "模型流式传输中",
-            "state_priming": "场景预备中",
-            "controls": "操作提示",
+            "controls": "控制",
             "forward": "前进",
             "backward": "后退",
-            "orbit_left": "左旋",
-            "orbit_right": "右旋",
-            "inspect_hint": "点击产品进行查看，然后打开信息 + 聊天。",
-            "exit_inspection": "退出查看"
+            "orbit_left": "向左旋转",
+            "orbit_right": "向右旋转",
+            "inspect_hint": "点击物体查看详情",
+            "exit_inspection": "退出检视",
+            "title": "正在初始化",
+            "asset": "加载展馆数据",
+            "chat": "连接代理",
+            "standby": "状态: {state}",
+            "state_streaming": "流式传输",
+            "state_priming": "准备中"
         },
         "items": {
             "crane": {
@@ -399,62 +424,6 @@
             "terms": "服务条款",
             "privacy": "隐私政策",
             "support": "支持"
-        }
-    },
-    "pavilion_ui": {
-        "back": "返回",
-        "view_details": "查看 3D",
-        "close": "关闭",
-        "products_catalog": "产品目录",
-        "order": "下单",
-        "showroom": {
-            "add_to_order": "加入订单",
-            "added": "已添加",
-            "request_quote": "询问报价",
-            "selected_items": "已选项目",
-            "remove": "移除",
-            "form_name": "全名",
-            "form_name_placeholder": "输入您的姓名",
-            "form_phone": "电话号码",
-            "form_phone_placeholder": "+1 (555) 000-0000",
-            "form_email": "电子邮箱",
-            "form_email_placeholder": "name@company.com",
-            "submit": "提交请求",
-            "order_completed": "订单已完成！",
-            "order_contact_msg": "公司经理将很快联系您。",
-            "close": "关闭"
-        }
-    },
-    "verified_pavilion": {
-        "welcome": {
-            "title": "认证展馆",
-            "subtitle": "欢迎来到 3DSFERA 展览。探索优质工业供应商，以 3D 方式检视认证机械，并直接联系制造商。",
-            "btn_enter": "进入展览",
-            "controls_hint": "使用 WASD 行走 • 点击物品检视"
-        },
-        "ui": {
-            "live_link": "现场链接"
-        },
-        "ui_nav": {
-            "nav_title": "导航",
-            "nav_forward": "向前移动",
-            "nav_orbit": "旋转相机",
-            "nav_hint": "返回展览"
-        },
-        "loader": {
-            "controls": "控制",
-            "forward": "前进",
-            "backward": "后退",
-            "orbit_left": "向左旋转",
-            "orbit_right": "向右旋转",
-            "inspect_hint": "点击物体查看详情",
-            "exit_inspection": "退出检视",
-            "title": "正在初始化",
-            "asset": "加载展馆数据",
-            "chat": "连接代理",
-            "standby": "状态: {state}",
-            "state_streaming": "流式传输",
-            "state_priming": "准备中"
         }
     }
 }
