@@ -355,13 +355,37 @@
             "services": "服务",
             "contact": "联系我们"
         },
+        "system_online": "系统在线",
         "hero": {
-            "title_prefix": "欢迎来到",
-            "title_suffix": "- 通往认证中国产品的门户。",
-            "subtitle": "利用世界各地的尖端 3D 技术。",
-            "cta_visit": "参观展厅",
-            "welcome_exhibition": "欢迎来到在线 3D 展览",
-            "description": "认识作为中国产品和服务全球市场领导者的公司，以及易于全球访问的中国产品和服务工作室。"
+            "eyebrow": "全球贸易网络 V2.0 实时",
+            "title_1": "贸易",
+            "title_2": "未来",
+            "description": "访问全球首个<1>验证工业元宇宙</1>。与供应商联系，在实时 3D 中检查重型机械，并在区块链上安全交易。",
+            "cta_enter": "进入展馆",
+            "cta_demo": "观看演示"
+        },
+        "stats": {
+            "countries": "国家",
+            "suppliers": "供应商",
+            "products": "产品",
+            "trade_vol": "贸易额"
+        },
+        "features": {
+            "global_access": {
+                "title": "全球访问",
+                "desc": "在办公桌前即可无缝连接来自 140 多个国家的制造商。入场门槛已消除。",
+                "link": "探索地图"
+            },
+            "real_time_3d": {
+                "title": "实时 3D",
+                "desc": "使用我们专有的 WebGL 渲染引擎，以亚毫米级精度检查复杂机械。",
+                "link": "查看演示"
+            },
+            "verified_trust": {
+                "title": "验证信任",
+                "desc": "每个供应商都经过审查，每笔交易都通过以太坊区块链上的智能合约进行保护。",
+                "link": "安全协议"
+            }
         },
         "floating": {
             "title": "即将举行的展览",

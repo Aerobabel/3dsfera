@@ -56,6 +56,7 @@ function App() {
             <span className="text-cyan-400">←</span> {t('app.back_to_home', 'BACK TO HOME')}
           </button>
           <div className="flex items-center gap-6">
+            <LanguageSwitcher />
             <div className="flex items-center gap-3 bg-white/5 px-4 py-2 rounded-full border border-white/10">
               <div className="w-2 h-2 rounded-full bg-green-500 shadow-[0_0_10px_#22c55e]"></div>
               <span className="text-xs font-bold tracking-wide text-white/90">{user.email}</span>

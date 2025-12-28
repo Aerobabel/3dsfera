@@ -9,12 +9,12 @@ function SceneContent() {
             {/* --- Environment & Lighting (Studio Setup) --- */}
             {/* Lower ambient light to reduce "whiteness" */}
             <Environment files="/hdris/convertio.in_image.hdr" blur={1} background={false} />
-            <ambientLight intensity={0.5} color="#ffffff" />
+            <ambientLight intensity={0.2} color="#ffffff" />
 
             {/* Main Key Light - Soft White */}
             <spotLight
                 position={[5, 10, 5]}
-                intensity={12}
+                intensity={5}
                 angle={0.6}
                 penumbra={1}
                 color="#ffffff"
@@ -33,13 +33,13 @@ function SceneContent() {
             {/* Matte Studio Floor - Slightly Darker Grey */}
             <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -2, 0]} receiveShadow>
                 <planeGeometry args={[100, 100]} />
-                <meshStandardMaterial color="#cbd5e1" roughness={0.7} metalness={0.2} />
+                <meshStandardMaterial color="#0f172a" roughness={0.7} metalness={0.2} />
             </mesh>
 
             {/* Back Wall (Curved Cyclorama illusion) */}
             <mesh position={[0, 10, -20]} receiveShadow>
                 <planeGeometry args={[100, 60]} />
-                <meshStandardMaterial color="#cbd5e1" roughness={1} />
+                <meshStandardMaterial color="#0f172a" roughness={1} />
             </mesh>
 
             {/* Left Wall Structures (Darker Silhouettes) */}
@@ -73,7 +73,8 @@ function SceneContent() {
             <ContactShadows resolution={1024} scale={50} blur={2.5} opacity={0.4} far={10} color="#1e293b" />
 
             {/* Light Blue-Grey Fog for Depth (Not basic white) */}
-            <fog attach="fog" args={['#e2e8f0', 5, 45]} />
+            {/* Light Blue-Grey Fog for Depth (Not basic white) */}
+            <fog attach="fog" args={['#0f172a', 5, 45]} />
         </>
     );
 }

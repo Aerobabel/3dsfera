@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sora:wght@500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Exo+2:wght@400;700&family=Inter:wght@400;500;600;700&family=Orbitron:wght@400;700;900&family=Sora:wght@500;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -32,13 +32,11 @@ body {
   }
 
   .scanlines {
-    background: linear-gradient(
-      to bottom,
-      rgba(255,255,255,0),
-      rgba(255,255,255,0) 50%,
-      rgba(0,0,0,0.2) 50%,
-      rgba(0,0,0,0.2)
-    );
+    background: linear-gradient(to bottom,
+        rgba(255, 255, 255, 0),
+        rgba(255, 255, 255, 0) 50%,
+        rgba(0, 0, 0, 0.2) 50%,
+        rgba(0, 0, 0, 0.2));
     background-size: 100% 4px;
     animation: scanline 10s linear infinite;
     pointer-events: none;
@@ -48,7 +46,7 @@ body {
     position: relative;
     animation: glitch 3s infinite;
   }
-  
+
   .glitch-text::before,
   .glitch-text::after {
     content: attr(data-text);
@@ -74,29 +72,81 @@ body {
   }
 
   @keyframes glitch {
-    0% { transform: translate(0) }
-    20% { transform: translate(-2px, 2px) }
-    40% { transform: translate(-2px, -2px) }
-    60% { transform: translate(2px, 2px) }
-    80% { transform: translate(2px, -2px) }
-    100% { transform: translate(0) }
+    0% {
+      transform: translate(0)
+    }
+
+    20% {
+      transform: translate(-2px, 2px)
+    }
+
+    40% {
+      transform: translate(-2px, -2px)
+    }
+
+    60% {
+      transform: translate(2px, 2px)
+    }
+
+    80% {
+      transform: translate(2px, -2px)
+    }
+
+    100% {
+      transform: translate(0)
+    }
   }
 
   @keyframes glitch-anim {
-    0% { clip: rect(12px, 9999px, 86px, 0) }
-    20% { clip: rect(85px, 9999px, 14px, 0) }
-    40% { clip: rect(32px, 9999px, 6px, 0) }
-    60% { clip: rect(6px, 9999px, 55px, 0) }
-    80% { clip: rect(48px, 9999px, 29px, 0) }
-    100% { clip: rect(81px, 9999px, 94px, 0) }
+    0% {
+      clip: rect(12px, 9999px, 86px, 0)
+    }
+
+    20% {
+      clip: rect(85px, 9999px, 14px, 0)
+    }
+
+    40% {
+      clip: rect(32px, 9999px, 6px, 0)
+    }
+
+    60% {
+      clip: rect(6px, 9999px, 55px, 0)
+    }
+
+    80% {
+      clip: rect(48px, 9999px, 29px, 0)
+    }
+
+    100% {
+      clip: rect(81px, 9999px, 94px, 0)
+    }
   }
+
   @keyframes glitch-anim2 {
-    0% { clip: rect(65px, 9999px, 92px, 0) }
-    20% { clip: rect(15px, 9999px, 4px, 0) }
-    40% { clip: rect(49px, 9999px, 78px, 0) }
-    60% { clip: rect(2px, 9999px, 25px, 0) }
-    80% { clip: rect(18px, 9999px, 89px, 0) }
-    100% { clip: rect(74px, 9999px, 32px, 0) }
+    0% {
+      clip: rect(65px, 9999px, 92px, 0)
+    }
+
+    20% {
+      clip: rect(15px, 9999px, 4px, 0)
+    }
+
+    40% {
+      clip: rect(49px, 9999px, 78px, 0)
+    }
+
+    60% {
+      clip: rect(2px, 9999px, 25px, 0)
+    }
+
+    80% {
+      clip: rect(18px, 9999px, 89px, 0)
+    }
+
+    100% {
+      clip: rect(74px, 9999px, 32px, 0)
+    }
   }
 }
 

@@ -1,225 +1,224 @@
-import React, { useState } from 'react';
-import { Search, ChevronDown, Facebook, Twitter, Youtube, Instagram, ArrowRight, LogIn, LogOut, LayoutDashboard, User } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { LayoutDashboard, User, LogIn, LogOut, ArrowRight, Globe, Shield, Zap, ChevronRight } from 'lucide-react';
 import HomeBackground3D from './HomeBackground3D';
-import LanguageSwitcher from './LanguageSwitcher';
+import { useTranslation, Trans } from 'react-i18next';
 
 const HomePage = ({ t, onNavigate, user, onOpenAuth, onLogout }) => {
-    // Add hover state for the hero button for extra juice
-    const [isHoveringCTA, setIsHoveringCTA] = useState(false);
+    const { i18n } = useTranslation();
+    const [scrolled, setScrolled] = useState(false);
+
+    // Scroll effect for navbar
+    useEffect(() => {
+        const handleScroll = () => setScrolled(window.scrollY > 50);
+        window.addEventListener('scroll', handleScroll);
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, []);
+
+    const changeLang = (lng) => i18n.changeLanguage(lng);
 
     return (
-        <div className="relative min-h-screen flex flex-col font-sans text-slate-900 overflow-hidden bg-zinc-50 selection:bg-cyan-500/30">
-            {/* 3D Background */}
-            <HomeBackground3D />
+        <div className="relative min-h-screen bg-[#050914] text-white selection:bg-cyan-500/30 font-sans overflow-x-hidden">
+            {/* --- BACKGROUND LAYER --- */}
+            {/* 3D Background Component */}
+            <div className="fixed inset-0 z-0">
+                <HomeBackground3D />
+            </div>
 
-            {/* --- HUD OVERLAY LAYER --- */}
-            {/* Light Vignette */}
-            <div className="absolute inset-0 z-0 bg-[radial-gradient(circle_at_center,transparent_0%,rgba(255,255,255,0.8)_100%)] pointer-events-none"></div>
-            <div className="absolute inset-0 z-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-10 mix-blend-multiply pointer-events-none"></div>
+            {/* Dark Overlay Gradient (Top to Bottom) - Stronger for contrast */}
+            <div className="fixed inset-0 z-0 bg-gradient-to-b from-[#050914]/95 via-[#050914]/70 to-[#050914] pointer-events-none" />
 
-            {/* Decorative HUD Lines - Darker for contrast */}
-            <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-cyan-500/20 to-transparent z-10"></div>
-            <div className="absolute bottom-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-cyan-500/20 to-transparent z-10"></div>
-            <div className="absolute left-8 top-0 h-32 w-px bg-gradient-to-b from-cyan-500/30 to-transparent z-10 hidden md:block"></div>
-            <div className="absolute right-8 bottom-0 h-32 w-px bg-gradient-to-t from-cyan-500/30 to-transparent z-10 hidden md:block"></div>
+            {/* Cyber Grid Overlay */}
+            <div className="fixed inset-0 z-0 opacity-20 bg-[linear-gradient(rgba(34,211,238,0.05)_1px,transparent_1px),linear-gradient(90deg,rgba(34,211,238,0.05)_1px,transparent_1px)] bg-[size:50px_50px] pointer-events-none" />
 
+            {/* Vignette */}
+            <div className="fixed inset-0 z-0 bg-[radial-gradient(circle_at_center,transparent_0%,#050914_100%)] pointer-events-none" />
 
-            {/* --- TOP NAVIGATION BAR (HUD HEADER) --- */}
-            <nav className="relative z-20 flex items-center justify-between px-6 md:px-12 py-6 w-full">
-                {/* Logo Section - Technical */}
-                <div className="flex items-center gap-4 group cursor-pointer">
-                    <div className="w-10 h-10 border border-slate-300 bg-white/50 flex items-center justify-center relative overflow-hidden rounded-sm shadow-sm">
-                        <div className="absolute inset-0 bg-cyan-400/10 animate-pulse"></div>
-                        <span className="font-['Orbitron'] font-bold text-cyan-600 text-lg relative z-10">3D</span>
-                    </div>
-                    <div className="flex flex-col justify-center">
-                        <span className="text-2xl font-['Orbitron'] font-bold tracking-[0.2em] text-slate-900">
-                            SFERA
-                        </span>
-                        <div className="flex items-center gap-2">
-                            <span className="h-px w-4 bg-cyan-500"></span>
-                            <span className="text-[10px] tracking-widest text-slate-500 uppercase">System Online</span>
+            {/* --- NAVIGATION --- */}
+            <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled ? 'bg-[#050914]/90 backdrop-blur-md border-b border-white/5 py-4' : 'bg-transparent py-8'}`}>
+                <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
+                    {/* Brand */}
+                    <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 bg-cyan-500/10 border border-cyan-500/20 rounded flex items-center justify-center relative overflow-hidden group">
+                            <div className="absolute inset-0 bg-cyan-400/20 animate-pulse" />
+                            <span className="font-['Orbitron'] font-bold text-cyan-400 relative z-10">3D</span>
                         </div>
-                    </div>
-                </div>
-
-                {/* Center Nav - Holographic Buttons (Light Mode) */}
-                <div className="hidden lg:flex items-center gap-1">
-                    {['home', 'exhibitions', 'products', 'services', 'contact'].map((item) => (
-                        <button key={item} className="relative px-6 py-2 group overflow-hidden">
-                            {/* Hover BG */}
-                            <div className="absolute inset-0 bg-cyan-500/0 group-hover:bg-cyan-500/10 transition-all duration-300 transform skew-x-[-15deg]"></div>
-                            {/* Text */}
-                            <span className="relative z-10 font-['Exo_2'] text-xs font-bold tracking-widest text-slate-600 group-hover:text-cyan-700 uppercase transition-colors">
-                                {t ? t(`homepage.nav.${item}`) : item}
-                            </span>
-                            {/* Underline Tech */}
-                            <div className="absolute bottom-0 left-0 w-full h-[1px] bg-cyan-500/0 group-hover:bg-cyan-500/50 transition-all duration-300"></div>
-                            {/* Corner bits */}
-                            <div className="absolute top-0 right-0 w-1 h-1 border-t border-r border-slate-300/0 group-hover:border-slate-400/50 transition-all"></div>
-                        </button>
-                    ))}
-                </div>
-
-                <div className="flex items-center gap-6">
-                    {/* Language Switcher - Minimal Slate */}
-                    <div className="flex border border-slate-300 rounded-sm overflow-hidden">
-                        <button className="px-3 py-1 text-[10px] font-bold text-slate-500 hover:bg-slate-100 transition-colors">EN</button>
-                        <button className="px-3 py-1 text-[10px] font-bold bg-slate-900 text-white">RU</button>
-                        <button className="px-3 py-1 text-[10px] font-bold text-slate-500 hover:bg-slate-100 transition-colors">ZH</button>
-                    </div>
-
-                    {/* Auth Controls - Industrial */}
-                    {user ? (
-                        <div className="flex items-center gap-4 pl-4 border-l border-slate-300">
-                            {user.user_metadata?.role === 'seller' && (
-                                <button
-                                    onClick={() => onNavigate('dashboard')}
-                                    className="flex items-center gap-2 px-4 py-2 bg-slate-100 hover:bg-slate-200 border border-slate-300 rounded-sm text-slate-700 text-xs font-['Exo_2'] font-bold tracking-wider transition-all"
-                                >
-                                    <LayoutDashboard size={14} />
-                                    <span>{t ? t('app.dashboard', 'DASHBOARD') : 'DASHBOARD'}</span>
-                                </button>
-                            )}
-
-                            <div className="h-9 w-9 border border-slate-300 bg-white flex items-center justify-center text-slate-600 shadow-sm hover:border-slate-400 transition-colors" title={user.email}>
-                                <User size={16} />
+                        <div>
+                            <h1 className="font-['Orbitron'] font-bold text-2xl tracking-[0.2em] text-white leading-none">3DSFERA</h1>
+                            <div className="flex items-center gap-2 mt-1">
+                                <div className="w-1.5 h-1.5 rounded-full bg-cyan-500 animate-pulse shadoow-[0_0_8px_cyan]" />
+                                <span className="text-[10px] uppercase tracking-widest text-cyan-500/80 font-mono">{t('homepage.system_online')}</span>
                             </div>
-
-                            <button onClick={onLogout} className="text-slate-400 hover:text-red-500 transition-colors">
-                                <LogOut size={20} />
-                            </button>
                         </div>
-                    ) : (
-                        <button
-                            onClick={onOpenAuth}
-                            className="flex items-center gap-3 px-6 py-2.5 bg-slate-900 hover:bg-slate-800 border border-slate-900 text-white text-xs font-['Exo_2'] font-bold tracking-widest shadow-md hover:shadow-lg transition-all"
-                        >
-                            <span className="relative z-10 flex items-center gap-2">
-                                <LogIn size={14} />
-                                {t ? t('app.login_signup', 'ACCESS TERMINAL') : 'ACCESS TERMINAL'}
-                            </span>
-                        </button>
-                    )}
+                    </div>
+
+                    {/* Desktop Menu */}
+                    <div className="hidden md:flex items-center gap-1">
+                        {['exhibitions', 'marketplace', 'solutions', 'about'].map((item) => (
+                            <button key={item} className="px-5 py-2 text-xs font-['Exo_2'] font-bold uppercase tracking-widest text-slate-400 hover:text-white transition-colors relative group">
+                                {t ? t(`homepage.nav.${item}`, item) : item}
+                                <span className="absolute bottom-0 left-0 w-0 h-[2px] bg-cyan-500 transition-all duration-300 group-hover:w-full" />
+                            </button>
+                        ))}
+                    </div>
+
+                    {/* Actions */}
+                    <div className="flex items-center gap-6">
+                        {/* Language */}
+                        <div className="hidden md:flex items-center gap-2 text-[10px] font-bold tracking-wider text-slate-500">
+                            {['en', 'ru', 'zh'].map((lng, i) => (
+                                <React.Fragment key={lng}>
+                                    <button
+                                        onClick={() => changeLang(lng)}
+                                        className={`transition-colors uppercase ${i18n.language === lng ? 'text-cyan-400 shadow-glow' : 'hover:text-white'}`}
+                                    >
+                                        {lng}
+                                    </button>
+                                    {i < 2 && <span className="text-slate-700">/</span>}
+                                </React.Fragment>
+                            ))}
+                        </div>
+
+                        {/* Auth */}
+                        {user ? (
+                            <div className="flex items-center gap-4 pl-6 border-l border-white/10">
+                                {user.user_metadata?.role === 'seller' && (
+                                    <button
+                                        onClick={() => onNavigate('dashboard')}
+                                        className="hidden md:flex items-center gap-2 px-4 py-2 bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 hover:bg-cyan-500/20 rounded-sm text-xs font-bold tracking-wider transition-all"
+                                    >
+                                        <LayoutDashboard size={14} />
+                                        <span>DASHBOARD</span>
+                                    </button>
+                                )}
+                                <div className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-slate-300 hover:text-white hover:border-white/30 transition-all cursor-pointer">
+                                    <User size={18} />
+                                </div>
+                                <button onClick={onLogout} className="text-slate-500 hover:text-red-400 transition-colors">
+                                    <LogOut size={20} />
+                                </button>
+                            </div>
+                        ) : (
+                            <button
+                                onClick={onOpenAuth}
+                                className="group relative px-6 py-2 bg-white text-black text-xs font-bold uppercase tracking-widest overflow-hidden hover:bg-cyan-400 transition-colors duration-300"
+                            >
+                                <div className="relative z-10 flex items-center gap-2">
+                                    <LogIn size={14} />
+                                    <span>Access Terminal</span>
+                                </div>
+                            </button>
+                        )}
+                    </div>
                 </div>
             </nav>
 
-            {/* --- MAIN CONTENT LAYOUT --- */}
-            <main className="relative z-10 flex-1 flex flex-col justify-end pb-12 md:pb-24 px-6 md:px-12 w-full max-w-[1920px] mx-auto">
-                <div className="grid md:grid-cols-12 gap-12 items-end">
+            {/* --- HERO SECTION --- */}
+            <header className="relative z-10 pt-40 pb-20 px-6 min-h-screen flex flex-col justify-center items-center text-center">
+                <div className="max-w-5xl mx-auto space-y-8">
+                    {/* Eyebrow */}
+                    <div className="inline-flex items-center gap-3 px-4 py-2 rounded-full bg-white/5 border border-white/10 backdrop-blur-sm animate-fadeIn">
+                        <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+                        <span className="text-xs font-['Exo_2'] font-bold tracking-[0.2em] text-cyan-300 uppercase">
+                            {t('homepage.hero.eyebrow')}
+                        </span>
+                    </div>
 
-                    {/* --- LEFT COLUMN: HERO TEXT (Span 7) --- */}
-                    <div className="md:col-span-8 lg:col-span-7 relative">
-                        <div className="relative z-10 max-w-4xl">
-                            <div className="mb-2 flex items-center gap-3">
-                                <div className="h-[2px] w-12 bg-cyan-500"></div>
-                                <span className="text-cyan-600 font-['Exo_2'] font-bold tracking-widest text-sm uppercase">
-                                    {t ? t('homepage.hero.welcome_exhibition', 'WELCOME TO ONLINE 3D-EXHIBITION') : 'WELCOME TO ONLINE 3D-EXHIBITION'}
-                                </span>
+                    {/* Main Title */}
+                    <h1 className="text-6xl md:text-8xl lg:text-9xl font-['Orbitron'] font-black tracking-tight leading-none text-transparent bg-clip-text bg-gradient-to-b from-white via-white to-slate-500 drop-shadow-[0_0_30px_rgba(255,255,255,0.15)]">
+                        {t('homepage.hero.title_1')} <br />
+                        <span className="text-stroke-1 text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-600 opacity-90">{t('homepage.hero.title_2')}</span>
+                    </h1>
+
+                    <p className="max-w-2xl mx-auto text-lg md:text-xl text-slate-400 font-['Exo_2'] leading-relaxed">
+                        <Trans i18nKey="homepage.hero.description" components={{ 1: <span className="text-cyan-400 font-bold" /> }} />
+                    </p>
+
+                    {/* CTA Group */}
+                    <div className="flex flex-col md:flex-row items-center justify-center gap-6 mt-12">
+                        <button
+                            onClick={() => onNavigate('verified_test')}
+                            className="group relative px-10 py-5 bg-cyan-500 hover:bg-cyan-400 text-black font-['Exo_2'] font-bold text-sm tracking-[0.2em] uppercase transition-all shadow-[0_0_20px_rgba(34,211,238,0.3)] hover:shadow-[0_0_40px_rgba(34,211,238,0.5)] skew-x-[-10deg]"
+                        >
+                            <div className="skew-x-[10deg] flex items-center gap-3">
+                                <span>{t('homepage.hero.cta_enter')}</span>
+                                <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
                             </div>
+                        </button>
 
-                            <h1 className="text-6xl md:text-8xl lg:text-9xl font-black text-slate-900 leading-[0.9] tracking-tight mb-8">
-                                <span className="block text-4xl md:text-5xl lg:text-6xl text-slate-500 font-['Exo_2'] mb-2 tracking-wide drop-shadow-sm">
-                                    {t ? t('homepage.hero.title_prefix', 'WELCOME TO') : 'WELCOME TO'}
-                                </span>
-                                <span className="block font-['Orbitron'] relative drop-shadow-xl">
-                                    3DSFERA
-                                    <span className="absolute -top-4 -right-16 md:-top-8 md:-right-24 text-2xl md:text-4xl text-cyan-500 font-['Exo_2'] font-bold opacity-80">
-                                        V.1
-                                    </span>
-                                </span>
-                            </h1>
+                        <button className="px-8 py-5 border border-white/20 hover:border-white/50 text-white font-['Exo_2'] font-bold text-sm tracking-[0.2em] uppercase transition-all backdrop-blur-sm hover:bg-white/5 skew-x-[-10deg]">
+                            <div className="skew-x-[10deg]">
+                                {t('homepage.hero.cta_demo')}
+                            </div>
+                        </button>
+                    </div>
 
-                            <p className="max-w-xl text-lg md:text-xl text-slate-600 font-['Exo_2'] mb-10 border-l-4 border-cyan-500 pl-6 py-2 bg-white/50 backdrop-blur-sm rounded-r-md">
-                                {t ? t('homepage.hero.subtitle', 'Utilizing cutting-edge 3D technology from anywhere in the world.') : 'Utilizing cutting-edge 3D technology from anywhere in the world.'}
+                    {/* Stats */}
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-16 pt-16 border-t border-white/5 max-w-4xl mx-auto mt-20">
+                        {[
+                            { label: t('homepage.stats.countries'), value: "140+" },
+                            { label: t('homepage.stats.suppliers'), value: "50k+" },
+                            { label: t('homepage.stats.products'), value: "2.4M" },
+                            { label: t('homepage.stats.trade_vol'), value: "$40B" },
+                        ].map((stat, i) => (
+                            <div key={i} className="text-center group cursor-default">
+                                <div className="text-3xl md:text-4xl font-['Orbitron'] font-bold text-white group-hover:text-cyan-400 transition-colors">{stat.value}</div>
+                                <div className="text-[10px] md:text-xs font-bold uppercase tracking-widest text-slate-500 mt-2">{stat.label}</div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </header>
+
+            {/* --- FEATURES SCROLL --- */}
+            <section className="relative z-10 py-32 border-t border-white/5 bg-[#050914]">
+                <div className="max-w-7xl mx-auto px-6">
+                    <div className="grid md:grid-cols-3 gap-8">
+                        {/* Feature 1 */}
+                        <div className="p-8 rounded-2xl bg-white/5 border border-white/10 hover:border-cyan-500/50 hover:bg-white/10 transition-all group">
+                            <div className="w-14 h-14 rounded-xl bg-cyan-500/10 flex items-center justify-center text-cyan-400 mb-6 group-hover:scale-110 transition-transform">
+                                <Globe size={32} />
+                            </div>
+                            <h3 className="text-xl font-['Orbitron'] font-bold text-white mb-4">{t('homepage.features.global_access.title')}</h3>
+                            <p className="text-slate-400 text-sm leading-relaxed">
+                                {t('homepage.features.global_access.desc')}
                             </p>
+                            <div className="mt-6 flex items-center text-cyan-500 text-xs font-bold uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity">
+                                {t('homepage.features.global_access.link')} <ChevronRight size={14} />
+                            </div>
+                        </div>
 
-                            <div className="mt-10 flex flex-wrap gap-6">
-                                <button
-                                    onClick={() => onNavigate('verified_test')}
-                                    onMouseEnter={() => setIsHoveringCTA(true)}
-                                    onMouseLeave={() => setIsHoveringCTA(false)}
-                                    className="group relative px-10 py-5 bg-slate-900 hover:bg-slate-800 border border-slate-700 text-white font-['Exo_2'] font-bold text-lg tracking-[0.15em] transition-all duration-300 overflow-hidden shadow-lg"
-                                >
-                                    <span className="relative z-10 flex items-center gap-4">
-                                        {t ? t('homepage.hero.cta_visit', 'ENTER PAVILION') : 'ENTER PAVILION'}
-                                        <ArrowRight size={20} className={`transform transition-transform duration-300 ${isHoveringCTA ? 'translate-x-2' : ''}`} />
-                                    </span>
-                                    {/* Background scanline */}
-                                    <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20"></div>
-                                    {/* Shine */}
-                                    <div className="absolute top-0 -left-[100%] w-full h-full bg-gradient-to-r from-transparent via-white/10 to-transparent transform skew-x-[-20deg] group-hover:animate-shine"></div>
-                                </button>
+                        {/* Feature 2 */}
+                        <div className="p-8 rounded-2xl bg-white/5 border border-white/10 hover:border-purple-500/50 hover:bg-white/10 transition-all group">
+                            <div className="w-14 h-14 rounded-xl bg-purple-500/10 flex items-center justify-center text-purple-400 mb-6 group-hover:scale-110 transition-transform">
+                                <Zap size={32} />
+                            </div>
+                            <h3 className="text-xl font-['Orbitron'] font-bold text-white mb-4">{t('homepage.features.real_time_3d.title')}</h3>
+                            <p className="text-slate-400 text-sm leading-relaxed">
+                                {t('homepage.features.real_time_3d.desc')}
+                            </p>
+                            <div className="mt-6 flex items-center text-purple-500 text-xs font-bold uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity">
+                                {t('homepage.features.real_time_3d.link')} <ChevronRight size={14} />
+                            </div>
+                        </div>
 
-                                <button className="px-8 py-5 border border-slate-300 hover:border-slate-400 text-slate-500 hover:text-slate-800 font-['Exo_2'] font-bold text-sm tracking-[0.15em] uppercase transition-colors backdrop-blur-md bg-white/40">
-                                    {t ? t('learn_more', 'SYSTEM PREVIEW') : 'SYSTEM PREVIEW'}
-                                </button>
+                        {/* Feature 3 */}
+                        <div className="p-8 rounded-2xl bg-white/5 border border-white/10 hover:border-green-500/50 hover:bg-white/10 transition-all group">
+                            <div className="w-14 h-14 rounded-xl bg-green-500/10 flex items-center justify-center text-green-400 mb-6 group-hover:scale-110 transition-transform">
+                                <Shield size={32} />
+                            </div>
+                            <h3 className="text-xl font-['Orbitron'] font-bold text-white mb-4">{t('homepage.features.verified_trust.title')}</h3>
+                            <p className="text-slate-400 text-sm leading-relaxed">
+                                {t('homepage.features.verified_trust.desc')}
+                            </p>
+                            <div className="mt-6 flex items-center text-green-500 text-xs font-bold uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity">
+                                {t('homepage.features.verified_trust.link')} <ChevronRight size={14} />
                             </div>
                         </div>
                     </div>
-
-                    {/* --- RIGHT COLUMN: DATA PANEL (Span 4) --- */}
-                    <div className="md:col-span-4 lg:col-span-5 flex flex-col items-end">
-                        <div className="w-full max-w-md bg-white/80 backdrop-blur-xl border border-slate-300/80 border-t-cyan-500/50 p-6 relative group hover:border-cyan-500/50 transition-colors shadow-2xl shadow-slate-300/50">
-                            {/* Decorative Corner */}
-                            <div className="absolute -top-1 -right-1 w-4 h-4 border-t-2 border-r-2 border-cyan-500"></div>
-                            <div className="absolute -bottom-1 -left-1 w-4 h-4 border-b-2 border-l-2 border-cyan-500"></div>
-
-                            <div className="flex justify-between items-end mb-6 border-b border-slate-200 pb-4">
-                                <div>
-                                    <div className="text-[10px] font-['Orbitron'] text-cyan-600 tracking-widest uppercase mb-1">DATA FEED</div>
-                                    <h3 className="text-xl font-['Exo_2'] font-bold text-slate-800 tracking-wide">{t ? t('homepage.floating.title', 'EXHIBITIONS') : "EXHIBITIONS"}</h3>
-                                </div>
-                                <div className="flex gap-1">
-                                    <span className="w-1 h-1 bg-cyan-500 rounded-full animate-ping"></span>
-                                    <span className="text-[10px] font-bold text-cyan-600 font-['Exo_2']">{t ? t('homepage.floating.live_now', 'LIVE') : "LIVE"}</span>
-                                </div>
-                            </div>
-
-                            {/* Data List */}
-                            <div className="space-y-3">
-                                {[
-                                    { title: "Dubai Expo", code: "DXB-2025", status: "ACTIVE", color: "text-cyan-600" },
-                                    { title: "Beijing Tech", code: "BJ-TECH", status: "STANDBY", color: "text-slate-400" },
-                                    { title: "Global Export", code: "GLB-EXP", status: "OFFLINE", color: "text-slate-400" },
-                                ].map((item, i) => (
-                                    <div key={i} className={`flex items-center justify-between p-3 border-l-2 ${item.status === 'ACTIVE' ? 'border-cyan-500 bg-cyan-50/50' : 'border-slate-100 hover:border-slate-300 hover:bg-white'} transition-all cursor-pointer group/item`}>
-                                        <div>
-                                            <div className={`text-xs font-bold font-['Exo_2'] uppercase tracking-wide ${item.status === 'ACTIVE' ? 'text-slate-900' : 'text-slate-500'}`}>{item.title}</div>
-                                            <div className="text-[10px] font-mono text-slate-400">{item.code}</div>
-                                        </div>
-                                        <div className={`text-[10px] font-bold tracking-wider ${item.color} font-['Orbitron']`}>{item.status}</div>
-                                    </div>
-                                ))}
-                            </div>
-
-                            {/* Footer of Card */}
-                            <div className="mt-6 flex justify-between items-center text-[10px] text-slate-400 font-mono">
-                                <span>SYNC_ID: #882910</span>
-                                <span>NET_STABLE</span>
-                            </div>
-                        </div>
-                    </div>
-
                 </div>
-            </main>
-
-            {/* --- FOOTER STATUS BAR --- */}
-            <footer className="relative z-20 py-4 px-6 md:px-12 border-t border-slate-200 bg-white/80 backdrop-blur-md flex flex-col md:flex-row items-center justify-between gap-4">
-                <div className="flex gap-8 text-[10px] font-['Exo_2'] font-bold text-slate-500 tracking-widest uppercase">
-                    <a href="#" className="hover:text-cyan-600 transition-colors">{t ? t('homepage.footer.terms') : "Terms of Protocol"}</a>
-                    <a href="#" className="hover:text-cyan-600 transition-colors">{t ? t('homepage.footer.privacy') : "Privacy Matrix"}</a>
-                    <a href="#" className="hover:text-cyan-600 transition-colors">{t ? t('homepage.footer.support') : "Tech Support"}</a>
-                </div>
-                <div className="flex gap-2 text-[10px] font-mono text-slate-500">
-                    <span>SERVER: EU-CENTRAL</span>
-                    <span className="text-cyan-600">|</span>
-                    <span>PING: 24ms</span>
-                </div>
-            </footer>
-        </div >
+            </section>
+        </div>
     );
 };
 
 export default HomePage;
-

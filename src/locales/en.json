@@ -355,13 +355,37 @@
             "services": "Services",
             "contact": "Contact"
         },
+        "system_online": "SYSTEM ONLINE",
         "hero": {
-            "title_prefix": "Welcome to",
-            "title_suffix": "- Your Gateway to Verified Chinese Products.",
-            "subtitle": "Utilizing Cutting-Edge 3D Technology from Anywhere in the World.",
-            "cta_visit": "Visit Exhibition Hall",
-            "welcome_exhibition": "Welcome to Online 3D Exhibition",
-            "description": "Meet company as a global market leader for Chinese products and services and Chinese products and services workshop that is easily accessible press and extraction accessible for worldwide."
+            "eyebrow": "Global Trade Network V2.0 Live",
+            "title_1": "THE FUTURE",
+            "title_2": "OF TRADE",
+            "description": "Access the world's first <1>Verified Industrial Metaverse</1>. Connect with suppliers, inspect heavy machinery in real-time 3D, and secure deals on the blockchain.",
+            "cta_enter": "Enter Pavilion",
+            "cta_demo": "Watch Demo"
+        },
+        "stats": {
+            "countries": "Countries",
+            "suppliers": "Suppliers",
+            "products": "Products",
+            "trade_vol": "Trade Vol"
+        },
+        "features": {
+            "global_access": {
+                "title": "Global Access",
+                "desc": "Seamlessly connect with manufacturers from over 140 countries without leaving your desk. The barrier to entry is gone.",
+                "link": "Explore Map"
+            },
+            "real_time_3d": {
+                "title": "Real-Time 3D",
+                "desc": "Inspect intricate machinery with sub-millimeter precision using our proprietary WebGL rendering engine.",
+                "link": "View Demo"
+            },
+            "verified_trust": {
+                "title": "Verified Trust",
+                "desc": "Every supplier is vetted, and every transaction is secured via smart contracts on the Ethereum blockchain.",
+                "link": "Security Protocol"
+            }
         },
         "floating": {
             "title": "Upcoming Exhibitions",
