@@ -1,7 +1,7 @@
 ﻿import React, { Suspense, useRef, useEffect, useState, useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
-import { useKeyboardControls, KeyboardControls, Preload, useGLTF, Environment, useProgress, Grid, ContactShadows, useTexture } from '@react-three/drei';
+import { useKeyboardControls, KeyboardControls, Preload, useGLTF, Environment, useProgress, Grid, ContactShadows, useTexture, Lightformer } from '@react-three/drei';
 import * as THREE from 'three';
 import { EffectComposer, Bloom, Vignette, Noise, DepthOfField } from '@react-three/postprocessing';
 import { supabase } from '../lib/supabaseClient';
@@ -14,7 +14,7 @@ import KioskUnit from './pavilion/KioskUnit';
 import ShowroomView from './pavilion/ShowroomView';
 import InfographicOverlay from './pavilion/InfographicOverlay';
 import { PAVILIONS } from './pavilion/pavilionData';
-import { IndustrialCeilingDetailsFixed, UltimateFloor, CeilingLights } from './pavilion/PavilionEnvironment';
+import { IndustrialCeilingDetailsFixed, UltimateFloor, CeilingLights, RealisticWall } from './pavilion/PavilionEnvironment';
 import { ControlsWrapper, CameraPitchClamp } from './pavilion/PavilionControls';
 import { CameraSmoother, InspectionCard } from './pavilion/PavilionInteraction';
 import { OrbitControls } from '@react-three/drei';
@@ -819,66 +819,50 @@ export default function VerifiedPavilion({ onBack, user }) {
 
                         {/* Start Wall to enclose the lobby */}
                         <group>
-                            {/* Left Wall Partitions */}
+                            {/* Left Wall Partitions - Realistic */}
                             {Array.from({ length: 5 }).map((_, i) => (
-                                <FactoryPartition
+                                <RealisticWall
                                     key={`lw-${i}`}
                                     position={[-68, 0, -30 + (i * 15)]}
                                     rotation={[0, Math.PI / 2, 0]}
-                                    width={10}
+                                    width={15} // Increased width for seamlessness, overlap slightly
                                 />
                             ))}
-                            {/* Right Wall Partitions */}
+                            {/* Right Wall Partitions - Realistic */}
                             {Array.from({ length: 5 }).map((_, i) => (
-                                <FactoryPartition
+                                <RealisticWall
                                     key={`rw-${i}`}
                                     position={[68, 0, -30 + (i * 15)]}
                                     rotation={[0, -Math.PI / 2, 0]}
-                                    width={10}
+                                    width={15}
                                 />
                             ))}
                         </group>
-                        <group position={[0, 15, 45]}>
-                            <mesh>
-                                <planeGeometry args={[100, 50]} />
-                                <meshStandardMaterial color="#111" metalness={0.9} roughness={0.2} />
-                            </mesh>
-                            {/* Lobby Grid */}
-                            <Grid
-                                position={[0, 0, 0.5]}
-                                args={[100, 50]}
-                                rotation={[Math.PI / 2, 0, 0]}
-                                cellSize={5}
-                                cellThickness={1}
-                                cellColor="#333"
-                                sectionSize={25}
-                                sectionThickness={2}
-                                sectionColor="#00ff00"
-                                fadeDistance={60}
-                            />
+                        {/* BACK WALL (Behind Camera Start) - Realistic */}
+                        <group position={[0, 0, 48]}>
+                            {Array.from({ length: 8 }).map((_, i) => (
+                                <RealisticWall
+                                    key={`bw-${i}`}
+                                    position={[(i - 3.5) * 15, 0, 0]}
+                                    rotation={[0, Math.PI, 0]}
+                                    width={15}
+                                />
+                            ))}
                         </group>
 
                         {/* --- WALL DETAILS (Adding depth to side walls) --- */}
-                        <group>
-                            {/* Left Wall Partitions */}
-                            {Array.from({ length: 5 }).map((_, i) => (
-                                <FactoryPartition
-                                    key={`lw-${i}`}
-                                    position={[-68, 0, -30 + (i * 15)]}
-                                    rotation={[0, Math.PI / 2, 0]}
-                                    width={10}
-                                />
-                            ))}
-                            {/* Right Wall Partitions */}
-                            {Array.from({ length: 5 }).map((_, i) => (
-                                <FactoryPartition
-                                    key={`rw-${i}`}
-                                    position={[68, 0, -30 + (i * 15)]}
-                                    rotation={[0, -Math.PI / 2, 0]}
-                                    width={10}
-                                />
-                            ))}
-                        </group>
+                        {/* --- WALL DETAILS (Specific Extras removed, handled by RealisticWall) --- */}
+
+                        {/* --- REALISTIC LIGHTING (Synthetic) --- */}
+                        {/* Generates an environment map locally on GPU - No network fetch required (Fixes crash) */}
+                        <Environment resolution={256} background={false} blur={0.6}>
+                            <Lightformer intensity={1.5} rotation-x={Math.PI / 2} position={[0, 5, -9]} scale={[10, 10, 1]} />
+                            <Lightformer intensity={2} rotation-y={Math.PI / 2} position={[-5, 1, -1]} scale={[20, 0.1, 1]} />
+                            <Lightformer intensity={2} rotation-y={Math.PI / 2} position={[-5, -1, -1]} scale={[20, 0.1, 1]} />
+                            <Lightformer intensity={1} rotation-y={-Math.PI / 2} position={[10, 1, 0]} scale={[20, 1, 1]} />
+                            {/* Cyan Industrial Tint */}
+                            <Lightformer intensity={0.5} rotation-y={Math.PI / 2} position={[-5, -1, -1]} scale={[20, 0.5, 1]} color="cyan" />
+                        </Environment>
 
                         {/* --- CEILING STRUCTURE --- */}
                         <IndustrialCeiling height={14} width={150} depth={150} />

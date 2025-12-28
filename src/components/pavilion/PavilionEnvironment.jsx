@@ -511,3 +511,82 @@ export function IndustrialCeilingDetailsFixed() {
         </group>
     )
 }
+
+export function RealisticWall({ position, rotation, width = 10 }) {
+    return (
+        <group position={position} rotation={rotation}>
+            {/* Main Wall Panel (Concrete/Industrial Panel) */}
+            <mesh position={[0, 7, 0]}>
+                <boxGeometry args={[width, 14, 0.5]} />
+                <meshStandardMaterial color="#2a2a2a" roughness={0.8} metalness={0.4} />
+            </mesh>
+
+            {/* Baseboard / Footer */}
+            <mesh position={[0, 0.5, 0.3]}>
+                <boxGeometry args={[width, 1, 0.2]} />
+                <meshStandardMaterial color="#111" metalness={0.8} roughness={0.4} />
+            </mesh>
+
+            {/* Structural Columns (Vertical I-Beams Effect) */}
+            <group position={[-width / 2 + 0.5, 7, 0.3]}>
+                <mesh>
+                    <boxGeometry args={[0.8, 14, 0.4]} />
+                    <meshStandardMaterial color="#0a0a0a" metalness={0.9} roughness={0.2} />
+                </mesh>
+                {/* Rivets/Bolts detail */}
+                <mesh position={[0, 0, 0.21]}>
+                    <planeGeometry args={[0.2, 13]} />
+                    <meshBasicMaterial color="#333" />
+                </mesh>
+            </group>
+
+            <group position={[width / 2 - 0.5, 7, 0.3]}>
+                <mesh>
+                    <boxGeometry args={[0.8, 14, 0.4]} />
+                    <meshStandardMaterial color="#0a0a0a" metalness={0.9} roughness={0.2} />
+                </mesh>
+                <mesh position={[0, 0, 0.21]}>
+                    <planeGeometry args={[0.2, 13]} />
+                    <meshBasicMaterial color="#333" />
+                </mesh>
+            </group>
+
+            {/* Horizontal Piping Bundle */}
+            <group position={[0, 10, 0.4]}>
+                <mesh rotation={[0, 0, Math.PI / 2]} position={[0, 0.2, 0]}>
+                    <cylinderGeometry args={[0.15, 0.15, width - 2]} />
+                    <meshStandardMaterial color="#888" metalness={0.9} roughness={0.1} />
+                </mesh>
+                <mesh rotation={[0, 0, Math.PI / 2]} position={[0, -0.2, 0]}>
+                    <cylinderGeometry args={[0.15, 0.15, width - 2]} />
+                    <meshStandardMaterial color="#666" metalness={0.9} roughness={0.1} />
+                </mesh>
+            </group>
+
+            {/* Mid-Level Tech Stripe (Emissive) */}
+            <mesh position={[0, 6, 0.26]}>
+                <boxGeometry args={[width - 2, 0.1, 0.05]} />
+                <meshStandardMaterial color="cyan" emissive="cyan" emissiveIntensity={0.5} toneMapped={false} />
+            </mesh>
+
+            {/* Lower Ventilation Grate Area */}
+            <group position={[0, 3, 0.3]}>
+                <mesh>
+                    <planeGeometry args={[width - 4, 2]} />
+                    <meshStandardMaterial color="#050505" />
+                </mesh>
+                <Grid
+                    position={[0, 0, 0.01]}
+                    rotation={[Math.PI / 2, 0, 0]}
+                    args={[width - 4, 2]}
+                    cellSize={0.25}
+                    cellThickness={0.5}
+                    cellColor="#333"
+                    sectionSize={1}
+                    sectionThickness={1}
+                    sectionColor="#555"
+                />
+            </group>
+        </group>
+    );
+}
