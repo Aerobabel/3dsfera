@@ -440,14 +440,14 @@ export function UltimateFloor() {
             <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.005, 0]}>
                 <planeGeometry args={[120, 120]} />
                 <MeshReflectorMaterial
-                    resolution={1024}
+                    resolution={512} // Reduced from 1024 for performance
                     mirror={0.5}
                     mixBlur={8}
                     mixStrength={1.5}
                     depthScale={1}
                     minDepthThreshold={0.4}
                     maxDepthThreshold={1.4}
-                    color="#A0A0A0" // Very Light Grey
+                    color="#A0A0A0"
                     metalness={0.6}
                     roughness={0.4}
                     distortion={0.2}

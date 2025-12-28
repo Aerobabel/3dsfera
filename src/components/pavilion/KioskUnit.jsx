@@ -148,6 +148,61 @@ function Hologram({ color = "#00ffff" }) {
     )
 }
 
+// 3. Info Desk Component with Hologram
+// 3. Info Desk Component with Hologram
+// 3. Info Desk Component with Hologram
+function InfoDesk() {
+    // Cyberpunk Holographic Girl
+    const texture = useVideoTexture(videoUrlDefault, { mute: true, loop: true, start: true });
+
+    React.useEffect(() => {
+        if (texture) {
+            texture.generateMipmaps = false;
+            texture.needsUpdate = true;
+        }
+    }, [texture]);
+
+    return (
+        <group position={[0, 0, 0]}>
+            {/* Sleek Curved Desk - Sitting on Platform (Y=0.6) */}
+            <group position={[0, 0.6, 1.5]}>
+                {/* Desk Body - Full Circle */}
+                <mesh position={[0, 0.3, 0]}>
+                    <cylinderGeometry args={[2.0, 2.2, 0.6, 64]} />
+                    <meshStandardMaterial color="#ffffff" metalness={0.8} roughness={0.1} side={THREE.DoubleSide} />
+                </mesh>
+                {/* Desk Surface - Full Ring */}
+                <mesh position={[0, 0.605, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+                    <ringGeometry args={[1.5, 2.3, 64]} />
+                    <meshStandardMaterial color="#111" metalness={0.8} side={THREE.DoubleSide} />
+                </mesh>
+            </group>
+
+            {/* Hologram Projector Base */}
+            <mesh position={[0, 0.7, 0]}>
+                <cylinderGeometry args={[0.8, 1, 0.2, 32]} />
+                <meshStandardMaterial color="#222" />
+            </mesh>
+
+            {/* Hologram Plane (Asian Female / Tech Girl Video) */}
+            <mesh position={[0, 2.5, 0]}>
+                <planeGeometry args={[1.8, 3.2]} />
+                <meshBasicMaterial
+                    map={texture}
+                    transparent
+                    opacity={0.95}
+                    side={THREE.DoubleSide}
+                    color="#ffffff"
+                    blending={THREE.AdditiveBlending}
+                    depthWrite={false}
+                />
+            </mesh>
+
+        </group>
+    );
+}
+
+
 function KioskUnit({
     position,
     rotation,
@@ -165,8 +220,12 @@ function KioskUnit({
     hideSideModels = false,
     isTv = false,
     isRoboticArm = false,
+    isMicrowave = false,
+    // New Props
+    type = 'standard', // 'standard' | 'info-desk'
     hideMainPedestal = false,
     productScale = 0.8,
+    floatingProduct = true,
     hideRoof = false,
     heightOffset = 0,
     useEscavator = false,
@@ -174,7 +233,8 @@ function KioskUnit({
     onClick = () => { },
     onProductClick,
     onSideClick, // New prop
-    style = "cyberpunk"
+    style = "cyberpunk",
+    interactable = true
 }) {
     const { t } = useTranslation();
     const isSciFi = style === "scifi";
@@ -189,7 +249,15 @@ function KioskUnit({
     const effectiveGlow = isSciFi ? "#00aaff" : glowColor;
     const titleColor = isSciFi ? "#222222" : "white";
 
-    const handlePointerOver = (e) => { e.stopPropagation(); document.body.style.cursor = 'pointer'; };
+    const handleInteraction = (e) => {
+        if (!interactable) return;
+        if (onClick) onClick(e);
+    };
+
+    const handlePointerOver = (e) => {
+        e.stopPropagation();
+        if (interactable) document.body.style.cursor = 'pointer';
+    };
     const handlePointerOut = (e) => { e.stopPropagation(); document.body.style.cursor = 'auto'; };
 
 
@@ -426,13 +494,13 @@ function KioskUnit({
                 {/* Frame */}
                 <mesh position={[0, 0, 0]}>
                     <boxGeometry args={[16, 6, 0.2]} />
-                    <meshStandardMaterial ref={backWallMatRef} color="#222" roughness={0.2} metalness={0.8} transparent />
+                    <meshStandardMaterial ref={backWallMatRef} color={type === 'info-desk' ? "#ffffff" : "#222"} roughness={type === 'info-desk' ? 0.1 : 0.2} metalness={0.8} transparent />
                 </mesh>
 
                 {/* Glass Panel Content Holder */}
                 <group position={[0, 0, 0.15]}>
                     {/* The Screen - No overlay per user request */}
-                    <TechScreen videoUrl={videoUrl} imageUrl={imageUrl} />
+                    {type !== 'info-desk' && <TechScreen videoUrl={videoUrl} imageUrl={imageUrl} />}
                 </group>
 
                 {/* Vertical Support Struts - TRUSS Design */}
@@ -440,16 +508,16 @@ function KioskUnit({
                     {/* Main Pole */}
                     <mesh>
                         <boxGeometry args={[0.2, 6, 0.2]} />
-                        <meshStandardMaterial color="#333" metalness={0.8} roughness={0.2} />
+                        <meshStandardMaterial color={type === 'info-desk' ? "#ffffff" : "#333"} metalness={0.9} roughness={0.1} />
                     </mesh>
                     {/* Cross Bracing */}
                     <mesh position={[0, 1, 0]} rotation={[0, 0, 0.5]}>
                         <boxGeometry args={[0.1, 2, 0.1]} />
-                        <meshStandardMaterial color="#222" metalness={0.8} />
+                        <meshStandardMaterial color={type === 'info-desk' ? "#cccccc" : "#222"} metalness={0.8} />
                     </mesh>
                     <mesh position={[0, -1, 0]} rotation={[0, 0, -0.5]}>
                         <boxGeometry args={[0.1, 2, 0.1]} />
-                        <meshStandardMaterial color="#222" metalness={0.8} />
+                        <meshStandardMaterial color={type === 'info-desk' ? "#cccccc" : "#222"} metalness={0.8} />
                     </mesh>
                 </group>
 
@@ -457,23 +525,23 @@ function KioskUnit({
                     {/* Main Pole */}
                     <mesh>
                         <boxGeometry args={[0.2, 6, 0.2]} />
-                        <meshStandardMaterial color="#333" metalness={0.8} roughness={0.2} />
+                        <meshStandardMaterial color={type === 'info-desk' ? "#ffffff" : "#333"} metalness={0.9} roughness={0.1} />
                     </mesh>
                     {/* Cross Bracing */}
                     <mesh position={[0, 1, 0]} rotation={[0, 0, -0.5]}>
                         <boxGeometry args={[0.1, 2, 0.1]} />
-                        <meshStandardMaterial color="#222" metalness={0.8} />
+                        <meshStandardMaterial color={type === 'info-desk' ? "#cccccc" : "#222"} metalness={0.8} />
                     </mesh>
                     <mesh position={[0, -1, 0]} rotation={[0, 0, 0.5]}>
                         <boxGeometry args={[0.1, 2, 0.1]} />
-                        <meshStandardMaterial color="#222" metalness={0.8} />
+                        <meshStandardMaterial color={type === 'info-desk' ? "#cccccc" : "#222"} metalness={0.8} />
                     </mesh>
                 </group>
             </group>
 
             {/* 3. Roof Structure - Floating & Detailed */}
             {!hideRoof && (
-                <group ref={roofGroupRef} position={[0, 6.5, -0.5]} onClick={onClick}>
+                <group ref={roofGroupRef} position={[0, type === 'info-desk' ? 8.5 : 6.5, -0.5]} onClick={handleInteraction}>
                     {/* Main Canopy - Thin & Clean */}
                     <mesh position={[0, 0, 0]}>
                         <boxGeometry args={[16, 0.2, 10]} />
@@ -512,6 +580,24 @@ function KioskUnit({
                             <cylinderGeometry args={[0.1, 0.1, 8]} />
                             <meshStandardMaterial color="#333" metalness={0.8} />
                         </mesh>
+
+                        {/* Info Desk Beacon - High Visibility */}
+                        {type === 'info-desk' && (
+                            <group position={[0, 2, 0]}>
+                                {/* Glowing Spire */}
+                                <mesh position={[0, 0, 0]}>
+                                    <cylinderGeometry args={[0.05, 0.15, 6, 16, 1, true]} />
+                                    <meshBasicMaterial color="#00ffff" toneMapped={false} />
+                                </mesh>
+                                {/* Beacon Light */}
+                                <pointLight position={[0, 3, 0]} color="#00ffff" intensity={4} distance={20} decay={2} />
+                                {/* Halo Ring */}
+                                <mesh position={[0, 2.8, 0]} rotation={[Math.PI / 2, 0, 0]}>
+                                    <torusGeometry args={[0.5, 0.05, 16, 32]} />
+                                    <meshBasicMaterial color="white" toneMapped={false} />
+                                </mesh>
+                            </group>
+                        )}
                     </group>
 
                     {/* Front Facade / Signage Holder */}
@@ -595,57 +681,29 @@ function KioskUnit({
             }
 
             {/* 5. Center Showcase */}
-            {
-                modelPath || isTv || isRoboticArm || useEscavator ? (
-                    <group position={[0, 0.6, 0]} onClick={onProductClick || onClick} onPointerOver={handlePointerOver} onPointerOut={handlePointerOut}>
-                        {/* Glass Display Case (Realism Upgrade) */}
-                        {!useEscavator && !isRoboticArm && ( // Don't enclose large machinery
-                            <group>
-                                <mesh position={[0, 0.9, 0]}>
-                                    <cylinderGeometry args={[3, 3, 1.8, 32]} />
-                                    <meshPhysicalMaterial
-                                        color="#ffffff"
-                                        transmission={0.99}
-                                        thickness={0.02} // Thin glass shell (not solid block)
-                                        roughness={0.02}
-                                        clearcoat={1}
-                                        metalness={0.0}
-                                        side={THREE.DoubleSide}
-                                    />
-                                </mesh>
-                            </group>
-                        )}
+            {type === 'info-desk' ? (
+                <InfoDesk />
+            ) : (modelPath || isTv || isRoboticArm || useEscavator) ? (
+                <group position={[0, 0.6, 0]} onClick={handleInteraction} onPointerOver={handlePointerOver} onPointerOut={() => document.body.style.cursor = 'auto'}>
+                    <ProductDisplay
+                        modelPath={modelPath}
+                        isTv={isTv}
+                        isRoboticArm={isRoboticArm}
+                        heightOffset={heightOffset}
+                        useEscavator={useEscavator}
+                        scale={productScale}
+                        floating={floatingProduct}
+                        hidePedestal={isMicrowave}
+                        isMicrowave={isMicrowave}
+                    />
+                </group>
+            ) : hasHologram ? (
+                <group position={[0, 4, 0]} onClick={handleInteraction}>
+                    <VolumetricBeam color={effectiveGlow} />
+                </group>
+            ) : null}
 
-
-
-                        <ProductDisplay
-                            modelPath={modelPath} // Passing the prop!
-                            isTv={isTv}
-                            isRoboticArm={isRoboticArm}
-                            hidePedestal={hideMainPedestal}
-                            position={[0, 0, 0]}
-                            scale={productScale}
-                            heightOffset={heightOffset}
-                            useEscavator={useEscavator}
-                            rotation={modelRotation}
-                        />
-                        {/* Main Central Stand if not hidden */}
-                        {!hideMainPedestal && (
-                            <mesh position={[0, -0.6, 0]}>
-                                <cylinderGeometry args={[3, 3.5, 0.2, 64]} />
-                                <meshStandardMaterial color="#1a1a1a" metalness={0.9} roughness={0.1} />
-                            </mesh>
-                        )}
-                    </group>
-                ) : hasHologram ? (
-                    <group position={[0, 4, 0]} onClick={onClick} onPointerOver={handlePointerOver} onPointerOut={handlePointerOut}>
-                        <Hologram color={effectiveGlow} />
-                        <VolumetricBeam color={effectiveGlow} />
-                    </group>
-                ) : null
-            }
-
-        </group >
+        </group>
     );
 }
 

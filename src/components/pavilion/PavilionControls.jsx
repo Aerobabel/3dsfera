@@ -32,11 +32,17 @@ function CameraRig({ velocityRef, active = true }) {
         }
 
         // 2. Movement - Forward/Backward keys
-        const accel = 40 * delta;
-        const damping = 8;
+        // 2. Movement - Forward/Backward keys
+        const accel = 120 * delta; // Tripled acceleration
+        const damping = 10; // Quicker stop
 
-        // Enforce Eye Level (Smoothly)
-        camera.position.y = THREE.MathUtils.lerp(camera.position.y, 1.7, 10 * delta);
+        // Enforce Eye Level (Hard Clamp + Smooth)
+        // If we are way off (e.g. falling/initial load), snap instantly to avoid "falling" look
+        if (Math.abs(camera.position.y - 1.7) > 1.0) {
+            camera.position.y = 1.7;
+        } else {
+            camera.position.y = THREE.MathUtils.lerp(camera.position.y, 1.7, 10 * delta);
+        }
 
         // Direction basis - Move in the direction we are facing
         const camForward = new THREE.Vector3(0, 0, -1).applyQuaternion(camera.quaternion);
@@ -67,7 +73,7 @@ function CameraRig({ velocityRef, active = true }) {
         }
 
         // Cap max speed
-        const maxSpeed = 8;
+        const maxSpeed = 20; // Increased from 8
         if (velocityRef.current.length() > maxSpeed) {
             velocityRef.current.normalize().multiplyScalar(maxSpeed);
         }

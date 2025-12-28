@@ -50,14 +50,14 @@ import aeroWallUrl from '../assets/images/aerowall.png';
 import liftWallUrl from '../assets/images/liftwall.png';
 
 const TURBO_ENGINE_PATH = '/objects/turbo_schaft_engine_ivchenko_al-20.glb';
-const PNEUMATIC_PATH = '/objects/Pneumatic.glb';
-const CRANE_PATH = '/objects/mobile_crane.glb';
+const PNEUMATIC_PATH = '/objects/optimized/Pneumatic.glb';
+const CRANE_PATH = '/objects/optimized/mobile_crane.glb';
 const CRANE_MACHINE_PATH = '/objects/optimized/crane_machine.glb';
 const ROAD_GRADER_PATH = '/objects/optimized/road_grader.glb';
 const VALVE_PATH = '/objects/valve.glb';
 const CAMERA_PATH = '/objects/optimized/camera.glb';
 const DRONE_PATH = '/objects/drone.glb';
-const ESCAVATOR_PATH = '/objects/escavator.glb';
+const ESCAVATOR_PATH = '/objects/optimized/escavator.glb';
 
 // Pre-load assets
 useGLTF.preload(TURBO_ENGINE_PATH);
@@ -391,34 +391,15 @@ export default function VerifiedPavilion({ onBack, user }) {
                         </group>
 
                         {/* Center Hero Booth (3dsfera) */}
+                        {/* Center Hero Booth (3dsfera) - Now Info Desk */}
                         <KioskUnit
                             position={[0, 0, -5]}
                             rotation={[0, 0, 0]}
-                            title="3DSFERA"
+                            title="Welcome to 3DSFERA"
                             glowColor="#00ffff"
-                            videoUrl={logoVideoUrl}
                             roofColor="white"
-                            isTv={true} // Enable TV display inside kiosk
-                            onClick={(e) => {
-                                const position = [0, 0, -5];
-                                if (inspectMode && orbitTarget && orbitTarget[0] === position[0] && orbitTarget[2] === position[2]) return;
-                                e.stopPropagation();
-                                SoundManager.playClick();
-                                setSelectedObject(PAVILIONS['3dsfera']);
-                                setInspectMode(true);
-                                setOrbitTarget(position);
-                                setCameraPosition([position[0], position[1] + 2.5, position[2] + 8.0]);
-                            }}
-                            onProductClick={(e) => {
-                                e.stopPropagation();
-                                if (inspectMode && selectedObject === PAVILIONS['3dsfera']) return;
-                                SoundManager.playClick();
-                                const position = [0, 0, -5];
-                                setSelectedObject(PAVILIONS['3dsfera']);
-                                setInspectMode(true);
-                                setOrbitTarget(position);
-                                setCameraPosition([position[0], position[1] + 2.5, position[2] + 8.0]);
-                            }}
+                            type="info-desk"
+                            interactable={false}
                         />
 
                         {/* 2. Mid Left: AERO DYNAMICS */}
@@ -507,6 +488,7 @@ export default function VerifiedPavilion({ onBack, user }) {
                             rotation={[0, Math.PI / 6, 0]}
                             title="VOLT ENERGY"
                             glowColor="#ffaa00"
+                            interactable={false}
                             roofColor="white"
                             videoUrl={null}
                             imageUrl={kioskEnergyUrl} // Inserted Energy Screen
@@ -543,6 +525,7 @@ export default function VerifiedPavilion({ onBack, user }) {
                             rotation={[0, -Math.PI / 6, 0]}
                             title="VELOCITY LOGISTICS"
                             glowColor="#00ff55"
+                            interactable={false}
                             roofColor="white"
                             videoUrl={null}
                             imageUrl={kioskLogisticsUrl} // Inserted Logistics Screen
@@ -638,6 +621,7 @@ export default function VerifiedPavilion({ onBack, user }) {
                             rotation={[0, 0, 0]}
                             title="QUANTUM DATA CORP"
                             glowColor="#4361ee"
+                            interactable={false} // Disabled per request
                             hideSideModels={true}
                             modelPath={PAVILIONS['data'].products[0].modelPath}
                             productScale={PAVILIONS['data'].products[0].scale}
@@ -786,7 +770,7 @@ export default function VerifiedPavilion({ onBack, user }) {
                     />
 
                     {/* POST PROCESSING */}
-                    <EffectComposer disableNormalPass>
+                    <EffectComposer disableNormalPass multisampling={0}>
                         <Bloom luminanceThreshold={1} mipmapBlur intensity={1.5} radius={0.4} />
                         <Noise opacity={inspectMode ? 0 : 0.02} /> {/* Disable noise in inspect for clarity */}
                         <Vignette eskil={false} offset={0.1} darkness={0.5} /> {/* Stronger Vignette for focus */}

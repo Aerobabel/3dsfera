@@ -32,7 +32,7 @@ export function PavilionArchitecture() {
                 position={[20, 30, 10]}
                 intensity={4}
                 castShadow
-                shadow-mapSize={[4096, 4096]}
+                shadow-mapSize={[1024, 1024]} // Reduced from 4096 for performance
                 shadow-bias={-0.0001}
                 shadow-radius={4}
             />
@@ -47,7 +47,7 @@ export function PavilionArchitecture() {
                 scale={80}
                 blur={2.5}
                 far={2}
-                resolution={1024}
+                resolution={512} // Reduced from 1024 for performance
                 color="#000000"
             />
 
