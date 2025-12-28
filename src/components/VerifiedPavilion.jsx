@@ -930,11 +930,7 @@ export default function VerifiedPavilion({ onBack, user }) {
                         <Bloom luminanceThreshold={1} mipmapBlur intensity={1.5} radius={0.4} />
                         <Noise opacity={inspectMode ? 0 : 0.02} /> {/* Disable noise in inspect for clarity */}
                         <Vignette eskil={false} offset={0.1} darkness={0.5} /> {/* Stronger Vignette for focus */}
-                        <DepthOfField
-                            focusDistance={0}
-                            focalLength={0.02}
-                            bokehScale={inspectMode ? 0 : 1.0} // Disable blur completely in inspect mode
-                        />
+
                     </EffectComposer>
                 </Canvas>
             </KeyboardControls>
