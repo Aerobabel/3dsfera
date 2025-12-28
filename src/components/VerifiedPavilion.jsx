@@ -1,7 +1,7 @@
 ﻿import React, { Suspense, useRef, useEffect, useState, useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
-import { useKeyboardControls, KeyboardControls, Preload, useGLTF, Environment, useProgress, Grid, ContactShadows, useTexture, Lightformer } from '@react-three/drei';
+import { useKeyboardControls, KeyboardControls, Preload, useGLTF, useProgress } from '@react-three/drei';
 import * as THREE from 'three';
 import { EffectComposer, Bloom, Vignette, Noise, DepthOfField } from '@react-three/postprocessing';
 import { supabase } from '../lib/supabaseClient';
@@ -14,7 +14,6 @@ import KioskUnit from './pavilion/KioskUnit';
 import ShowroomView from './pavilion/ShowroomView';
 import InfographicOverlay from './pavilion/InfographicOverlay';
 import { PAVILIONS } from './pavilion/pavilionData';
-import { IndustrialCeilingDetailsFixed, UltimateFloor, CeilingLights, RealisticWall } from './pavilion/PavilionEnvironment';
 import { ControlsWrapper, CameraPitchClamp } from './pavilion/PavilionControls';
 import { CameraSmoother, InspectionCard } from './pavilion/PavilionInteraction';
 import { OrbitControls } from '@react-three/drei';
@@ -22,14 +21,18 @@ import { OrbitControls } from '@react-three/drei';
 import ProductDisplay from './pavilion/ProductDisplay';
 import { ConveyorBelt } from './pavilion/subsystems/ConveyorBelt';
 import { FactoryPartition } from './pavilion/subsystems/FactoryPartition';
-import IndustrialCeiling from './pavilion/subsystems/IndustrialCeiling'; // New Import
+
 import { HeavyDutyRobot } from './pavilion/subsystems/HeavyDutyRobot';
 import { HazardZone } from './pavilion/subsystems/HazardZone';
 import { Escavator } from './pavilion/subsystems/Escavator';
 
+import { CameraManager } from './pavilion/CameraManager';
+import { SceneReadyNotifier } from './pavilion/PavilionUtils';
+import { PavilionArchitecture } from './pavilion/PavilionArchitecture';
+
 // Assets
-import tractorVideoUrl from '../assets/videos/Cyberpunk_Tractor_Video_Generation.mp4';
-import logoVideoUrl from '../assets/videos/Logo_Video_Generation.mp4';
+const tractorVideoUrl = '/videos/Cyberpunk_Tractor_Video_Generation.mp4';
+const logoVideoUrl = '/videos/Logo_Video_Generation.mp4';
 // Generated Kiosk Screens
 import kioskSecurityUrl from '../assets/images/kiosk_security.png';
 import kioskResearchUrl from '../assets/images/kiosk_research.png';
@@ -45,7 +48,6 @@ import kioskLogisticsUrl from '../assets/images/kiosk_logistics.png';
 import aeroScreenUrl from '../assets/images/aero_screen.png';
 import aeroWallUrl from '../assets/images/aerowall.png';
 import liftWallUrl from '../assets/images/liftwall.png';
-import techWallUrl from '../assets/images/wall.png';
 
 const TURBO_ENGINE_PATH = '/objects/turbo_schaft_engine_ivchenko_al-20.glb';
 const PNEUMATIC_PATH = '/objects/Pneumatic.glb';
@@ -63,39 +65,14 @@ useGLTF.preload(CRANE_PATH);
 useGLTF.preload(CRANE_MACHINE_PATH);
 useGLTF.preload(ESCAVATOR_PATH);
 
-// Helper to ensure scene is actually rendered before hiding loader
-function SceneReadyNotifier({ onReady }) {
-    const { gl } = useThree();
-    const frameCount = useRef(0);
-
-    useFrame(() => {
-        if (frameCount.current < 4) { // Wait 4 frames for safety (shader compile/upload)
-            frameCount.current += 1;
-            return;
-        }
-        // Force a gl compile check or just trust the frames
-        onReady();
-    });
-    return null;
-}
-
-function TexturedWall({ position, rotation, args, color = "#111", textureUrl }) {
-    const texture = useTexture(textureUrl);
-    texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
-    texture.repeat.set(args[0] / 20, args[1] / 20); // Scale texture (1 repeat per 20 units)
-
-    return (
-        <mesh position={position} rotation={rotation}>
-            <planeGeometry args={args} />
-            <meshStandardMaterial map={texture} color={color} metalness={0.5} roughness={0.6} />
-        </mesh>
-    );
-}
-
 export default function VerifiedPavilion({ onBack, user }) {
     const { t } = useTranslation();
     const [selectedObject, setSelectedObject] = useState(null);
     const [inspectMode, setInspectMode] = useState(false); // New: Inspect Mode State
+    const [isTransitioning, setTransitioning] = useState(false);
+    const [savedCameraState, setSavedCameraState] = useState(null); // Save cam before inspect
+    const [captureReq, setCaptureReq] = useState(false); // Trigger for camera capture
+    const [pendingData, setPendingData] = useState(null); // Data waiting for capture
     const [orbitTarget, setOrbitTarget] = useState(null); // New: Target for Orbit Controls
     const [cameraPosition, setCameraPosition] = useState(null); // New: Smoother Target Cam Pos
     const [isOpen, setIsOpen] = useState(false); // Pavilion info overlay state
@@ -104,6 +81,7 @@ export default function VerifiedPavilion({ onBack, user }) {
     const [isShowroomOpen, setIsShowroomOpen] = useState(false);
     const [showroomData, setShowroomData] = useState(null);
     const { progress, active } = useProgress();
+    const [visualProgress, setVisualProgress] = useState(0); // Smooth progress
     const [minHoldDone, setMinHoldDone] = useState(false);
     const [sceneReady, setSceneReady] = useState(false);
     const [showLoader, setShowLoader] = useState(true);
@@ -122,6 +100,15 @@ export default function VerifiedPavilion({ onBack, user }) {
             resolveVerifiedDemoId(supabase, null).then(setPavilionId);
         }
     }, [user]);
+
+    // Smooth Progress Logic: Prevent backtracking
+    useEffect(() => {
+        if (progress === 0 && !active) return; // Ignore reset
+        setVisualProgress(prev => {
+            const next = Math.max(prev, progress);
+            return next > 99 ? 100 : next;
+        });
+    }, [progress, active]);
 
     // Init Audio
     useEffect(() => {
@@ -148,21 +135,36 @@ export default function VerifiedPavilion({ onBack, user }) {
 
     // --- HANDLERS ---
 
-    const handleObjectClick = useCallback((data, position) => {
-        SoundManager.playClick();
-        setSelectedObject(data);
+    const handleCameraCaptured = useCallback((capturedState) => {
+        // 2. Camera is saved. Now transition.
+        setSavedCameraState(capturedState);
+        setCaptureReq(false);
 
-        // If position provided, enter inspect mode
-        if (position) {
-            setInspectMode(true);
-            setOrbitTarget(position);
-            // Calculate viewing angle: look from slightly above and back
-            const viewOffset = [position[0], position[1] + 2.5, position[2] + 8.0]; // Better camera distance for visibility
-            setCameraPosition(viewOffset);
+        if (pendingData) {
+            const { data, position } = pendingData;
+            SoundManager.playClick();
+            setSelectedObject(data);
+
+            if (position) {
+                setInspectMode(true);
+                setOrbitTarget(position);
+                const viewOffset = [position[0], position[1] + 2.5, position[2] + 8.0];
+                setCameraPosition(viewOffset);
+            }
         }
+        setPendingData(null);
+    }, [pendingData]);
+
+    const handleObjectClick = useCallback((data, position) => {
+        // 1. Request Capture first. Don't move yet.
+        setPendingData({ data, position });
+        setCaptureReq(true);
     }, []);
 
     const closeInspectMode = () => {
+        if (savedCameraState) {
+            setTransitioning(true);
+        }
         setInspectMode(false);
         setSelectedObject(null);
         setOrbitTarget(null);
@@ -264,103 +266,24 @@ export default function VerifiedPavilion({ onBack, user }) {
                         <SceneReadyNotifier onReady={() => setSceneReady(true)} />
 
                         {/* --- ENVIRONMENT (RESTORED DARK) --- */}
-                        <color attach="background" args={['#2a2a2a']} />
-                        <fogExp2 attach="fog" args={['#2a2a2a', 0.015]} />
-                        <Environment
-                            files="/hdris/convertio.in_image.hdr"
-                            background={false}
-                            blur={0.02}
-                            environmentIntensity={1.5} // Increased env reflection
-                        />
 
-                        {/* REALISTIC LIGHTING RATIOS */}
-                        <ambientLight intensity={0.4} /> {/* Reduced from 1.5 to remove 'flatness' */}
-
-                        <directionalLight
-                            position={[20, 30, 10]}
-                            intensity={4} // Sun is bright
-                            castShadow
-                            shadow-mapSize={[4096, 4096]} // Sharper shadows
-                            shadow-bias={-0.0001}
-                            shadow-radius={4} // Soften shadow edges
-                        />
-                        {/* Fill Light for balanced illumination (Right Side) */}
-                        <pointLight position={[30, 20, 0]} intensity={10} distance={50} decay={2} color="#e0e0ff" />
-                        <pointLight position={[-30, 20, 0]} intensity={5} distance={50} decay={2} color="#e0e0ff" />
 
                         {/* --- CINEMATIC GROUNDING --- */}
-                        <ContactShadows
-                            position={[0, 0.01, 0]} // Just above the grid
-                            color="#000000"
-                            opacity={0.6} // Strong but soft shadow
-                            scale={80} // Cover the main area
-                            blur={2.5} // High blur for that 'ambient occlusion' look
-                            far={2} // Only affect objects close to floor
-                            resolution={1024} // High quality
-                        />
+
 
                         {/* --- ORIGINAL SCENE COMPONENTS --- */}
-                        <UltimateFloor />
+                        <PavilionArchitecture />
                         {/* <BackgroundBillboard /> REMOVED for depth */}
                         {/* <BackWallStructure /> REMOVED for depth */}
                         {/* <NeonCeiling /> REMOVED per user request */}
                         {/* <FloorArrows /> REMOVED */}
-                        <IndustrialCeilingDetailsFixed />
-                        <CeilingLights />
+
 
                         {/* --- NEW ATMOSPHERE: GLOWING SPHERE & VOID FILL --- */}
 
                         {/* The Sun / Sphere */}
-                        <group position={[0, 25, 0]}>
-                            <mesh>
-                                <sphereGeometry args={[6, 64, 64]} />
-                                <meshStandardMaterial
-                                    emissive="white"
-                                    emissiveIntensity={2}
-                                    color="white"
-                                    toneMapped={false}
-                                />
-                            </mesh>
-                            <pointLight intensity={4} distance={300} decay={2} color="cyan" />
-                        </group>
 
-                        {/* Deep Back Wall (Blocking the void at Z = -90) */}
-                        <group position={[0, 20, -90]}>
-                            <TexturedWall
-                                args={[300, 120]}
-                                textureUrl={techWallUrl}
-                                color="#080808" // Darkened
-                            />
-                            {/* Giant Grid on Back Wall */}
-                            <Grid
-                                position={[0, 0, 0.5]}
-                                args={[300, 120]}
-                                rotation={[Math.PI / 2, 0, 0]}
-                                cellSize={5}
-                                cellThickness={1}
-                                cellColor="#333"
-                                sectionSize={25}
-                                sectionThickness={2}
-                                sectionColor="#00ffff"
-                                fadeDistance={200}
-                            />
-                        </group>
 
-                        {/* Side Walls to close the box */}
-                        <TexturedWall
-                            position={[-70, 20, -40]}
-                            rotation={[0, Math.PI / 2, 0]}
-                            args={[200, 120]}
-                            textureUrl={techWallUrl}
-                            color="#040404" // Very Dark (Left)
-                        />
-                        <TexturedWall
-                            position={[70, 20, -40]}
-                            rotation={[0, -Math.PI / 2, 0]}
-                            args={[200, 120]}
-                            textureUrl={techWallUrl}
-                            color="#040404" // Very Dark (Right)
-                        />
 
                         {/* --- DYNAMIC ELEMENETS --- */}
 
@@ -653,16 +576,7 @@ export default function VerifiedPavilion({ onBack, user }) {
 
                         {/* --- WAREHOUSE STRUCTURE (Partitions & Dividers) --- */}
                         {/* Left Side Lane Dividers */}
-                        <FactoryPartition position={[-15, 0, 10]} rotation={[0, Math.PI / 2, 0]} width={6} />
-                        <FactoryPartition position={[-15, 0, -15]} rotation={[0, Math.PI / 2, 0]} width={6} />
 
-                        {/* Right Side Lane Dividers */}
-                        <FactoryPartition position={[15, 0, 10]} rotation={[0, Math.PI / 2, 0]} width={6} />
-                        <FactoryPartition position={[15, 0, -15]} rotation={[0, Math.PI / 2, 0]} width={6} />
-
-                        {/* Back Wall Details */}
-                        <FactoryPartition position={[-10, 0, -45]} width={8} />
-                        <FactoryPartition position={[10, 0, -45]} width={8} />
 
                         {/* --- EXTRA KIOSKS (Filling Sides & Far Back as requested) --- */}
 
@@ -818,54 +732,17 @@ export default function VerifiedPavilion({ onBack, user }) {
                         />
 
                         {/* Start Wall to enclose the lobby */}
-                        <group>
-                            {/* Left Wall Partitions - Realistic */}
-                            {Array.from({ length: 5 }).map((_, i) => (
-                                <RealisticWall
-                                    key={`lw-${i}`}
-                                    position={[-68, 0, -30 + (i * 15)]}
-                                    rotation={[0, Math.PI / 2, 0]}
-                                    width={15} // Increased width for seamlessness, overlap slightly
-                                />
-                            ))}
-                            {/* Right Wall Partitions - Realistic */}
-                            {Array.from({ length: 5 }).map((_, i) => (
-                                <RealisticWall
-                                    key={`rw-${i}`}
-                                    position={[68, 0, -30 + (i * 15)]}
-                                    rotation={[0, -Math.PI / 2, 0]}
-                                    width={15}
-                                />
-                            ))}
-                        </group>
-                        {/* BACK WALL (Behind Camera Start) - Realistic */}
-                        <group position={[0, 0, 48]}>
-                            {Array.from({ length: 8 }).map((_, i) => (
-                                <RealisticWall
-                                    key={`bw-${i}`}
-                                    position={[(i - 3.5) * 15, 0, 0]}
-                                    rotation={[0, Math.PI, 0]}
-                                    width={15}
-                                />
-                            ))}
-                        </group>
+
 
                         {/* --- WALL DETAILS (Adding depth to side walls) --- */}
                         {/* --- WALL DETAILS (Specific Extras removed, handled by RealisticWall) --- */}
 
                         {/* --- REALISTIC LIGHTING (Synthetic) --- */}
                         {/* Generates an environment map locally on GPU - No network fetch required (Fixes crash) */}
-                        <Environment resolution={256} background={false} blur={0.6}>
-                            <Lightformer intensity={1.5} rotation-x={Math.PI / 2} position={[0, 5, -9]} scale={[10, 10, 1]} />
-                            <Lightformer intensity={2} rotation-y={Math.PI / 2} position={[-5, 1, -1]} scale={[20, 0.1, 1]} />
-                            <Lightformer intensity={2} rotation-y={Math.PI / 2} position={[-5, -1, -1]} scale={[20, 0.1, 1]} />
-                            <Lightformer intensity={1} rotation-y={-Math.PI / 2} position={[10, 1, 0]} scale={[20, 1, 1]} />
-                            {/* Cyan Industrial Tint */}
-                            <Lightformer intensity={0.5} rotation-y={Math.PI / 2} position={[-5, -1, -1]} scale={[20, 0.5, 1]} color="cyan" />
-                        </Environment>
+                        {/* --- REALISTIC LIGHTING (Synthetic) --- */}
+                        {/* Generates an environment map locally on GPU - No network fetch required (Fixes crash) */}
 
-                        {/* --- CEILING STRUCTURE --- */}
-                        <IndustrialCeiling height={14} width={150} depth={150} />
+
 
 
                         {/* --- CONTROLS SWITCH --- */}
@@ -873,6 +750,7 @@ export default function VerifiedPavilion({ onBack, user }) {
                             <ControlsWrapper
                                 velocityRef={velocityRef}
                                 cameraRef={cameraRef}
+                                active={!isTransitioning}
                             />
                         ) : (
                             <OrbitControls
@@ -882,7 +760,7 @@ export default function VerifiedPavilion({ onBack, user }) {
                                 enableZoom={true}
                                 minDistance={0.5}
                                 maxDistance={20}
-                                minPolarAngle={Math.PI / 4} // Limit top view so camera doesn't hit ceiling
+                                minPolarAngle={Math.PI / 3} // Limit top view so camera doesn't hit ceiling
                                 maxPolarAngle={Math.PI / 2} // Restrict to ground level (no under-floor view)
                             />
                         )}
@@ -898,6 +776,14 @@ export default function VerifiedPavilion({ onBack, user }) {
 
                         <Preload all />
                     </Suspense>
+
+                    <CameraManager
+                        inspectMode={inspectMode}
+                        captureReq={captureReq}
+                        onCapture={handleCameraCaptured}
+                        savedState={savedCameraState}
+                        onRestoreComplete={() => setTransitioning(false)}
+                    />
 
                     {/* POST PROCESSING */}
                     <EffectComposer disableNormalPass>
@@ -944,12 +830,12 @@ export default function VerifiedPavilion({ onBack, user }) {
                     <div className="relative w-full max-w-lg px-8 py-10 border border-cyan-400/20 rounded-3xl bg-white/5 shadow-[0_20px_80px_rgba(0,0,0,0.65)]">
                         <div className="flex items-center justify-between text-xs uppercase tracking-[0.3em] text-cyan-200/80 mb-4">
                             <span>{t('verified_pavilion.loader.title')}</span>
-                            <span>{Math.round(progress)}%</span>
+                            <span>{Math.round(visualProgress)}%</span>
                         </div>
                         <div className="w-full h-2 rounded-full bg-white/10 overflow-hidden">
                             <div
                                 className="h-full bg-gradient-to-r from-cyan-400 via-blue-400 to-indigo-500 transition-all duration-200"
-                                style={{ width: `${Math.min(Math.max(progress, 5), 100)}%` }}
+                                style={{ width: `${Math.min(Math.max(visualProgress, 5), 100)}%` }}
                             />
                         </div>
                         <div className="mt-6 text-sm text-slate-200/80 space-y-2">

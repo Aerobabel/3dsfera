@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useVideoTexture, CatmullRomLine, Text, Grid, MeshReflectorMaterial, Torus, SpotLight } from '@react-three/drei';
 import * as THREE from 'three';
 
@@ -60,8 +60,8 @@ export function CeilingLights() {
         </group>
     );
 }
-import tractorVideoUrl from '../../assets/videos/Cyberpunk_Tractor_Video_Generation.mp4';
-import logoVideoUrl from '../../assets/videos/Logo_Video_Generation.mp4';
+const tractorVideoUrl = '/videos/Cyberpunk_Tractor_Video_Generation.mp4';
+const logoVideoUrl = '/videos/Logo_Video_Generation.mp4';
 
 // --------------------------------------------------------
 // INDUSTRIAL CEILING DETAILS (Wires, Signs, Trusses)
@@ -473,12 +473,49 @@ export function UltimateFloor() {
 }
 
 export function IndustrialCeilingDetailsFixed() {
+    // Generate Corrugated Metal Bump Map
+    const corrugatedMap = useMemo(() => {
+        const canvas = document.createElement('canvas');
+        canvas.width = 512;
+        canvas.height = 512;
+        const ctx = canvas.getContext('2d');
+
+        // Background
+        ctx.fillStyle = '#808080';
+        ctx.fillRect(0, 0, 512, 512);
+
+        // Draw ridges (simple stripes for bump)
+        ctx.fillStyle = '#ffffff'; // High point
+        for (let i = 0; i < 512; i += 20) {
+            // Smooth gradient for round ridge? Just stripes for now.
+            const grad = ctx.createLinearGradient(i, 0, i + 20, 0);
+            grad.addColorStop(0, '#404040'); // Low
+            grad.addColorStop(0.5, '#ffffff'); // High
+            grad.addColorStop(1, '#404040'); // Low
+            ctx.fillStyle = grad;
+            ctx.fillRect(i, 0, 20, 512);
+        }
+
+        const tex = new THREE.CanvasTexture(canvas);
+        tex.wrapS = THREE.RepeatWrapping;
+        tex.wrapT = THREE.RepeatWrapping;
+        tex.repeat.set(10, 10);
+        return tex;
+    }, []);
+
     return (
         <group position={[0, 0, 0]}>
-            {/* SOLID ROOF ENCLOSURE */}
+            {/* SOLID ROOF ENCLOSURE (Corrugated Metal) */}
             <mesh position={[0, 30, 0]} rotation={[Math.PI / 2, 0, 0]}>
                 <planeGeometry args={[200, 200]} />
-                <meshStandardMaterial color="#111" roughness={0.9} metalness={0.2} side={THREE.DoubleSide} />
+                <meshStandardMaterial
+                    color="#1a1a1a"
+                    roughness={0.5}
+                    metalness={0.6}
+                    bumpMap={corrugatedMap}
+                    bumpScale={0.2}
+                    side={THREE.DoubleSide}
+                />
             </mesh>
 
             <VentilationDucts />
@@ -513,12 +550,52 @@ export function IndustrialCeilingDetailsFixed() {
 }
 
 export function RealisticWall({ position, rotation, width = 10 }) {
+    // Generate procedural concrete texture (Cached by useMemo)
+    const concreteTexture = useMemo(() => {
+        const canvas = document.createElement('canvas');
+        canvas.width = 512;
+        canvas.height = 512;
+        const ctx = canvas.getContext('2d');
+
+        // Base Industrial Grey
+        ctx.fillStyle = '#5a5a5a';
+        ctx.fillRect(0, 0, 512, 512);
+
+        // Noise Layer
+        for (let i = 0; i < 60000; i++) {
+            ctx.fillStyle = Math.random() > 0.5 ? '#6a6a6a' : '#4a4a4a';
+            ctx.globalAlpha = 0.15;
+            ctx.fillRect(Math.random() * 512, Math.random() * 512, 2, 2);
+        }
+
+        // Grime/Stains
+        ctx.globalAlpha = 0.1;
+        ctx.fillStyle = '#000';
+        for (let i = 0; i < 20; i++) {
+            ctx.beginPath();
+            ctx.arc(Math.random() * 512, Math.random() * 512, Math.random() * 50, 0, Math.PI * 2);
+            ctx.fill();
+        }
+
+        const tex = new THREE.CanvasTexture(canvas);
+        tex.wrapS = THREE.RepeatWrapping;
+        tex.wrapT = THREE.RepeatWrapping;
+        tex.repeat.set(width / 5, 2); // Scale texture by wall width
+        return tex;
+    }, [width]);
+
     return (
         <group position={position} rotation={rotation}>
             {/* Main Wall Panel (Concrete/Industrial Panel) */}
             <mesh position={[0, 7, 0]}>
                 <boxGeometry args={[width, 14, 0.5]} />
-                <meshStandardMaterial color="#2a2a2a" roughness={0.8} metalness={0.4} />
+                <meshStandardMaterial
+                    map={concreteTexture}
+                    roughnessMap={concreteTexture} // Use noise as roughness map too
+                    roughness={0.9}
+                    metalness={0.2}
+                    color="#888"
+                />
             </mesh>
 
             {/* Baseboard / Footer */}

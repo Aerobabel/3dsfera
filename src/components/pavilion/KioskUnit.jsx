@@ -598,6 +598,23 @@ function KioskUnit({
             {
                 modelPath || isTv || isRoboticArm || useEscavator ? (
                     <group position={[0, 0.6, 0]} onClick={onProductClick || onClick} onPointerOver={handlePointerOver} onPointerOut={handlePointerOut}>
+                        {/* Glass Display Case (Realism Upgrade) */}
+                        {!useEscavator && !isRoboticArm && ( // Don't enclose large machinery
+                            <group>
+                                <mesh position={[0, 0.9, 0]}>
+                                    <cylinderGeometry args={[3, 3, 1.8, 32]} />
+                                    <meshPhysicalMaterial
+                                        color="#ffffff"
+                                        transmission={0.99}
+                                        thickness={0.02} // Thin glass shell (not solid block)
+                                        roughness={0.02}
+                                        clearcoat={1}
+                                        metalness={0.0}
+                                        side={THREE.DoubleSide}
+                                    />
+                                </mesh>
+                            </group>
+                        )}
 
 
 

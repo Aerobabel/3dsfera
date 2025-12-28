@@ -1,8 +1,8 @@
 // Pavilion Data Structures
 // Each pavilion contains company info and all associated products
 
-import tractorVideoUrl from '../../assets/videos/Cyberpunk_Tractor_Video_Generation.mp4';
-import logoVideoUrl from '../../assets/videos/Logo_Video_Generation.mp4';
+const tractorVideoUrl = '/videos/Cyberpunk_Tractor_Video_Generation.mp4';
+const logoVideoUrl = '/videos/Logo_Video_Generation.mp4';
 import aeroWallUrl from '../../assets/images/aerowall.png';
 import liftWallUrl from '../../assets/images/liftwall.png';
 

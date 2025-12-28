@@ -3,7 +3,7 @@ import { useThree, useFrame } from '@react-three/fiber';
 import { useKeyboardControls, Html } from '@react-three/drei';
 import * as THREE from 'three';
 
-function CameraRig({ velocityRef }) {
+function CameraRig({ velocityRef, active = true }) {
     const { camera } = useThree();
     const [, getKeys] = useKeyboardControls();
 
@@ -17,6 +17,8 @@ function CameraRig({ velocityRef }) {
     const ROTATION_SPEED = 1.5;
 
     useFrame((state, delta) => {
+        if (!active) return;
+
         const { forward, backward, left, right } = getKeys();
 
         // --- TANK CONTROLS ---
@@ -29,17 +31,12 @@ function CameraRig({ velocityRef }) {
             camera.rotation.y -= ROTATION_SPEED * delta;
         }
 
-        // Clamp rotation to prevent looking backward (approx +/- 75 degrees)
-        // const MAX_YAW = 1.3;
-        // camera.rotation.y = Math.max(-MAX_YAW, Math.min(MAX_YAW, camera.rotation.y));
-        // UNLOCKED: Allow full 360 rotation per user request
-
         // 2. Movement - Forward/Backward keys
         const accel = 40 * delta;
         const damping = 8;
 
-        // Enforce Eye Level
-        camera.position.y = 1.7;
+        // Enforce Eye Level (Smoothly)
+        camera.position.y = THREE.MathUtils.lerp(camera.position.y, 1.7, 10 * delta);
 
         // Direction basis - Move in the direction we are facing
         const camForward = new THREE.Vector3(0, 0, -1).applyQuaternion(camera.quaternion);
@@ -90,14 +87,17 @@ function CameraRig({ velocityRef }) {
     return null;
 }
 
-function CameraPitchClamp({ cameraRef, minPitch = -Math.PI / 6, maxPitch = Math.PI / 6 }) {
+function CameraPitchClamp({ cameraRef, active = true, minPitch = -Math.PI / 6, maxPitch = Math.PI / 6 }) {
     // Optional: Since we removed mouse look, we might want keys for looking up/down?
     // For now, tank controls usually keep head level or use separate keys.
     // We will just clamp strictly to avoid weird angles if any other force acts on it.
     const eulerRef = useRef(new THREE.Euler(0, 0, 0, 'YXZ'));
-    useFrame(() => {
+    useFrame((state, delta) => {
+        if (!active) return;
         const cam = cameraRef?.current;
         if (!cam) return;
+        // Enforce Eye Level (Smoothly)
+        cam.position.y = THREE.MathUtils.lerp(cam.position.y, 1.7, 10 * delta);
         // Ensure Zero Roll
         cam.rotation.z = 0;
         // We might simply lock pitch to 0 for pure "DOOM" style, or allow slight look.
@@ -109,7 +109,7 @@ function CameraPitchClamp({ cameraRef, minPitch = -Math.PI / 6, maxPitch = Math.
     return null;
 }
 
-export function ControlsWrapper({ velocityRef, cameraRef }) {
+export function ControlsWrapper({ velocityRef, cameraRef, active = true }) {
     const { camera } = useThree();
 
     useEffect(() => {
@@ -118,10 +118,8 @@ export function ControlsWrapper({ velocityRef, cameraRef }) {
 
     return (
         <>
-            <CameraRig velocityRef={velocityRef} />
-            <CameraPitchClamp cameraRef={cameraRef} />
-
-
+            <CameraRig velocityRef={velocityRef} active={active} />
+            <CameraPitchClamp cameraRef={cameraRef} active={active} />
         </>
     )
 }
