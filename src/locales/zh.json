@@ -400,5 +400,61 @@
             "privacy": "隐私政策",
             "support": "支持"
         }
+    },
+    "pavilion_ui": {
+        "back": "返回",
+        "view_details": "查看 3D",
+        "close": "关闭",
+        "products_catalog": "产品目录",
+        "order": "下单",
+        "showroom": {
+            "add_to_order": "加入订单",
+            "added": "已添加",
+            "request_quote": "询问报价",
+            "selected_items": "已选项目",
+            "remove": "移除",
+            "form_name": "全名",
+            "form_name_placeholder": "输入您的姓名",
+            "form_phone": "电话号码",
+            "form_phone_placeholder": "+1 (555) 000-0000",
+            "form_email": "电子邮箱",
+            "form_email_placeholder": "name@company.com",
+            "submit": "提交请求",
+            "order_completed": "订单已完成！",
+            "order_contact_msg": "公司经理将很快联系您。",
+            "close": "关闭"
+        }
+    },
+    "verified_pavilion": {
+        "welcome": {
+            "title": "认证展馆",
+            "subtitle": "欢迎来到 3DSFERA 展览。探索优质工业供应商，以 3D 方式检视认证机械，并直接联系制造商。",
+            "btn_enter": "进入展览",
+            "controls_hint": "使用 WASD 行走 • 点击物品检视"
+        },
+        "ui": {
+            "live_link": "现场链接"
+        },
+        "ui_nav": {
+            "nav_title": "导航",
+            "nav_forward": "向前移动",
+            "nav_orbit": "旋转相机",
+            "nav_hint": "返回展览"
+        },
+        "loader": {
+            "controls": "控制",
+            "forward": "前进",
+            "backward": "后退",
+            "orbit_left": "向左旋转",
+            "orbit_right": "向右旋转",
+            "inspect_hint": "点击物体查看详情",
+            "exit_inspection": "退出检视",
+            "title": "正在初始化",
+            "asset": "加载展馆数据",
+            "chat": "连接代理",
+            "standby": "状态: {state}",
+            "state_streaming": "流式传输",
+            "state_priming": "准备中"
+        }
     }
 }

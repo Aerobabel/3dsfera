@@ -353,11 +353,13 @@ export default function ShowroomView({ pavilionData, onBack, user }) {
                                             <button
                                                 onClick={(e) => addToCart(e, product)}
                                                 className={`px-3 py-1.5 rounded text-[10px] font-bold uppercase tracking-widest border transition-all ${cart.find(c => c.id === product.id)
-                                                        ? 'bg-cyan-500 text-black border-cyan-500 cursor-default'
-                                                        : 'bg-transparent text-white/60 border-white/20 hover:border-cyan-400 hover:text-cyan-400'
+                                                    ? 'bg-cyan-500 text-black border-cyan-500 cursor-default'
+                                                    : 'bg-transparent text-white/60 border-white/20 hover:border-cyan-400 hover:text-cyan-400'
                                                     }`}
                                             >
-                                                {cart.find(c => c.id === product.id) ? 'Added' : 'Add to Order'}
+                                                {cart.find(c => c.id === product.id)
+                                                    ? t('pavilion_ui.showroom.added', 'Added')
+                                                    : t('pavilion_ui.showroom.add_to_order', 'Add to Order')}
                                             </button>
 
                                             <div className="flex items-center gap-2 text-cyan-400 text-xs font-bold uppercase tracking-wider group-hover:translate-x-1 transition-transform">
@@ -378,17 +380,17 @@ export default function ShowroomView({ pavilionData, onBack, user }) {
                             {!orderSubmitted ? (
                                 <>
                                     <div className="p-6 border-b border-white/5 flex justify-between items-center">
-                                        <h2 className="text-xl font-bold text-white font-[Orbitron]">REQUEST QUOTE</h2>
+                                        <h2 className="text-xl font-bold text-white font-[Orbitron]">{t('pavilion_ui.showroom.request_quote', 'REQUEST QUOTE')}</h2>
                                         <button onClick={() => setIsCheckoutOpen(false)} className="text-white/40 hover:text-white">✕</button>
                                     </div>
                                     <div className="p-6 space-y-6">
                                         <div className="space-y-2">
-                                            <h3 className="text-xs font-bold text-cyan-400 uppercase tracking-widest">Selected Items ({cart.length})</h3>
+                                            <h3 className="text-xs font-bold text-cyan-400 uppercase tracking-widest">{t('pavilion_ui.showroom.selected_items', 'Selected Items')} ({cart.length})</h3>
                                             <div className="max-h-32 overflow-y-auto space-y-2 custom-scrollbar pr-2">
                                                 {cart.map(item => (
                                                     <div key={item.id} className="flex justify-between items-center bg-white/5 p-2 rounded">
                                                         <span className="text-sm text-white">{item.title}</span>
-                                                        <button onClick={() => removeFromCart(item.id)} className="text-red-400 hover:text-red-300 text-xs">Remove</button>
+                                                        <button onClick={() => removeFromCart(item.id)} className="text-red-400 hover:text-red-300 text-xs">{t('pavilion_ui.showroom.remove', 'Remove')}</button>
                                                     </div>
                                                 ))}
                                             </div>
@@ -396,36 +398,36 @@ export default function ShowroomView({ pavilionData, onBack, user }) {
 
                                         <form onSubmit={handleCheckoutSubmit} className="space-y-4">
                                             <div>
-                                                <label className="block text-xs uppercase text-white/60 mb-1">Full Name</label>
+                                                <label className="block text-xs uppercase text-white/60 mb-1">{t('pavilion_ui.showroom.form_name', 'Full Name')}</label>
                                                 <input
                                                     required
                                                     type="text"
                                                     className="w-full bg-black/40 border border-white/10 rounded p-2 text-white focus:border-cyan-500 focus:outline-none transition-colors"
                                                     value={checkoutForm.name}
                                                     onChange={e => setCheckoutForm({ ...checkoutForm, name: e.target.value })}
-                                                    placeholder="Enter your name"
+                                                    placeholder={t('pavilion_ui.showroom.form_name_placeholder', 'Enter your name')}
                                                 />
                                             </div>
                                             <div>
-                                                <label className="block text-xs uppercase text-white/60 mb-1">Phone Number</label>
+                                                <label className="block text-xs uppercase text-white/60 mb-1">{t('pavilion_ui.showroom.form_phone', 'Phone Number')}</label>
                                                 <input
                                                     required
                                                     type="tel"
                                                     className="w-full bg-black/40 border border-white/10 rounded p-2 text-white focus:border-cyan-500 focus:outline-none transition-colors"
                                                     value={checkoutForm.phone}
                                                     onChange={e => setCheckoutForm({ ...checkoutForm, phone: e.target.value })}
-                                                    placeholder="+1 (555) 000-0000"
+                                                    placeholder={t('pavilion_ui.showroom.form_phone_placeholder', '+1 (555) 000-0000')}
                                                 />
                                             </div>
                                             <div>
-                                                <label className="block text-xs uppercase text-white/60 mb-1">Email Address</label>
+                                                <label className="block text-xs uppercase text-white/60 mb-1">{t('pavilion_ui.showroom.form_email', 'Email Address')}</label>
                                                 <input
                                                     required
                                                     type="email"
                                                     className="w-full bg-black/40 border border-white/10 rounded p-2 text-white focus:border-cyan-500 focus:outline-none transition-colors"
                                                     value={checkoutForm.email}
                                                     onChange={e => setCheckoutForm({ ...checkoutForm, email: e.target.value })}
-                                                    placeholder="name@company.com"
+                                                    placeholder={t('pavilion_ui.showroom.form_email_placeholder', 'name@company.com')}
                                                 />
                                             </div>
 
@@ -433,7 +435,7 @@ export default function ShowroomView({ pavilionData, onBack, user }) {
                                                 type="submit"
                                                 className="w-full py-3 bg-cyan-500 hover:bg-cyan-400 text-black font-bold uppercase tracking-widest rounded transition-colors shadow-[0_0_20px_rgba(34,211,238,0.3)] mt-2"
                                             >
-                                                Submit Request
+                                                {t('pavilion_ui.showroom.submit', 'Submit Request')}
                                             </button>
                                         </form>
                                     </div>
@@ -444,8 +446,8 @@ export default function ShowroomView({ pavilionData, onBack, user }) {
                                         <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
                                     </div>
                                     <div>
-                                        <h2 className="text-2xl font-bold text-white mb-2">Order Completed!</h2>
-                                        <p className="text-white/60">Company manager will contact you soon.</p>
+                                        <h2 className="text-2xl font-bold text-white mb-2">{t('pavilion_ui.showroom.order_completed', 'Order Completed!')}</h2>
+                                        <p className="text-white/60">{t('pavilion_ui.showroom.order_contact_msg', 'Company manager will contact you soon.')}</p>
                                     </div>
                                     <button
                                         onClick={resetCheckout}

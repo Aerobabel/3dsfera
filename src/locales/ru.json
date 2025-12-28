@@ -400,5 +400,61 @@
             "privacy": "Политика конфиденциальности",
             "support": "Поддержка"
         }
+    },
+    "pavilion_ui": {
+        "back": "Назад",
+        "view_details": "Осмотр 3D",
+        "close": "Закрыть",
+        "products_catalog": "Каталог товаров",
+        "order": "Заказ",
+        "showroom": {
+            "add_to_order": "В заказ",
+            "added": "Добавлено",
+            "request_quote": "ЗАПРОСИТЬ ЦЕНУ",
+            "selected_items": "Выбранные товары",
+            "remove": "Удалить",
+            "form_name": "ФИО",
+            "form_name_placeholder": "Введите ваше имя",
+            "form_phone": "Номер телефона",
+            "form_phone_placeholder": "+7 (999) 000-0000",
+            "form_email": "Email адрес",
+            "form_email_placeholder": "name@company.com",
+            "submit": "Отправить запрос",
+            "order_completed": "Заказ оформлен!",
+            "order_contact_msg": "Менеджер скоро свяжется с вами.",
+            "close": "Закрыть"
+        }
+    },
+    "verified_pavilion": {
+        "welcome": {
+            "title": "ВЕРИФИЦИРОВАННЫЙ ПАВИЛЬОН",
+            "subtitle": "Добро пожаловать на выставку 3DSFERA. Изучайте премиальных поставщиков, осматривайте технику в 3D и связывайтесь с производителями напрямую.",
+            "btn_enter": "Войти на выставку",
+            "controls_hint": "WASD для ходьбы • Клик для осмотра"
+        },
+        "ui": {
+            "live_link": "Онлайн"
+        },
+        "ui_nav": {
+            "nav_title": "Навигация",
+            "nav_forward": "Движение вперед",
+            "nav_orbit": "Вращение камеры",
+            "nav_hint": "Вернуться на выставку"
+        },
+        "loader": {
+            "controls": "Управление",
+            "forward": "Вперед",
+            "backward": "Назад",
+            "orbit_left": "Вращение влево",
+            "orbit_right": "Вращение вправо",
+            "inspect_hint": "Кликните объект для осмотра",
+            "exit_inspection": "Выйти из осмотра",
+            "title": "ЗАГРУЗКА",
+            "asset": "Загрузка данных павильона",
+            "chat": "Подключение агента",
+            "standby": "Статус: {state}",
+            "state_streaming": "Потоковая передача",
+            "state_priming": "Подготовка"
+        }
     }
 }

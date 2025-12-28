@@ -1049,11 +1049,11 @@ export default function VerifiedPavilion({ onBack, user }) {
                             </div>
 
                             <h1 className="text-4xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-b from-white to-slate-400 font-[Orbitron] tracking-tight">
-                                VERIFIED PAVILION
+                                {t('verified_pavilion.welcome.title')}
                             </h1>
 
                             <p className="text-lg text-slate-400 font-light leading-relaxed max-w-lg">
-                                Welcome to the 3DSFERA Exhibition. Explore premium industrial suppliers, inspect verified machinery in 3D, and connect directly with manufacturers.
+                                {t('verified_pavilion.welcome.subtitle')}
                             </p>
 
                             <div className="h-px w-24 bg-gradient-to-r from-transparent via-white/20 to-transparent my-4" />
@@ -1065,12 +1065,12 @@ export default function VerifiedPavilion({ onBack, user }) {
                                 }}
                                 className="group relative px-10 py-4 bg-white text-black font-bold uppercase tracking-[0.2em] text-sm overflow-hidden transition-all hover:scale-105 hover:shadow-[0_0_40px_rgba(255,255,255,0.3)]"
                             >
-                                <span className="relative z-10">Enter Exhibition</span>
+                                <span className="relative z-10">{t('verified_pavilion.welcome.btn_enter')}</span>
                                 <div className="absolute inset-0 bg-cyan-400 mix-blend-overlay opacity-0 group-hover:opacity-100 transition-opacity" />
                             </button>
 
                             <p className="text-[10px] text-slate-600 uppercase tracking-widest mt-4">
-                                Use WASD to Walk • Click Items to Inspect
+                                {t('verified_pavilion.welcome.controls_hint')}
                             </p>
                         </div>
                     </div>

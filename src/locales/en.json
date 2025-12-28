@@ -400,5 +400,61 @@
             "privacy": "Privacy Policy",
             "support": "Support"
         }
+    },
+    "pavilion_ui": {
+        "back": "Back",
+        "view_details": "Inspect 3D",
+        "close": "Close",
+        "products_catalog": "Product Catalog",
+        "order": "Order",
+        "showroom": {
+            "add_to_order": "Add to Order",
+            "added": "Added",
+            "request_quote": "REQUEST QUOTE",
+            "selected_items": "Selected Items",
+            "remove": "Remove",
+            "form_name": "Full Name",
+            "form_name_placeholder": "Enter your name",
+            "form_phone": "Phone Number",
+            "form_phone_placeholder": "+1 (555) 000-0000",
+            "form_email": "Email Address",
+            "form_email_placeholder": "name@company.com",
+            "submit": "Submit Request",
+            "order_completed": "Order Completed!",
+            "order_contact_msg": "Company manager will contact you soon.",
+            "close": "Close"
+        }
+    },
+    "verified_pavilion": {
+        "welcome": {
+            "title": "VERIFIED PAVILION",
+            "subtitle": "Welcome to the 3DSFERA Exhibition. Explore premium industrial suppliers, inspect verified machinery in 3D, and connect directly with manufacturers.",
+            "btn_enter": "Enter Exhibition",
+            "controls_hint": "Use WASD to Walk • Click Items to Inspect"
+        },
+        "ui": {
+            "live_link": "Live Link"
+        },
+        "ui_nav": {
+            "nav_title": "Navigation",
+            "nav_forward": "Move forward",
+            "nav_orbit": "Orbit Camera",
+            "nav_hint": "Return to Exhibition"
+        },
+        "loader": {
+            "controls": "Controls",
+            "forward": "Forward",
+            "backward": "Backward",
+            "orbit_left": "Rotate Left",
+            "orbit_right": "Rotate Right",
+            "inspect_hint": "Click object to inspect details",
+            "exit_inspection": "Exit Inspection",
+            "title": "INITIALIZING",
+            "asset": "Loading Pavilion Data",
+            "chat": "Connecting to Agent",
+            "standby": "State: {state}",
+            "state_streaming": "Streaming",
+            "state_priming": "Priming"
+        }
     }
 }
