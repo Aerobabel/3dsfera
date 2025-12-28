@@ -214,15 +214,14 @@ function KioskUnit({
     videoUrl,
     imageUrl,
     modelPath,
-    sideModelPath, // New prop
-    sideModelScale, // New prop
+    sideModelPath,
+    sideModelScale,
     modelPosition,
     hideSideModels = false,
     isTv = false,
     isRoboticArm = false,
     isMicrowave = false,
-    // New Props
-    type = 'standard', // 'standard' | 'info-desk'
+    type = 'standard',
     hideMainPedestal = false,
     productScale = 0.8,
     floatingProduct = true,
@@ -232,7 +231,7 @@ function KioskUnit({
     modelRotation = [0, 0, 0],
     onClick = () => { },
     onProductClick,
-    onSideClick, // New prop
+    onSideClick,
     style = "cyberpunk",
     interactable = true
 }) {
