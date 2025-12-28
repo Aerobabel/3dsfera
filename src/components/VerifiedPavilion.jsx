@@ -22,6 +22,7 @@ import { OrbitControls } from '@react-three/drei';
 import ProductDisplay from './pavilion/ProductDisplay';
 import { ConveyorBelt } from './pavilion/subsystems/ConveyorBelt';
 import { FactoryPartition } from './pavilion/subsystems/FactoryPartition';
+import IndustrialCeiling from './pavilion/subsystems/IndustrialCeiling'; // New Import
 import { HeavyDutyRobot } from './pavilion/subsystems/HeavyDutyRobot';
 import { HazardZone } from './pavilion/subsystems/HazardZone';
 import { Escavator } from './pavilion/subsystems/Escavator';
@@ -878,6 +879,9 @@ export default function VerifiedPavilion({ onBack, user }) {
                                 />
                             ))}
                         </group>
+
+                        {/* --- CEILING STRUCTURE --- */}
+                        <IndustrialCeiling height={14} width={150} depth={150} />
 
 
                         {/* --- CONTROLS SWITCH --- */}
