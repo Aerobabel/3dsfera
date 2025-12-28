@@ -9,7 +9,12 @@ import liftWallUrl from '../../assets/images/liftwall.png';
 const TURBO_ENGINE_PATH = '/objects/turbo_schaft_engine_ivchenko_al-20.glb'; // Kept for reference or removal
 const PNEUMATIC_PATH = '/objects/Pneumatic.glb';
 const CRANE_MACHINE_PATH = '/objects/crane_machine.glb';
+const ROAD_GRADER_PATH = '/objects/road_grader_optimized.glb';
 const VALVE_PATH = '/objects/valve.glb';
+const CAMERA_PATH = '/objects/camera.glb';
+const DRONE_PATH = '/objects/drone.glb';
+const MICROSCOPE_PATH = '/objects/microscope.glb';
+const SERVER_RACK_PATH = '/objects/network_server_rack.glb';
 
 export const PAVILIONS = {
     '3dsfera': {
@@ -134,23 +139,23 @@ export const PAVILIONS = {
         description: 'Vertical transportation solutions for modern infrastructure.',
         products: [
             {
-                id: 'excavator_Main',
-                title: 'Excavator X-200',
-                name: 'Excavator X-200',
-                description: 'Heavy-duty hydraulic excavator designed for large-scale mining and construction. Features 360-degree rotation and advanced hydraulic systems for maximum digging force.',
-                price: '$350,000',
-                modelPath: '/objects/escavator.glb',
+                id: 'road_grader_Main',
+                title: 'Mega-Grader 5000',
+                name: 'Mega-Grader 5000',
+                description: 'Advanced road grading machine with GPS-guided blade control and autonomous leveling systems. Perfect for high-speed highway construction.',
+                price: '$210,000',
+                modelPath: ROAD_GRADER_PATH,
                 isRoboticArm: false,
                 rotation: [0, -Math.PI / 4, 0],
                 stats: {
-                    weight: '22 Tons',
-                    digDepth: '6.5 m',
-                    power: '160 HP'
+                    weight: '18 Tons',
+                    bladeWidth: '14 ft',
+                    power: '250 HP'
                 },
                 features: [
-                    { title: 'High-Torque Swing', text: 'Rapid cycle times for increased productivity.' },
-                    { title: 'Reinforced Bucket', text: 'Wear-resistant steel for rock and hard soil.' },
-                    { title: 'Operator Cab', text: 'Climate-controlled with ergonomic controls and panoramic view.' }
+                    { title: 'GPS Leveling', text: 'Precision grade control within 1mm.' },
+                    { title: 'Articulated Frame', text: 'Superior maneuverability in tight spaces.' },
+                    { title: 'Eco-Diesel Engine', text: 'High torque with low emissions.' }
                 ]
             },
             {
@@ -173,5 +178,101 @@ export const PAVILIONS = {
                 ]
             }
         ]
+    },
+    'logistics': {
+        id: 'logistics',
+        name: 'GLOBAL LOGISTICS',
+        description: 'Advanced automated logistics and supply chain management solutions. Optimizing global trade with AI-driven sorting and pneumatics.',
+        stats: {
+            'Throughput': '10k/hr',
+            'Accuracy': '99.99%',
+            'Network': 'Global',
+            'AI Core': 'Gen-5'
+        },
+        glowColor: '#00ff55',
+        products: [
+            {
+                id: 'pneumatic_sorter',
+                title: 'Pneumatic Sorter Unit',
+                description: 'High-speed pneumatic diversion unit for automated conveyor systems. Handles up to 5000 units per hour with precise soft-touch actuation.',
+                stats: {
+                    'Speed': '5m/s',
+                    'Pressure': '6 Bar',
+                    'Response': '10ms',
+                    'Rating': 'IP67'
+                },
+                modelPath: PNEUMATIC_PATH,
+                scale: 1.2,
+                position: [0, 0, 0],
+                features: [
+                    'Soft-Touch Diverter',
+                    'Real-Time Tracking',
+                    'Energy Efficient Air-Drive',
+                    'Modular Design',
+                    'Predictive Maintenance'
+                ]
+            }
+        ]
+    },
+    'security': {
+        id: 'security',
+        name: 'CYBER SECURITY',
+        description: 'Next-generation surveillance and threat detection systems.',
+        glowColor: '#e63946',
+        products: [{
+            id: 'sec_camera',
+            title: 'AI Sentinel Camera',
+            description: '360-degree autonomous surveillance unit with facial recognition.',
+            stats: { 'Resolution': '8K', 'AI Model': 'Sentinel-V3', 'Vision': 'Night/Thermal' },
+            modelPath: CAMERA_PATH,
+            scale: 0.02, // Adjusted to visible size
+            features: ['Facial Recognition', 'Motion Tracking', 'Thermal Vision']
+        }]
+    },
+    'data': {
+        id: 'data',
+        name: 'DATA SYSTEMS',
+        description: 'Scalable cloud infrastructure and high-density server solutions.',
+        glowColor: '#4361ee',
+        products: [{
+            id: 'server_blade',
+            title: 'Quantum Server Rack',
+            description: 'High-density liquid cooled server rack for AI training.',
+            stats: { 'Cores': '1024', 'RAM': '4TB', 'Cooling': 'Liquid N2' },
+            modelPath: SERVER_RACK_PATH,
+            scale: 0.02, // Adjusted to visible size
+            features: ['Liquid Cooling', 'Hot-Swappable', 'Quantum Ready']
+        }]
+    },
+    'biotech': {
+        id: 'biotech',
+        name: 'BIO GENETICS',
+        description: 'Precision laboratory equipment for genetic sequencing and analysis.',
+        glowColor: '#2a9d8f',
+        products: [{
+            id: 'electron_microscope',
+            title: 'Electron Microscope',
+            description: 'High-resolution imaging for cellular analysis.',
+            stats: { 'Magnification': '1,000,000x', 'Res': '0.1nm', 'Type': 'TEM' },
+            modelPath: MICROSCOPE_PATH,
+            scale: 0.02, // Adjusted to visible size
+            features: ['Atomic Resolution', 'Auto-Focus', 'Cloud Analysis']
+        }]
+    },
+    'ai_systems': {
+        id: 'ai_systems',
+        name: 'AI ROBOTICS',
+        description: 'Autonomous drones and robotic systems for industrial automation.',
+        glowColor: '#caf0f8',
+        products: [{
+            id: 'ind_drone',
+            title: 'Inspector Drone X1',
+            description: 'Autonomous inspection drone for hazardous environments.',
+            stats: { 'Flight Time': '45m', 'Range': '5km', 'Sensors': 'Lidar/RGB' },
+            modelPath: DRONE_PATH,
+            scale: 0.02, // Adjusted to visible size
+            rotation: [0, Math.PI, 0],
+            features: ['Obstacle Avoidance', 'Auto-Docking', 'Swarm Capable']
+        }]
     }
 };

@@ -62,9 +62,7 @@ function ShowroomStage({ currentProduct, isHeavy }) {
                     <Center key={currentProduct.id} position={[0, 0, 0]}>
                         <Resize key={currentProduct.id} scale={4.5}>
                             {/* Product Rendering Switch */}
-                            {currentProduct.id === 'excavator_Main' ? (
-                                <Escavator />
-                            ) : currentProduct.isMicrowave ? (
+                            {currentProduct.isMicrowave ? (
                                 <Microwave />
                             ) : currentProduct.isTelevision ? (
                                 <Television />
@@ -250,14 +248,16 @@ export default function ShowroomView({ pavilionData, onBack, user }) {
             <div className="absolute top-0 left-0 w-full p-8 z-50 flex justify-between items-start pointer-events-none">
                 <button
                     onClick={onBack}
-                    className="pointer-events-auto group flex items-center gap-3 text-white/50 hover:text-white transition-all hover:scale-105"
+                    className="pointer-events-auto group flex items-center gap-3 transition-all hover:scale-105"
                 >
-                    <div className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center backdrop-blur-md">
-                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
+                    <div className="flex items-center gap-3 bg-black/40 backdrop-blur-md border border-white/10 rounded-full pl-1 pr-6 py-1 hover:bg-black/60 hover:border-white/30 transition-colors">
+                        <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center group-hover:bg-white group-hover:text-black transition-colors text-white">
+                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
+                        </div>
+                        <span className="text-xs font-bold tracking-[0.2em] uppercase text-white/80 group-hover:text-white" style={{ fontFamily: 'Inter, "Segoe UI", Arial, sans-serif' }}>
+                            {t('pavilion_ui.exit_showroom', 'Exit Showroom')}
+                        </span>
                     </div>
-                    <span className="text-xs font-bold tracking-[0.2em] uppercase" style={{ fontFamily: 'Inter, "Segoe UI", Arial, sans-serif' }}>
-                        {t('pavilion_ui.exit_showroom', 'Exit Showroom')}
-                    </span>
                 </button>
 
                 <div className="text-right">
@@ -320,7 +320,7 @@ export default function ShowroomView({ pavilionData, onBack, user }) {
 
             {/* NAVIGATOR (Bottom Right) */}
             <div
-                className="absolute bottom-12 right-12 z-50 flex items-center gap-6 pointer-events-auto"
+                className="absolute bottom-24 right-12 z-50 flex items-center gap-6 pointer-events-auto"
                 style={showChat ? { right: 'calc(420px + 3rem)' } : undefined}
             >
                 <button

@@ -148,7 +148,34 @@ function Hologram({ color = "#00ffff" }) {
     )
 }
 
-function KioskUnit({ position, rotation, title = "PREMIUM SUPPLIER", glowColor = "#00ffff", hasHologram = false, platformColor = "#111", roofColor, videoUrl, imageUrl, modelPath, modelPosition, hideSideModels = false, isTv = false, isRoboticArm = false, hideMainPedestal = false, productScale = 0.8, hideRoof = false, heightOffset = 0, useEscavator = false, onClick = () => { }, onProductClick, style = "cyberpunk" }) {
+function KioskUnit({
+    position,
+    rotation,
+    title = "KIOSK",
+    glowColor = "#00ffff",
+    hasHologram = false,
+    platformColor = "#111",
+    roofColor,
+    videoUrl,
+    imageUrl,
+    modelPath,
+    sideModelPath, // New prop
+    sideModelScale, // New prop
+    modelPosition,
+    hideSideModels = false,
+    isTv = false,
+    isRoboticArm = false,
+    hideMainPedestal = false,
+    productScale = 0.8,
+    hideRoof = false,
+    heightOffset = 0,
+    useEscavator = false,
+    modelRotation = [0, 0, 0],
+    onClick = () => { },
+    onProductClick,
+    onSideClick, // New prop
+    style = "cyberpunk"
+}) {
     const { t } = useTranslation();
     const isSciFi = style === "scifi";
 
@@ -166,7 +193,7 @@ function KioskUnit({ position, rotation, title = "PREMIUM SUPPLIER", glowColor =
     const handlePointerOut = (e) => { e.stopPropagation(); document.body.style.cursor = 'auto'; };
 
 
-    const isLuminent = platformColor === "white";
+    // const isLuminent = platformColor === "white"; // Unused in new design
 
     // --- SCI-FI PEDESTAL VARIANT ---
     if (isSciFi) {
@@ -178,7 +205,7 @@ function KioskUnit({ position, rotation, title = "PREMIUM SUPPLIER", glowColor =
                 {/* 1. Main Pedestal Base */}
                 <mesh position={[0, 0.5, 0]}>
                     <cylinderGeometry args={[2.5, 3, 1, 64]} />
-                    <meshStandardMaterial color="#e0e0e0" roughness={0.2} metalness={0.8} />
+                    <meshStandardMaterial color="#333" roughness={0.3} metalness={0.9} />
                 </mesh>
 
                 {/* 2. Glowing Ring Insert */}
@@ -245,6 +272,7 @@ function KioskUnit({ position, rotation, title = "PREMIUM SUPPLIER", glowColor =
                             scale={0.8} // Scaled to fit in kiosk
                             heightOffset={heightOffset}
                             useEscavator={useEscavator}
+                            isRoboticArm={isRoboticArm}
                         />
                     ) : hasHologram ? (
                         <group position={[0, 1, 0]}>
@@ -331,154 +359,236 @@ function KioskUnit({ position, rotation, title = "PREMIUM SUPPLIER", glowColor =
         }
     });
 
-    // --- ORIGINAL CYBERPUNK BOOTH VARIANT ---
+    // --- HIGH-END CYBERPUNK BOOTH VARIANT ---
     return (
         <group ref={groupRef} position={position} rotation={rotation}>
-            {/* Top Down Spot */}
-            <spotLight position={[0, 10, 0]} angle={0.6} penumbra={0.5} intensity={5} color={effectiveGlow} distance={20} />
+            {/* Top Down Spot - Focused and cleaner */}
+            <spotLight position={[0, 8, 2]} angle={0.5} penumbra={0.4} intensity={25} color={effectiveGlow} distance={15} />
 
-            {/* Fake Shadow Plane */}
-            <mesh position={[0, 0.05, 0]} rotation={[-Math.PI / 2, 0, 0]}>
-                <circleGeometry args={[11, 32]} />
-                <meshBasicMaterial color="#000000" transparent opacity={0.3} toneMapped={false} />
+            {/* 0. Floor Reflection/Shadow Blob */}
+            <mesh position={[0, 0.02, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+                <circleGeometry args={[8, 64]} />
+                <meshBasicMaterial color="#000000" transparent opacity={0.6} toneMapped={false} />
             </mesh>
 
-            {/* 1. Main Platform */}
-            <group position={[0, 0.1, 0]} onClick={onClick}>
-                <RoundedBox args={[18, 0.2, 12]} radius={0.05} smoothness={4}>
+            {/* 1. Main Base Platform - Tiered & Detailed Design */}
+            <group position={[0, 0, 0]} onClick={onClick}>
+                {/* Lower Base (Matte dark metal) */}
+                <mesh position={[0, 0.15, 0]} castShadow receiveShadow>
+                    <boxGeometry args={[16, 0.3, 10]} />
                     <meshStandardMaterial
-                        color={baseColor}
-                        roughness={roughness}
-                        metalness={metalness}
-                        emissive={isLuminent ? "#ffffff" : "#000000"}
-                        emissiveIntensity={isLuminent ? 0.8 : 0}
+                        color="#111111"
+                        roughness={0.7}
+                        metalness={0.5}
+                    />
+                </mesh>
+
+                {/* Tech Vents on Base Sides (Detailing) */}
+                <mesh position={[0, 0.15, 5.01]}>
+                    <planeGeometry args={[14, 0.15]} />
+                    <meshStandardMaterial color="black" emissive="#000000" />
+                </mesh>
+                <mesh position={[0, 0.15, -5.01]}>
+                    <planeGeometry args={[14, 0.15]} />
+                    <meshStandardMaterial color="black" emissive="#000000" />
+                </mesh>
+
+                {/* Upper Deck (Polished Obsidian/Glass look) */}
+                <RoundedBox position={[0, 0.45, 0]} args={[15, 0.3, 9]} radius={0.05} smoothness={4}>
+                    <meshPhysicalMaterial
+                        color="#050505"
+                        roughness={0.1}
+                        metalness={0.9}
+                        clearcoat={1}
+                        clearcoatRoughness={0.1}
                     />
                 </RoundedBox>
 
-                {/* Borders / Accents - 3D Neon Tubes */}
-                <mesh position={[0, 0, 6.05]} rotation={[0, 0, Math.PI / 2]}>
-                    <cylinderGeometry args={[0.04, 0.04, 18.2, 16]} />
-                    <meshStandardMaterial
-                        color={effectiveGlow}
-                        emissive={effectiveGlow}
-                        emissiveIntensity={2}
-                        toneMapped={false}
-                    />
-                </mesh>
-                <mesh position={[0, 0, -6.05]} rotation={[0, 0, Math.PI / 2]}>
-                    <cylinderGeometry args={[0.04, 0.04, 18.2, 16]} />
-                    <meshStandardMaterial
-                        color={effectiveGlow}
-                        emissive={effectiveGlow}
-                        emissiveIntensity={2}
-                        toneMapped={false}
-                    />
+                {/* Underglow Strip (Between layers) */}
+                <mesh position={[0, 0.3, 0]}>
+                    <boxGeometry args={[15.2, 0.05, 9.2]} />
+                    <meshBasicMaterial color={effectiveGlow} toneMapped={false} />
                 </mesh>
 
-                {/* Vertical Pillars */}
-                <mesh position={[-9, 3, 6]}>
-                    <boxGeometry args={[0.02, 6, 0.02]} />
-                    <meshStandardMaterial color={isSciFi ? "#ccc" : detailsColor} />
+                {/* Neon Channels on the floor */}
+                <mesh position={[7, 0.61, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+                    <planeGeometry args={[0.2, 9]} />
+                    <meshBasicMaterial color={effectiveGlow} toneMapped={false} opacity={0.8} transparent />
                 </mesh>
-                <mesh position={[9, 3, 6]}>
-                    <boxGeometry args={[0.02, 6, 0.02]} />
-                    <meshStandardMaterial color={isSciFi ? "#ccc" : detailsColor} />
+                <mesh position={[-7, 0.61, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+                    <planeGeometry args={[0.2, 9]} />
+                    <meshBasicMaterial color={effectiveGlow} toneMapped={false} opacity={0.8} transparent />
                 </mesh>
             </group>
 
-            {/* 2. Back Structure */}
-            <group ref={backWallGroupRef} position={[0, 3, -5.8]} onClick={onClick}>
-                <RoundedBox args={[18, 6, 0.5]} radius={0.1} smoothness={4}>
-                    <meshStandardMaterial
-                        ref={backWallMatRef}
-                        color={detailsColor}
-                        roughness={0.2}
-                        metalness={metalness}
-                        transparent
-                    />
-                </RoundedBox>
-                <TechScreen videoUrl={videoUrl} imageUrl={imageUrl} />
+            {/* 2. Back Wall Structure - High Tech Glass */}
+            <group ref={backWallGroupRef} position={[0, 3.5, -4.5]} onClick={onClick}>
+                {/* Frame */}
+                <mesh position={[0, 0, 0]}>
+                    <boxGeometry args={[16, 6, 0.2]} />
+                    <meshStandardMaterial ref={backWallMatRef} color="#222" roughness={0.2} metalness={0.8} transparent />
+                </mesh>
+
+                {/* Glass Panel Content Holder */}
+                <group position={[0, 0, 0.15]}>
+                    {/* The Screen - No overlay per user request */}
+                    <TechScreen videoUrl={videoUrl} imageUrl={imageUrl} />
+                </group>
+
+                {/* Vertical Support Struts - TRUSS Design */}
+                <group position={[-7.8, 0, 0.5]}>
+                    {/* Main Pole */}
+                    <mesh>
+                        <boxGeometry args={[0.2, 6, 0.2]} />
+                        <meshStandardMaterial color="#333" metalness={0.8} roughness={0.2} />
+                    </mesh>
+                    {/* Cross Bracing */}
+                    <mesh position={[0, 1, 0]} rotation={[0, 0, 0.5]}>
+                        <boxGeometry args={[0.1, 2, 0.1]} />
+                        <meshStandardMaterial color="#222" metalness={0.8} />
+                    </mesh>
+                    <mesh position={[0, -1, 0]} rotation={[0, 0, -0.5]}>
+                        <boxGeometry args={[0.1, 2, 0.1]} />
+                        <meshStandardMaterial color="#222" metalness={0.8} />
+                    </mesh>
+                </group>
+
+                <group position={[7.8, 0, 0.5]}>
+                    {/* Main Pole */}
+                    <mesh>
+                        <boxGeometry args={[0.2, 6, 0.2]} />
+                        <meshStandardMaterial color="#333" metalness={0.8} roughness={0.2} />
+                    </mesh>
+                    {/* Cross Bracing */}
+                    <mesh position={[0, 1, 0]} rotation={[0, 0, -0.5]}>
+                        <boxGeometry args={[0.1, 2, 0.1]} />
+                        <meshStandardMaterial color="#222" metalness={0.8} />
+                    </mesh>
+                    <mesh position={[0, -1, 0]} rotation={[0, 0, 0.5]}>
+                        <boxGeometry args={[0.1, 2, 0.1]} />
+                        <meshStandardMaterial color="#222" metalness={0.8} />
+                    </mesh>
+                </group>
             </group>
 
-            {/* 3. Roof Structure - Conditionally Hidden in Inspection Mode */}
+            {/* 3. Roof Structure - Floating & Detailed */}
             {!hideRoof && (
-                <group ref={roofGroupRef} position={[0, 5.8, 0]} onClick={onClick}>
-                    <RoundedBox args={[18, 0.4, 12]} radius={0.05} smoothness={4}>
-                        <meshStandardMaterial
-                            ref={roofMatRef}
-                            color={roofColor || detailsColor}
-                            roughness={0.2}
-                            metalness={metalness}
-                            emissive={roofColor === "white" ? "#ffffff" : "#000000"}
-                            emissiveIntensity={roofColor === "white" ? 0.8 : 0}
-                            transparent
-                        />
-                    </RoundedBox>
-                    {/* Border */}
-                    <mesh position={[0, 0, 6.05]} rotation={[0, 0, Math.PI / 2]}>
-                        <cylinderGeometry args={[0.04, 0.04, 18.2, 16]} />
+                <group ref={roofGroupRef} position={[0, 6.5, -0.5]} onClick={onClick}>
+                    {/* Main Canopy - Thin & Clean */}
+                    <mesh position={[0, 0, 0]}>
+                        <boxGeometry args={[16, 0.2, 10]} />
+                        <meshStandardMaterial ref={roofMatRef} color="#1a1a1a" roughness={0.2} metalness={0.8} transparent />
+                    </mesh>
+
+                    {/* Integrated Ceiling Light Panel */}
+                    <mesh position={[0, -0.11, 0]} rotation={[Math.PI / 2, 0, 0]}>
+                        <planeGeometry args={[14, 8]} />
                         <meshStandardMaterial
                             color={effectiveGlow}
                             emissive={effectiveGlow}
-                            emissiveIntensity={2}
+                            emissiveIntensity={0.5}
                             toneMapped={false}
                         />
                     </mesh>
 
-                    {/* Floating Signage */}
-                    <group position={[0, 0.8, 6]}>
-                        {/* Sign Backing */}
-                        <mesh position={[0, 0, 0]}>
-                            <boxGeometry args={[16, 2.5, 0.1]} />
-                            <meshStandardMaterial color={isSciFi ? "#ffffff" : "#000"} metalness={0.5} roughness={0.2} />
+                    {/* Roof Greebles / Tech Modules (Top Detail) */}
+                    <group position={[0, 0.2, 0]}>
+                        {/* Ventilation Unit */}
+                        <mesh position={[-4, 0, 2]}>
+                            <boxGeometry args={[2, 0.3, 2]} />
+                            <meshStandardMaterial color="#222" roughness={0.6} />
+                        </mesh>
+                        {/* Antenna Box */}
+                        <mesh position={[5, 0, -3]}>
+                            <boxGeometry args={[1, 0.4, 1.5]} />
+                            <meshStandardMaterial color="#111" roughness={0.4} />
+                        </mesh>
+                        <mesh position={[5, 0.5, -3]}>
+                            <cylinderGeometry args={[0.05, 0.05, 1]} />
+                            <meshStandardMaterial color="#555" metalness={1} />
+                        </mesh>
+                        {/* Piping */}
+                        <mesh position={[0, 0.1, -2]} rotation={[0, 0, Math.PI / 2]}>
+                            <cylinderGeometry args={[0.1, 0.1, 8]} />
+                            <meshStandardMaterial color="#333" metalness={0.8} />
+                        </mesh>
+                    </group>
+
+                    {/* Front Facade / Signage Holder */}
+                    <group position={[0, 0, 5.1]}>
+                        {/* Sign Background */}
+                        <mesh>
+                            <boxGeometry args={[16, 1.2, 0.4]} />
+                            <meshStandardMaterial color="#000" metalness={0.8} roughness={0.2} />
                         </mesh>
 
-                        {/* Line 1: VERIFIED SUPPLIER */}
+                        {/* Glowing Edge Line */}
+                        <mesh position={[0, -0.65, 0]}>
+                            <boxGeometry args={[16, 0.05, 0.4]} />
+                            <meshBasicMaterial color={effectiveGlow} toneMapped={false} />
+                        </mesh>
 
+                        {/* Tech Detail on Sign Edge */}
+                        <mesh position={[7.5, 0, 0.25]}>
+                            <boxGeometry args={[0.5, 1, 0.1]} />
+                            <meshStandardMaterial color={effectiveGlow} emissive={effectiveGlow} />
+                        </mesh>
+                        <mesh position={[-7.5, 0, 0.25]}>
+                            <boxGeometry args={[0.5, 1, 0.1]} />
+                            <meshStandardMaterial color={effectiveGlow} emissive={effectiveGlow} />
+                        </mesh>
+
+                        {/* Text: Title */}
                         <Text
-                            position={[0, 0.6, 0.11]}
-                            fontSize={0.5}
-                            letterSpacing={0.2}
+                            position={[0, 0, 0.22]}
+                            fontSize={0.7}
+                            font="https://fonts.gstatic.com/s/inter/v12/UcCO3FwrK3iLTeHuS_fvQtMwCp50KnMw2boKoduKmMEVuLyfAZ9hjp-Ek-_EeA.woff"
+                            letterSpacing={0.05}
                             anchorX="center"
                             anchorY="middle"
                         >
-                            {t('verified_pavilion.ui.verified_supplier', 'VERIFIED SUPPLIER')}
+                            {title.toUpperCase()}
                             <meshStandardMaterial
-                                color={effectiveGlow}
-                                emissive={effectiveGlow}
-                                emissiveIntensity={1.5}
+                                color="white"
+                                emissive="white"
+                                emissiveIntensity={0.8}
                                 toneMapped={false}
                             />
                         </Text>
 
-                        {/* Line 2: FIRM NAME */}
-                        <Text
-                            position={[0, -0.3, 0.11]}
-                            fontSize={1.2}
-                            letterSpacing={0.1}
-                            anchorX="center"
-                            anchorY="middle"
-                        >
-                            {title}
-                            <meshStandardMaterial
-                                color={titleColor}
-                                emissive={titleColor}
-                                emissiveIntensity={1.5}
-                                toneMapped={false}
-                            />
-                        </Text>
+
                     </group>
                 </group>
             )}
+
+            {/* 4. Products positioning */}
             {
-                modelPath && !hideSideModels && (
+                (modelPath || sideModelPath) && !hideSideModels && (
                     <>
-                        <group position={[5, 1.5, 2]} onClick={onProductClick || onClick} onPointerOver={handlePointerOver} onPointerOut={handlePointerOut}>
-                            <ProductDisplay modelPath={modelPath} scale={0.6} heightOffset={heightOffset} useEscavator={useEscavator} />
+                        <group position={[5, 0.25, 2]} onClick={(e) => {
+                            e.stopPropagation();
+                            if (onSideClick) onSideClick(e, 'right');
+                            else (onProductClick || onClick)(e);
+                        }} onPointerOver={handlePointerOver} onPointerOut={handlePointerOut}>
+                            <ProductDisplay modelPath={sideModelPath || modelPath} scale={sideModelScale || 0.6} heightOffset={heightOffset} useEscavator={useEscavator} />
+                            {/* Small product stand */}
+                            <mesh position={[0, -0.05, 0]}>
+                                <cylinderGeometry args={[1.5, 1.5, 0.1, 32]} />
+                                <meshStandardMaterial color="#222" metalness={0.8} roughness={0.2} />
+                            </mesh>
                         </group>
 
-                        <group position={[-5, 1.5, 2]} onClick={onProductClick || onClick} onPointerOver={handlePointerOver} onPointerOut={handlePointerOut}>
-                            <ProductDisplay modelPath={modelPath} scale={0.6} heightOffset={heightOffset} useEscavator={useEscavator} />
+                        <group position={[-5, 0.25, 2]} onClick={(e) => {
+                            e.stopPropagation();
+                            if (onSideClick) onSideClick(e, 'left');
+                            else (onProductClick || onClick)(e);
+                        }} onPointerOver={handlePointerOver} onPointerOut={handlePointerOut}>
+                            <ProductDisplay modelPath={sideModelPath || modelPath} scale={sideModelScale || productScale} heightOffset={heightOffset} useEscavator={useEscavator} />
+                            {/* Small product stand */}
+                            <mesh position={[0, -0.05, 0]}>
+                                <cylinderGeometry args={[1.5, 1.5, 0.1, 32]} />
+                                <meshStandardMaterial color="#222" metalness={0.8} roughness={0.2} />
+                            </mesh>
                         </group>
                     </>
                 )
@@ -487,9 +597,12 @@ function KioskUnit({ position, rotation, title = "PREMIUM SUPPLIER", glowColor =
             {/* 5. Center Showcase */}
             {
                 modelPath || isTv || isRoboticArm || useEscavator ? (
-                    <group position={[0, 0.2, 0]} onClick={onProductClick || onClick} onPointerOver={handlePointerOver} onPointerOut={handlePointerOut}> {/* Lowered to 0.2 to sit on the 0.2m high platform */}
+                    <group position={[0, 0.6, 0]} onClick={onProductClick || onClick} onPointerOver={handlePointerOver} onPointerOut={handlePointerOut}>
+
+
+
                         <ProductDisplay
-                            modelPath={modelPath}
+                            modelPath={modelPath} // Passing the prop!
                             isTv={isTv}
                             isRoboticArm={isRoboticArm}
                             hidePedestal={hideMainPedestal}
@@ -497,7 +610,15 @@ function KioskUnit({ position, rotation, title = "PREMIUM SUPPLIER", glowColor =
                             scale={productScale}
                             heightOffset={heightOffset}
                             useEscavator={useEscavator}
+                            rotation={modelRotation}
                         />
+                        {/* Main Central Stand if not hidden */}
+                        {!hideMainPedestal && (
+                            <mesh position={[0, -0.6, 0]}>
+                                <cylinderGeometry args={[3, 3.5, 0.2, 64]} />
+                                <meshStandardMaterial color="#1a1a1a" metalness={0.9} roughness={0.1} />
+                            </mesh>
+                        )}
                     </group>
                 ) : hasHologram ? (
                     <group position={[0, 4, 0]} onClick={onClick} onPointerOver={handlePointerOver} onPointerOut={handlePointerOut}>

@@ -426,29 +426,46 @@ function CeilingMonitors() {
     )
 }
 
-export function ReflectiveGridFloor() {
+export function UltimateFloor() {
     return (
         <group position={[0, -0.01, 0]}>
-            {/* Reflector */}
-            <mesh rotation={[-Math.PI / 2, 0, 0]}>
-                <planeGeometry args={[100, 100]} />
-                <meshStandardMaterial
-                    color="#777777" // Medium Grey (was #cccccc)
-                    roughness={0.8} // Matte/Rough to diffuse light
-                    metalness={0.1} // Low metalness
+            {/* COMPONENT 1: The "Pink Success" Logic (Base Layer) */}
+            <mesh rotation={[-Math.PI / 2, 0, 0]} receiveShadow={false}>
+                <planeGeometry args={[120, 120]} />
+                {/* Unlit White Material - Identical physics to the "Pink" check that worked */}
+                <meshStandardMaterial color="#909090" roughness={0.5} metalness={0.5} />
+            </mesh>
+
+            {/* COMPONENT 2: The Reflections */}
+            <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.005, 0]}>
+                <planeGeometry args={[120, 120]} />
+                <MeshReflectorMaterial
+                    resolution={1024}
+                    mirror={0.5}
+                    mixBlur={8}
+                    mixStrength={1.5}
+                    depthScale={1}
+                    minDepthThreshold={0.4}
+                    maxDepthThreshold={1.4}
+                    color="#A0A0A0" // Very Light Grey
+                    metalness={0.6}
+                    roughness={0.4}
+                    distortion={0.2}
+                    distortionMap={null}
                 />
             </mesh>
-            {/* Grid Overlay */}
+
+            {/* Grid Overlay - "Architectural White" Style */}
             <Grid
-                position={[0, 0.05, 0]}
-                args={[100, 100]}
+                position={[0, 0.02, 0]}
+                args={[120, 120]}
                 cellSize={2}
                 cellThickness={1}
-                cellColor="#555555" // Subtle dark grey for tiles
+                cellColor="#e6e6e6" // Extremely subtle off-white
                 sectionSize={10}
                 sectionThickness={1.5}
-                sectionColor="#ffffff" // Clean white for structure
-                fadeDistance={80}
+                sectionColor="#d4d4d4" // Subtle grey (Removed Blue/Cyan)
+                fadeDistance={100} // Soft fade out at distance
                 infiniteGrid
             />
         </group>
@@ -458,6 +475,12 @@ export function ReflectiveGridFloor() {
 export function IndustrialCeilingDetailsFixed() {
     return (
         <group position={[0, 0, 0]}>
+            {/* SOLID ROOF ENCLOSURE */}
+            <mesh position={[0, 30, 0]} rotation={[Math.PI / 2, 0, 0]}>
+                <planeGeometry args={[200, 200]} />
+                <meshStandardMaterial color="#111" roughness={0.9} metalness={0.2} side={THREE.DoubleSide} />
+            </mesh>
+
             <VentilationDucts />
             <StructuralBeams />
             <CeilingMonitors />

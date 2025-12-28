@@ -8,10 +8,10 @@ function CameraRig({ velocityRef }) {
     const [, getKeys] = useKeyboardControls();
 
     // Bounds for movement (Pavilion floor area)
-    const MAX_X = 35;
-    const MIN_X = -35;
-    const MAX_Z = 50;
-    const MIN_Z = -20;
+    const MAX_X = 70;
+    const MIN_X = -70;
+    const MAX_Z = 60;
+    const MIN_Z = -80;
 
     // Rotation Speed
     const ROTATION_SPEED = 1.5;
@@ -30,8 +30,9 @@ function CameraRig({ velocityRef }) {
         }
 
         // Clamp rotation to prevent looking backward (approx +/- 75 degrees)
-        const MAX_YAW = 1.3;
-        camera.rotation.y = Math.max(-MAX_YAW, Math.min(MAX_YAW, camera.rotation.y));
+        // const MAX_YAW = 1.3;
+        // camera.rotation.y = Math.max(-MAX_YAW, Math.min(MAX_YAW, camera.rotation.y));
+        // UNLOCKED: Allow full 360 rotation per user request
 
         // 2. Movement - Forward/Backward keys
         const accel = 40 * delta;

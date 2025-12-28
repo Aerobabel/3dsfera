@@ -8,11 +8,11 @@ import { RoundedBox } from '@react-three/drei';
 function Crate({ position, color = "#444" }) {
     return (
         <group position={position}>
-            <RoundedBox args={[2.5, 2.5, 2.5]} radius={0.1} smoothness={4}>
+            <RoundedBox args={[1.5, 1.5, 1.5]} radius={0.05} smoothness={4} castShadow receiveShadow>
                 <meshStandardMaterial color={color} roughness={0.3} metalness={0.6} />
             </RoundedBox>
             {/* Tech details/grooves */}
-            <mesh position={[0, 0, 1.3]}>
+            <mesh position={[0, 0, 1.3]} castShadow receiveShadow>
                 <planeGeometry args={[2, 2]} />
                 <meshStandardMaterial color="#222" />
             </mesh>

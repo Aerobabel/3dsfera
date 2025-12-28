@@ -55,15 +55,30 @@ function GLTFModel({ path, scale, floating }) {
     const gltf = useGLTF(path);
     const scene = React.useMemo(() => gltf.scene.clone(), [gltf.scene]);
 
+    React.useLayoutEffect(() => {
+        scene.traverse((child) => {
+            if (child.isMesh) {
+                child.castShadow = true;
+                child.receiveShadow = true;
+                if (child.material) {
+                    child.material.transparent = false;
+                    child.material.opacity = 1;
+                    child.material.depthWrite = true;
+                    child.material.side = THREE.DoubleSide;
+                }
+            }
+        });
+    }, [scene]);
+
     if (floating) {
         return (
             <Float speed={2} rotationIntensity={0.5} floatIntensity={0.5}>
-                <primitive object={scene} scale={[1.5, 1.5, 1.5]} />
+                <primitive object={scene} scale={[1, 1, 1]} />
             </Float>
         );
     }
 
-    return <primitive object={scene} scale={[1.5, 1.5, 1.5]} />;
+    return <primitive object={scene} scale={[1, 1, 1]} />;
 }
 
 // --- MAIN COMPONENT ---

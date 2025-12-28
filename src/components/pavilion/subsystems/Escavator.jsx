@@ -6,31 +6,12 @@ import React, { useRef, useLayoutEffect, useMemo } from 'react';
 import { useGLTF } from '@react-three/drei';
 import * as THREE from 'three';
 
+const ESCAVATOR_MODEL_PATH = '/objects/escavator.glb';
+
 export function Escavator(props) {
-    const gltf = useGLTF('/objects/escavator.glb');
-    // Clone once so we can safely mutate transforms/materials
+    const gltf = useGLTF(ESCAVATOR_MODEL_PATH);
     const scene = useMemo(() => gltf.scene.clone(true), [gltf.scene]);
     const ref = useRef();
-
-    // Auto-centering removed as it was causing offset issues
-    // useLayoutEffect(() => {
-    //     // Center the model at the origin and rest it on the ground
-    //     const box = new THREE.Box3().setFromObject(scene);
-    //     const center = new THREE.Vector3();
-    //     box.getCenter(center);
-    //     scene.position.sub(center);
-    //     scene.position.y -= box.min.y; // lift so the lowest point sits on y=0
-
-    //     scene.traverse((child) => {
-    //         if (child.isMesh) {
-    //             child.castShadow = true;
-    //             child.receiveShadow = true;
-    //             if (child.material) {
-    //                 child.material.envMapIntensity = 1;
-    //             }
-    //         }
-    //     });
-    // }, [scene]);
 
     useLayoutEffect(() => {
         scene.traverse((child) => {
@@ -39,6 +20,9 @@ export function Escavator(props) {
                 child.receiveShadow = true;
                 if (child.material) {
                     child.material.envMapIntensity = 1;
+                    child.material.transparent = false;
+                    child.material.opacity = 1;
+                    child.material.side = THREE.DoubleSide;
                 }
             }
         });
@@ -46,9 +30,9 @@ export function Escavator(props) {
 
     return (
         <group {...props} dispose={null} ref={ref}>
-            <primitive object={scene} scale={1.8} rotation={[0, -Math.PI / 4, 0]} />
+            <primitive object={scene} scale={1.8} position={[0, 0, 0]} rotation={[0, -Math.PI / 4, 0]} />
         </group>
     );
 }
 
-useGLTF.preload('/objects/escavator.glb');
+useGLTF.preload(ESCAVATOR_MODEL_PATH);
