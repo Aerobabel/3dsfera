@@ -288,8 +288,9 @@ export default function VerifiedPavilion({ onBack, user }) {
                         {/* --- DYNAMIC ELEMENETS --- */}
 
                         {/* Drones */}
-                        <MaintenanceDrone color="#00ffff" startAngle={0} yOffset={6} radius={12} speed={0.2} />
-                        <MaintenanceDrone color="#ff00ff" startAngle={Math.PI} yOffset={8} radius={18} speed={-0.15} />
+                        {/* Drones REMOVED per user request */}
+                        {/* <MaintenanceDrone color="#00ffff" startAngle={0} yOffset={6} radius={12} speed={0.2} /> */}
+                        {/* <MaintenanceDrone color="#ff00ff" startAngle={Math.PI} yOffset={8} radius={18} speed={-0.15} /> */}
 
                         {/* --- PRODUCT SHOWCASE ON FLOOR --- */}
                         {/* 2. Road Grader on Right (Replacing Crane) */}
