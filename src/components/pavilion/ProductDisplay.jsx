@@ -5,8 +5,6 @@ import * as THREE from 'three';
 // --- SUB-COMPONENTS ---
 
 import { HeavyDutyRobot } from './subsystems/HeavyDutyRobot';
-import { Microwave } from './subsystems/Microwave';
-import { Television } from './subsystems/Television';
 import { Escavator } from './subsystems/Escavator';
 
 function ProceduralPedestal() {
@@ -85,7 +83,6 @@ function GLTFModel({ path, scale, floating }) {
 
 export default function ProductDisplay({
     modelPath,
-    isTv = false,
     isRoboticArm = false,
     useEscavator = false,
     position = [0, 0, 0],
@@ -112,14 +109,10 @@ export default function ProductDisplay({
                     <cylinderGeometry args={[1.5, 1.5, 4, 16]} />
                     <meshBasicMaterial transparent opacity={0} depthWrite={false} color="red" side={THREE.DoubleSide} />
                 </mesh>
-                {isTv ? (
-                    <Television scale={1.2} />
-                ) : isRoboticArm ? (
+                {isRoboticArm ? (
                     <HeavyDutyRobot position={[0, -0.95, 0]} />
                 ) : useEscavator ? (
                     <Escavator />
-                ) : props.isMicrowave ? (
-                    <Microwave scale={0.8} />
                 ) : (
                     modelPath && <GLTFModel path={modelPath} floating={floating} />
                 )}

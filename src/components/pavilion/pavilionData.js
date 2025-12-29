@@ -36,50 +36,7 @@ export const PAVILIONS = {
         },
         glowColor: '#00ffff',
         videoUrl: logoVideoUrl,
-        products: [
-            {
-                id: 'smart_microwave',
-                title: 'Smart Inverter Microwave',
-                description: 'Next-gen kitchen appliance with AI cooking sensors and rapid defrost technology. Sleek stainless steel finish.',
-                stats: {
-                    'Power': '1200W',
-                    'Capacity': '2.2 cu ft',
-                    'Sensors': 'Humidity/Temp'
-                },
-                modelPath: null,
-                isMicrowave: true,
-                scale: 1.0,
-                position: [0, 0, 0],
-                features: [
-                    'AI Cooking Sensors',
-                    'Smart Inverter Technology',
-                    'EasyClean Antibacterial Coating',
-                    'Hexagonal Stable Ring',
-                    'Bright LED Interior Light'
-                ]
-            },
-            {
-                id: 'oled_tv',
-                title: '65" 4K OLED TV',
-                description: 'Ultra-thin bezel-less display with infinite contrast and cinematic color accuracy.',
-                stats: {
-                    'Resolution': '3840 x 2160',
-                    'Panel Type': 'OLED',
-                    'Refresh Rate': '120Hz'
-                },
-                modelPath: null,
-                isTelevision: true,
-                scale: 1.2,
-                position: [5, 0, 0],
-                features: [
-                    'Self-lit OLED Pixels',
-                    'α9 Gen5 AI Processor 4K',
-                    'Dolby Vision IQ & Dolby Atmos',
-                    'NVIDIA G-SYNC Compatible',
-                    'ThinQ AI with Voice Control'
-                ]
-            }
-        ]
+        products: []
     },
     'aero': {
         id: 'aero',
@@ -139,24 +96,7 @@ export const PAVILIONS = {
                 ],
                 image: pnemaPrivodUrl
             },
-            {
-                id: 'turbine_blade',
-                title: 'Titanium Turbine Blade',
-                description: 'High-efficiency airfoil design for maximum thrust.',
-                stats: { 'Material': 'Ti-Alloy', 'Length': '40cm', 'Heat Resist': '2000°C' },
-                modelPath: null,
-                features: ['Aerodynamic Profile', 'Cooling Channels', 'Stress Tested'],
-                image: null
-            },
-            {
-                id: 'fuel_pump',
-                title: 'High-Pressure Fuel Pump',
-                description: 'Precision fuel delivery for jet engines.',
-                stats: { 'Pressure': '5000 PSI', 'Flow': '50 L/min', 'Weight': '5kg' },
-                modelPath: null,
-                features: ['Dual Redundancy', 'Self-Lubricating', 'Compact Design'],
-                image: null
-            }
+
         ]
     },
     'heavy': {

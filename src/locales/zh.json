@@ -332,14 +332,7 @@
             }
         },
         "products": {
-            "smart_microwave": {
-                "title": "智能变频微波炉",
-                "description": "AI烹饪传感器，极速解冻，不锈钢外观，适配现代厨房。"
-            },
-            "oled_tv": {
-                "title": "65英寸 4K OLED 电视",
-                "description": "无边框4K OLED面板，极高对比度与影院级色彩。"
-            },
+
             "turbine_valve": {
                 "title": "高温涡轮阀",
                 "description": "钛合金精密阀门，专为极端温度与高可靠性而设计。"

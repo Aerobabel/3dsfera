@@ -332,14 +332,7 @@
             }
         },
         "products": {
-            "smart_microwave": {
-                "title": "Smart Inverter Microwave",
-                "description": "AI cooking sensors, rapid defrost, and stainless finish for modern kitchens."
-            },
-            "oled_tv": {
-                "title": "65\" 4K OLED TV",
-                "description": "Bezel-less 4K OLED panel with infinite contrast and cinematic color accuracy."
-            },
+
             "turbine_valve": {
                 "title": "High-Temp Turbine Valve",
                 "description": "Precision titanium-alloy valve engineered for extreme turbine temperatures and durability."

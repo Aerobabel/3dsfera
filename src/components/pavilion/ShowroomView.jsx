@@ -11,8 +11,6 @@ import FeaturesModal from './FeaturesModal';
 // ... imports
 import { HeavyDutyRobot } from './subsystems/HeavyDutyRobot';
 import { PlatformDemoModel } from './subsystems/PlatformDemoModel';
-import { Microwave } from './subsystems/Microwave';
-import { Television } from './subsystems/Television';
 import { Escavator } from './subsystems/Escavator';
 
 // --- COMPONENTS ---
@@ -62,11 +60,7 @@ function ShowroomStage({ currentProduct, isHeavy }) {
                     <Center key={currentProduct.id} position={[0, 0, 0]}>
                         <Resize key={currentProduct.id} scale={4.5}>
                             {/* Product Rendering Switch */}
-                            {currentProduct.isMicrowave ? (
-                                <Microwave />
-                            ) : currentProduct.isTelevision ? (
-                                <Television />
-                            ) : currentProduct.isPlatformDemo ? (
+                            {currentProduct.isPlatformDemo ? (
                                 <PlatformDemoModel />
                             ) : currentProduct.isRoboticArm ? (
                                 <HeavyDutyRobot />

@@ -377,9 +377,7 @@ function KioskUnit({
     sideModelScale,
     modelPosition,
     hideSideModels = false,
-    isTv = false,
     isRoboticArm = false,
-    isMicrowave = false,
     type = 'standard',
     hideMainPedestal = false,
     productScale = 0.8,
@@ -489,10 +487,9 @@ function KioskUnit({
 
                 {/* 6. Content (Model or Hologram) */}
                 <group position={[0, 0, 0]}> {/* Lowered from 0.4 to 0 so pedestal sits on floor */}
-                    {modelPath || isTv || useEscavator ? (
+                    {modelPath || useEscavator ? (
                         <ProductDisplay
                             modelPath={modelPath}
-                            isTv={isTv}
                             hidePedestal={hideMainPedestal}
                             position={[0, 0, 0]}
                             scale={0.8} // Scaled to fit in kiosk
@@ -871,18 +868,16 @@ function KioskUnit({
             {/* 5. Center Showcase */}
             {type === 'info-desk' ? (
                 <InfoDesk />
-            ) : (modelPath || isTv || isRoboticArm || useEscavator) ? (
+            ) : (modelPath || isRoboticArm || useEscavator) ? (
                 <group position={[0, 0.6, 0]} onClick={handleInteraction} onPointerOver={handlePointerOver} onPointerOut={() => document.body.style.cursor = 'auto'}>
                     <ProductDisplay
                         modelPath={modelPath}
-                        isTv={isTv}
                         isRoboticArm={isRoboticArm}
                         heightOffset={heightOffset}
                         useEscavator={useEscavator}
                         scale={productScale}
                         floating={floatingProduct}
-                        hidePedestal={isMicrowave}
-                        isMicrowave={isMicrowave}
+                        hidePedestal={false}
                     />
                 </group>
             ) : hasHologram ? (
