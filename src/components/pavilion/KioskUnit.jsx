@@ -281,34 +281,34 @@ function CorporatePavilion({ width = 14, height = 7, depth = 8 }) {
                     <DataDashboardScreen width={width * 0.8} height={height * 0.7} />
                 </group>
 
-                {/* 3D Kinetic Brand Centerpiece */}
-                <group position={[0, -1.5, 1]} rotation={[0, 1.66, 0]}> {/* Rotated 95 deg */}
-                    <group ref={logoRef}>
-                        <Center>
-                            <Gltf src="/objects/hologram.glb" scale={10} />
-                        </Center>
-                    </group>
+                {/* 3D Kinetic Brand Centerpiece REMOVED per user request */}
+                {/* <group position={[0, -1.5, 1]} rotation={[0, 1.66, 0]}> 
+                        <group ref={logoRef}>
+                            <Center>
+                                <Gltf src="/objects/hologram.glb" scale={10} />
+                            </Center>
+                        </group> */}
 
-                    {/* Minimalist Brand Signature - LARGER */}
-                    <Text
-                        position={[0, -2.8, 0]}
-                        fontSize={2.0}
-                        color="#ffffff"
-                        anchorX="center"
-                        anchorY="middle"
-                        font={fontUrl}
-                        letterSpacing={0.15}
-                        fontWeight="normal"
-                        outlineWidth={0.01}
-                        outlineColor="#00aaff"
-                    >
-                        3DSFERA
-                    </Text>
-                    <mesh position={[0, -3.8, 0]}>
-                        <planeGeometry args={[1.5, 0.05]} />
-                        <meshBasicMaterial color="#00aaff" toneMapped={false} />
-                    </mesh>
-                </group>
+                {/* Minimalist Brand Signature - LARGER */}
+                <Text
+                    position={[0, -2.8, 0]}
+                    fontSize={2.0}
+                    color="#ffffff"
+                    anchorX="center"
+                    anchorY="middle"
+                    font={fontUrl}
+                    letterSpacing={0.15}
+                    fontWeight="normal"
+                    outlineWidth={0.01}
+                    outlineColor="#00aaff"
+                >
+                    3DSFERA
+                </Text>
+                <mesh position={[0, -3.8, 0]}>
+                    <planeGeometry args={[1.5, 0.05]} />
+                    <meshBasicMaterial color="#00aaff" toneMapped={false} />
+                </mesh>
+                {/* </group> */}
             </group>
 
             {/* 3. Roof Canopy - Suspended Dark Structure */}
@@ -358,7 +358,7 @@ function CorporatePavilion({ width = 14, height = 7, depth = 8 }) {
             {/* 5. Reception Desk (Central Element) */}
             <InfoDesk />
 
-        </group>
+        </group >
     );
 }
 

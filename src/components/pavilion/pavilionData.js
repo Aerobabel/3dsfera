@@ -12,6 +12,7 @@ import klapanUrl from '../../assets/images/klapan.png';
 import mobileGraderUrl from '../../assets/images/mobilegrader.png';
 import pnemaPrivodUrl from '../../assets/images/pnemaprivod.png';
 import kioskBiotechUrl from '../../assets/images/kiosk_biotech.png';
+import kioskSecurityUrl from '../../assets/images/kiosk_security.png';
 
 const TURBO_ENGINE_PATH = '/objects/turbo_schaft_engine_ivchenko_al-20.glb';
 const PNEUMATIC_PATH = '/objects/Pneumatic.glb';
