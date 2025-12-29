@@ -75,9 +75,7 @@ function ShowroomStage({ currentProduct, isHeavy }) {
                                     path={currentProduct.modelPath}
                                     rotation={currentProduct.rotation || [0, 0, 0]}
                                 />
-                            ) : (
-                                <PlaceholderModel />
-                            )}
+                            ) : null}
                         </Resize>
                     </Center>
 

@@ -4,7 +4,6 @@
 const tractorVideoUrl = '/videos/Cyberpunk_Tractor_Video_Generation.mp4';
 const logoVideoUrl = '/videos/Logo_Video_Generation.mp4';
 import aeroWallUrl from '../../assets/images/aerowall.png';
-import liftWallUrl from '../../assets/images/liftwall.png';
 import cameralensUrl from '../../assets/images/cameralens.png';
 import inspectorDroneUrl from '../../assets/images/inspectordrone.png';
 import mobileCraneUrl from '../../assets/images/mobilecrane.png';
@@ -147,7 +146,7 @@ export const PAVILIONS = {
                 stats: { 'Material': 'Ti-Alloy', 'Length': '40cm', 'Heat Resist': '2000°C' },
                 modelPath: null,
                 features: ['Aerodynamic Profile', 'Cooling Channels', 'Stress Tested'],
-                image: aeroWallUrl
+                image: null
             },
             {
                 id: 'fuel_pump',
@@ -156,7 +155,7 @@ export const PAVILIONS = {
                 stats: { 'Pressure': '5000 PSI', 'Flow': '50 L/min', 'Weight': '5kg' },
                 modelPath: null,
                 features: ['Dual Redundancy', 'Self-Lubricating', 'Compact Design'],
-                image: liftWallUrl
+                image: null
             }
         ]
     },
