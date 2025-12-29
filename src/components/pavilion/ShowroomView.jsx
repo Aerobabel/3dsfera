@@ -339,7 +339,7 @@ export default function ShowroomView({ pavilionData, onBack, user }) {
                                             <img
                                                 src={product.image}
                                                 alt={product.title}
-                                                className="w-full h-full object-cover opacity-60 group-hover:opacity-100 transition-opacity grayscale group-hover:grayscale-0 duration-500"
+                                                className="w-full h-full object-contain p-4 opacity-80 group-hover:opacity-100 transition-opacity grayscale group-hover:grayscale-0 duration-500"
                                             />
                                         ) : (
                                             <div className="absolute inset-0 flex items-center justify-center text-white/10 group-hover:text-cyan-500/20 transition-colors">
