@@ -47,7 +47,6 @@ export const PAVILIONS = {
                     'Capacity': '2.2 cu ft',
                     'Sensors': 'Humidity/Temp'
                 },
-                modelPath: null,
                 isMicrowave: true,
                 scale: 1.0,
                 position: [0, 0, 0],
@@ -68,7 +67,6 @@ export const PAVILIONS = {
                     'Panel Type': 'OLED',
                     'Refresh Rate': '120Hz'
                 },
-                modelPath: null,
                 isTelevision: true,
                 scale: 1.2,
                 position: [5, 0, 0],
@@ -140,24 +138,7 @@ export const PAVILIONS = {
                 ],
                 image: pnemaPrivodUrl
             },
-            {
-                id: 'turbine_blade',
-                title: 'Titanium Turbine Blade',
-                description: 'High-efficiency airfoil design for maximum thrust.',
-                stats: { 'Material': 'Ti-Alloy', 'Length': '40cm', 'Heat Resist': '2000°C' },
-                modelPath: null,
-                features: ['Aerodynamic Profile', 'Cooling Channels', 'Stress Tested'],
-                image: aeroWallUrl
-            },
-            {
-                id: 'fuel_pump',
-                title: 'High-Pressure Fuel Pump',
-                description: 'Precision fuel delivery for jet engines.',
-                stats: { 'Pressure': '5000 PSI', 'Flow': '50 L/min', 'Weight': '5kg' },
-                modelPath: null,
-                features: ['Dual Redundancy', 'Self-Lubricating', 'Compact Design'],
-                image: liftWallUrl
-            }
+
         ]
     },
     'heavy': {
@@ -207,24 +188,7 @@ export const PAVILIONS = {
                 ],
                 image: mobileCraneUrl
             },
-            {
-                id: 'excavator_bucket',
-                title: 'Reinforced Excavator Bucket',
-                description: 'Heavy-duty bucket with hardened teeth for rock excavation.',
-                stats: { 'Capacity': '1.5 m³', 'Weight': '800kg', 'Material': 'Hardox 500' },
-                modelPath: null,
-                features: ['Wear Resistant', 'Quick Coupler', 'Optimized Geometry'],
-                image: mobileGraderUrl
-            },
-            {
-                id: 'hydraulic_hammer',
-                title: 'Hydraulic Breaker',
-                description: 'Powerful impact hammer for demolition and mining.',
-                stats: { 'Impact Energy': '3000 J', 'Blows': '400-800 bpm', 'Weight': '1.2 Ton' },
-                modelPath: null,
-                features: ['Auto-Greasing', 'Sound Suppression', 'Blank Firing Protection'],
-                image: mobileCraneUrl
-            }
+
         ]
     },
     'logistics': {
@@ -277,24 +241,7 @@ export const PAVILIONS = {
             features: ['Facial Recognition', 'Motion Tracking', 'Thermal Vision'],
             image: cameralensUrl
         },
-        {
-            id: 'biometric_lock',
-            title: 'Biometric Access Control',
-            description: 'Fingerprint and retina scanner for high-security areas.',
-            stats: { 'FAR': '0.001%', 'Scan Time': '0.2s', 'Users': '50,000' },
-            modelPath: null,
-            features: ['Liveness Detection', 'Anti-Spoofing', 'Networked'],
-            image: kioskSecurityUrl
-        },
-        {
-            id: 'motion_sensor',
-            title: 'Wide-Area Motion Sensor',
-            description: 'Volumetric detection for large industrial spaces.',
-            stats: { 'Range': '50m', 'FOV': '180°', 'IP Rating': 'IP66' },
-            modelPath: null,
-            features: ['Pet Immunity', 'Microwave+PIR', 'Anti-Masking'],
-            image: cameralensUrl
-        }]
+        ]
     },
     'data': {
         id: 'data',
@@ -326,24 +273,7 @@ export const PAVILIONS = {
             features: ['Atomic Resolution', 'Auto-Focus', 'Cloud Analysis'],
             image: kioskBiotechUrl
         },
-        {
-            id: 'dna_sequencer',
-            title: 'Next-Gen DNA Sequencer',
-            description: 'Rapid whole-genome sequencing platform.',
-            stats: { 'Throughput': '6Tb', 'Time': '24h', 'Accuracy': '99.9%' },
-            modelPath: null,
-            features: ['AI Basecalling', 'Real-time Analysis', 'Modular Flow Cell'],
-            image: cameralensUrl
-        },
-        {
-            id: 'centrifuge',
-            title: 'Ultra-High Speed Centrifuge',
-            description: 'Precision separation for molecular biology.',
-            stats: { 'RPM': '100,000', 'G-Force': '800,000g', 'Temp': '-20°C to 40°C' },
-            modelPath: null,
-            features: ['Vacuum Seal', 'Vibration Control', 'Touch Interface'],
-            image: klapanUrl
-        }]
+        ]
     },
     'ai_systems': {
         id: 'ai_systems',
