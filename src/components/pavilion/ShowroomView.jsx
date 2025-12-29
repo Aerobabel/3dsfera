@@ -324,19 +324,30 @@ export default function ShowroomView({ pavilionData, onBack, user }) {
                                 <button
                                     key={product.id}
                                     onClick={() => {
-                                        SoundManager.playClick();
-                                        setActiveIndex(idx);
-                                        setViewMode('detail');
+                                        if (product.modelPath) {
+                                            SoundManager.playClick();
+                                            setActiveIndex(idx);
+                                            setViewMode('detail');
+                                        }
                                     }}
-                                    className="group relative flex flex-col text-left h-full bg-white/5 border border-white/10 hover:border-cyan-500/50 hover:bg-white/10 transition-all duration-300 rounded-xl overflow-hidden shadow-lg hover:shadow-cyan-500/10"
+                                    className={`group relative flex flex-col text-left h-full bg-white/5 border border-white/10 transition-all duration-300 rounded-xl overflow-hidden shadow-lg 
+                                        ${product.modelPath ? 'hover:border-cyan-500/50 hover:bg-white/10 hover:shadow-cyan-500/10 cursor-pointer' : 'opacity-80 cursor-default'}`}
                                 >
                                     {/* Image Placeholder area */}
                                     <div className="h-48 w-full bg-black/50 relative overflow-hidden group-hover:opacity-90 transition-opacity">
-                                        <div className="absolute inset-0 flex items-center justify-center text-white/10 group-hover:text-cyan-500/20 transition-colors">
-                                            <svg className="w-16 h-16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M14 10l-2 1m0 0l-2-1m2 1v2.5M20 7l-2 1m2-1l-2-1m2 1v2.5M14 4l-2-1-2 1M4 7l2-1M4 7l2 1M4 7v2.5M12 21l-2-1m2 1l2-1m-2 1v-2.5M6 18l-2-1v-2.5M18 18l2-1v-2.5" /></svg>
-                                        </div>
-                                        <div className="absolute bottom-3 left-3 px-2 py-1 bg-black/60 rounded text-[10px] font-mono text-cyan-400 border border-cyan-500/30">
-                                            3D MODEL
+                                        {product.image ? (
+                                            <img
+                                                src={product.image}
+                                                alt={product.title}
+                                                className="w-full h-full object-cover opacity-60 group-hover:opacity-100 transition-opacity grayscale group-hover:grayscale-0 duration-500"
+                                            />
+                                        ) : (
+                                            <div className="absolute inset-0 flex items-center justify-center text-white/10 group-hover:text-cyan-500/20 transition-colors">
+                                                <svg className="w-16 h-16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M14 10l-2 1m0 0l-2-1m2 1v2.5M20 7l-2 1m2-1l-2-1m2 1v2.5M14 4l-2-1-2 1M4 7l2-1M4 7l2 1M4 7v2.5M12 21l-2-1m2 1l2-1m-2 1v-2.5M6 18l-2-1v-2.5M18 18l2-1v-2.5" /></svg>
+                                            </div>
+                                        )}
+                                        <div className={`absolute bottom-3 left-3 px-2 py-1 bg-black/60 rounded text-[10px] font-mono border ${product.modelPath ? 'text-cyan-400 border-cyan-500/30' : 'text-slate-400 border-slate-500/30'}`}>
+                                            {product.modelPath ? '3D MODEL' : 'CATALOGUE ITEM'}
                                         </div>
                                     </div>
 
@@ -363,7 +374,13 @@ export default function ShowroomView({ pavilionData, onBack, user }) {
                                             </button>
 
                                             <div className="flex items-center gap-2 text-cyan-400 text-xs font-bold uppercase tracking-wider group-hover:translate-x-1 transition-transform">
-                                                {t('pavilion_ui.view_details', 'View 3D')} <span className="text-lg">→</span>
+                                                {product.modelPath ? (
+                                                    <>
+                                                        {t('pavilion_ui.view_details', 'View 3D')} <span className="text-lg">→</span>
+                                                    </>
+                                                ) : (
+                                                    <span className="text-slate-500 cursor-default opacity-50">View Only</span>
+                                                )}
                                             </div>
                                         </div>
                                     </div>

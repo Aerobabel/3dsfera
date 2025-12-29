@@ -82,12 +82,27 @@ function CameraRig({ velocityRef, active = true }) {
         const nextX = camera.position.x + velocityRef.current.x * delta;
         const nextZ = camera.position.z + velocityRef.current.z * delta;
 
-        // Collision Bounds
+        // Kiosk Collision "No-Go" Zone (Center 0,0,-5)
+        const KIOSK_BOUNDS = { minX: -8, maxX: 8, minZ: -10, maxZ: 1.5 };
+
+        // X Movement
         if (nextX <= MAX_X && nextX >= MIN_X) {
-            camera.position.x = nextX;
+            const insideKiosk = (nextX > KIOSK_BOUNDS.minX && nextX < KIOSK_BOUNDS.maxX) &&
+                (camera.position.z > KIOSK_BOUNDS.minZ && camera.position.z < KIOSK_BOUNDS.maxZ);
+
+            if (!insideKiosk) {
+                camera.position.x = nextX;
+            }
         }
+
+        // Z Movement
         if (nextZ <= MAX_Z && nextZ >= MIN_Z) {
-            camera.position.z = nextZ;
+            const insideKiosk = (camera.position.x > KIOSK_BOUNDS.minX && camera.position.x < KIOSK_BOUNDS.maxX) &&
+                (nextZ > KIOSK_BOUNDS.minZ && nextZ < KIOSK_BOUNDS.maxZ);
+
+            if (!insideKiosk) {
+                camera.position.z = nextZ;
+            }
         }
     });
     return null;

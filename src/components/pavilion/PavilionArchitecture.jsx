@@ -87,12 +87,7 @@ export function PavilionArchitecture() {
             </group>
 
             {/* --- WAREHOUSE STRUCTURE (Partitions & Dividers) --- */}
-            <FactoryPartition position={[-15, 0, 10]} rotation={[0, Math.PI / 2, 0]} width={6} />
-            <FactoryPartition position={[-15, 0, -15]} rotation={[0, Math.PI / 2, 0]} width={6} />
-            <FactoryPartition position={[15, 0, 10]} rotation={[0, Math.PI / 2, 0]} width={6} />
-            <FactoryPartition position={[15, 0, -15]} rotation={[0, Math.PI / 2, 0]} width={6} />
-            <FactoryPartition position={[-10, 0, -45]} width={8} />
-            <FactoryPartition position={[10, 0, -45]} width={8} />
+            {/* --- WAREHOUSE STRUCTURE (Partitions & Dividers) --- */}
 
             {/* Start Wall to enclose the lobby */}
             <group>
@@ -100,7 +95,7 @@ export function PavilionArchitecture() {
                 {Array.from({ length: 5 }).map((_, i) => (
                     <RealisticWall
                         key={`lw-${i}`}
-                        position={[-68, 0, -30 + (i * 15)]}
+                        position={[-58, 0, -30 + (i * 15)]}
                         rotation={[0, Math.PI / 2, 0]}
                         width={15}
                     />
@@ -109,7 +104,7 @@ export function PavilionArchitecture() {
                 {Array.from({ length: 5 }).map((_, i) => (
                     <RealisticWall
                         key={`rw-${i}`}
-                        position={[68, 0, -30 + (i * 15)]}
+                        position={[58, 0, -30 + (i * 15)]}
                         rotation={[0, -Math.PI / 2, 0]}
                         width={15}
                     />

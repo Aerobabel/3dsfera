@@ -498,24 +498,12 @@ export default function VerifiedPavilion({ onBack, user }) {
                             hideSideModels={true}
                             heightOffset={-0.95} // Place on pedestal
                             onClick={(e) => {
-                                const position = [-12, 0, -20];
-                                if (inspectMode && orbitTarget && orbitTarget[0] === position[0] && orbitTarget[2] === position[2]) return;
-                                e.stopPropagation();
-                                SoundManager.playClick();
-                                setSelectedObject(PAVILIONS['aero']); // Re-using data for now as placeholder
-                                setInspectMode(true);
-                                setOrbitTarget(position);
-                                setCameraPosition([position[0], position[1] + 2.5, position[2] + 8.0]);
+                                // e.stopPropagation();
+                                // Restricted Entry
                             }}
                             onProductClick={(e) => {
-                                e.stopPropagation();
-                                if (inspectMode && selectedObject === PAVILIONS['aero']) return;
-                                SoundManager.playClick();
-                                const position = [-12, 0, -20];
-                                setSelectedObject(PAVILIONS['aero']);
-                                setInspectMode(true);
-                                setOrbitTarget(position);
-                                setCameraPosition([position[0], position[1] + 2.5, position[2] + 8.0]);
+                                // e.stopPropagation();
+                                // Restricted Entry
                             }}
                         />
 
@@ -628,15 +616,8 @@ export default function VerifiedPavilion({ onBack, user }) {
                             modelPosition={[0, 0.5, 0]}
                             imageUrl={kioskDataUrl}
                             onClick={(e) => {
-                                const position = [0, 0, -45];
-                                if (inspectMode && orbitTarget && orbitTarget[0] === position[0] && orbitTarget[2] === position[2]) return;
-                                e.stopPropagation();
-                                SoundManager.playClick();
-                                SoundManager.playClick();
-                                setSelectedObject(PAVILIONS['data']);
-                                setInspectMode(true);
-                                setOrbitTarget([0, 1, -50]); // Centered on server rack
-                                setCameraPosition([position[0], position[1] + 2, position[2] + 6]);
+                                // e.stopPropagation();
+                                // Restricted Entry
                             }}
                         />
 
@@ -647,6 +628,7 @@ export default function VerifiedPavilion({ onBack, user }) {
                             title="SYNTHETIC MINDS"
                             glowColor="#fb8500"
                             videoUrl={null}
+                            hideSideModels={true}
                             imageUrl={kioskManufacturingUrl}
 
                             onClick={() => SoundManager.playClick()}
