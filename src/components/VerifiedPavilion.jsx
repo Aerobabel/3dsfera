@@ -24,6 +24,7 @@ import { FactoryPartition } from './pavilion/subsystems/FactoryPartition';
 
 
 import WalkingMan from './pavilion/WalkingMan';
+import HologramGuide from './pavilion/HologramGuide';
 
 import { CameraManager } from './pavilion/CameraManager';
 import { SceneReadyNotifier } from './pavilion/PavilionUtils';
@@ -365,25 +366,29 @@ export default function VerifiedPavilion({ onBack, user }) {
                     {/* --- ANIMATED CHARACTERS --- */}
                     {/* Character 1: Wandering the main left aisle */}
                     {/* Character 1: Wandering the main left aisle (SAFE ZONE: Left of Conveyor) */}
+                    {/* Character 1: Left Aisle (Corrected: Outside Conveyors, Before Aegis) */}
                     <WalkingMan
-                        startPosition={[-18, 0, 5]}
-                        bounds={{ x: [-25, -14], z: [0, 20] }}
-                        speed={1.2}
+                        startPosition={[-18, 0, 0]}
+                        bounds={{ x: [-20, -15], z: [-5, 10] }} // Lane between Conveyor(x=-10) and Aegis(x=-25)
+                        speed={1.0}
                     />
 
-                    {/* Character 2: Wandering the back factory entry */}
+                    {/* Character 2: Back Crosswalk (Safe: Behind Center Kiosk (z=-5), In front of Back Row (z=-38)) */}
                     <WalkingMan
-                        startPosition={[-8, 0, -15]}
-                        bounds={{ x: [-15, 0], z: [-20, -5] }}
-                        speed={1.4}
+                        startPosition={[0, 0, -15]}
+                        bounds={{ x: [-12, 12], z: [-25, -12] }} // Strictly mid-ground
+                        speed={0.8}
                     />
 
-                    {/* Character 3: Wandering near the right aisle (SAFE ZONE: Right of Crane) */}
+                    {/* Character 3: Far Right Aisle (Safe: Strictly Right of Titan/Genesis Kiosks (x=25)) */}
                     <WalkingMan
-                        startPosition={[28, 0, 10]}
-                        bounds={{ x: [28, 35], z: [5, 25] }}
-                        speed={1.1}
+                        startPosition={[35, 0, 0]}
+                        bounds={{ x: [32, 40], z: [-10, 30] }} // Far right wall walk
+                        speed={1.0}
                     />
+
+                    {/* Standing on the central platform greeting users */}
+                    <HologramGuide position={[0, 0.6, 12]} rotation={[0, 0, 0]} scale={0.013} />
 
                     {/* --- BOOTHS / KIOSKS (Default Cyberpunk) --- */}
 
@@ -730,10 +735,13 @@ export default function VerifiedPavilion({ onBack, user }) {
                         {...(orbitTarget ? { target: orbitTarget } : {})}
                         enablePan={!inspectMode}
                         enableZoom={true}
-                        minDistance={inspectMode ? 0.5 : 2}
-                        maxDistance={inspectMode ? 20 : 100}
-                        minPolarAngle={inspectMode ? Math.PI / 3 : 0}
+
+                        // RESTRICTED CAMERA LIMITS
+                        minDistance={inspectMode ? 0.5 : 5} // Prevent clipping through models
+                        maxDistance={inspectMode ? 20 : 80} // Prevent leaving the hall
+                        minPolarAngle={inspectMode ? Math.PI / 3 : 0.1} // Prevent looking straight up
                         maxPolarAngle={Math.PI / 2 - 0.05} // Ground level limit
+
                         enableDamping={true}
                         dampingFactor={0.1}
                         makeDefault
