@@ -6,7 +6,7 @@ import React, { useRef, useLayoutEffect, useMemo } from 'react';
 import { useGLTF } from '@react-three/drei';
 import * as THREE from 'three';
 
-const ESCAVATOR_MODEL_PATH = '/objects/escavator.glb';
+const ESCAVATOR_MODEL_PATH = '/objects/optimized/escavator.glb';
 
 export function Escavator(props) {
     const gltf = useGLTF(ESCAVATOR_MODEL_PATH);

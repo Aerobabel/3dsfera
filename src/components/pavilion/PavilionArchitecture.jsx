@@ -1,5 +1,5 @@
 import React from 'react';
-import { Environment, Lightformer, ContactShadows, Grid } from '@react-three/drei';
+import { Environment, Lightformer, ContactShadows, Grid, Sparkles } from '@react-three/drei';
 import * as THREE from 'three';
 import {
     UltimateFloor,
@@ -8,14 +8,14 @@ import {
     RealisticWall,
     NeonCeiling
 } from './PavilionEnvironment';
-import { FactoryPartition } from './subsystems/FactoryPartition';
+
 
 export function PavilionArchitecture() {
     return (
         <group>
             {/* --- ENVIRONMENT (RESTORED DARK) --- */}
             <color attach="background" args={['#2a2a2a']} />
-            <fogExp2 attach="fog" args={['#2a2a2a', 0.015]} />
+            <fogExp2 attach="fog" args={['#1a1a1a', 0.025]} /> {/* Darker and denser fog */}
             <Environment resolution={256} background={false} blur={0.6}>
                 <Lightformer intensity={1.5} rotation-x={Math.PI / 2} position={[0, 5, -9]} scale={[10, 10, 1]} />
                 <Lightformer intensity={2} rotation-y={Math.PI / 2} position={[-5, 1, -1]} scale={[20, 0.1, 1]} />
@@ -40,25 +40,21 @@ export function PavilionArchitecture() {
             <pointLight position={[30, 20, 0]} intensity={10} distance={50} decay={2} color="#e0e0ff" />
             <pointLight position={[-30, 20, 0]} intensity={5} distance={50} decay={2} color="#e0e0ff" />
 
-            {/* --- CINEMATIC GROUNDING --- */}
-            <ContactShadows
-                position={[0, 0.01, 0]}
-                opacity={0.6}
-                scale={80}
-                blur={2.5}
-                far={2}
-                resolution={512} // Reduced from 1024 for performance
-                color="#000000"
-            />
+            {/* --- ATMOSPHERE --- */}
+            <Sparkles count={300} scale={[100, 40, 100]} size={6} speed={0.4} opacity={0.2} color="#ccffff" />
 
-            <UltimateFloor />
-            <IndustrialCeilingDetailsFixed height={14} width={150} depth={150} />
+            {/* Background Dome to catch fog - removes "infinite void" look */}
+            <mesh position={[0, 0, 0]}>
+                <sphereGeometry args={[150, 32, 32]} />
+                <meshBasicMaterial color="#050810" side={THREE.BackSide} />
+            </mesh>
+
             <UltimateFloor />
             <IndustrialCeilingDetailsFixed height={14} width={150} depth={150} />
             <CeilingLights />
             <NeonCeiling />
 
-            {/* The Sun / Sphere */}
+            {/* The Sun / Sphere - RESTORED */}
             <group position={[0, 25, 0]}>
                 <mesh>
                     <sphereGeometry args={[6, 64, 64]} />
@@ -86,25 +82,32 @@ export function PavilionArchitecture() {
                 />
             </group>
 
+            {/* --- NEW VOID BARRIER (Fog Wall) --- */}
+            {/* Added at Z=-42 to hide artifacts behind the last row of kiosks */}
+            <mesh position={[0, 25, -42]}>
+                <planeGeometry args={[300, 100]} /> {/* Increased size to prevent peeking around */}
+                <meshBasicMaterial color="#000000" side={THREE.DoubleSide} /> {/* Fully Opaque, Double Sided */}
+            </mesh>
+
             {/* --- WAREHOUSE STRUCTURE (Partitions & Dividers) --- */}
-            {/* --- WAREHOUSE STRUCTURE (Partitions & Dividers) --- */}
+            {/* Extended walls to cover deeper scene */}
 
             {/* Start Wall to enclose the lobby */}
             <group>
-                {/* Left Wall Partitions */}
-                {Array.from({ length: 5 }).map((_, i) => (
+                {/* Left Wall Partitions - Extended count */}
+                {Array.from({ length: 12 }).map((_, i) => (
                     <RealisticWall
                         key={`lw-${i}`}
-                        position={[-58, 0, -30 + (i * 15)]}
+                        position={[-58, 0, -80 + (i * 15)]}
                         rotation={[0, Math.PI / 2, 0]}
                         width={15}
                     />
                 ))}
-                {/* Right Wall Partitions */}
-                {Array.from({ length: 5 }).map((_, i) => (
+                {/* Right Wall Partitions - Extended count */}
+                {Array.from({ length: 12 }).map((_, i) => (
                     <RealisticWall
                         key={`rw-${i}`}
-                        position={[58, 0, -30 + (i * 15)]}
+                        position={[58, 0, -80 + (i * 15)]}
                         rotation={[0, -Math.PI / 2, 0]}
                         width={15}
                     />

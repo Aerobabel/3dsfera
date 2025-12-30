@@ -282,12 +282,7 @@ function CorporatePavilion({ width = 14, height = 7, depth = 8 }) {
                 </group>
 
                 {/* 3D Kinetic Brand Centerpiece REMOVED per user request */}
-                {/* <group position={[0, -1.5, 1]} rotation={[0, 1.66, 0]}> 
-                        <group ref={logoRef}>
-                            <Center>
-                                <Gltf src="/objects/hologram.glb" scale={10} />
-                            </Center>
-                        </group> */}
+                {/* 3D Kinetic Brand Centerpiece REMOVED per user request */}
 
                 {/* Minimalist Brand Signature - LARGER */}
                 <Text

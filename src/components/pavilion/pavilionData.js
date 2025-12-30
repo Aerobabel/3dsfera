@@ -10,7 +10,7 @@ import inspectorDroneUrl from '../../assets/images/inspectordrone.png';
 import mobileCraneUrl from '../../assets/images/mobilecrane.png';
 import klapanUrl from '../../assets/images/klapan.png';
 import mobileGraderUrl from '../../assets/images/mobilegrader.png';
-import pnemaPrivodUrl from '../../assets/images/pnemaprivod.png';
+import pnemaPrivodUrl from '../../assets/images/pneuma2.png';
 import kioskBiotechUrl from '../../assets/images/kiosk_biotech.png';
 import kioskSecurityUrl from '../../assets/images/kiosk_security.png';
 
