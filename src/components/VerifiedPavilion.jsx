@@ -58,10 +58,11 @@ const DRONE_PATH = '/objects/drone.glb';
 const ESCAVATOR_PATH = '/objects/optimized/escavator.glb';
 
 // Pre-load assets
-useGLTF.preload(TURBO_ENGINE_PATH);
-useGLTF.preload(CRANE_PATH);
-useGLTF.preload(CRANE_MACHINE_PATH);
-useGLTF.preload(ESCAVATOR_PATH);
+// Pre-load assets
+// useGLTF.preload(TURBO_ENGINE_PATH);
+// useGLTF.preload(CRANE_PATH);
+// useGLTF.preload(CRANE_MACHINE_PATH);
+// useGLTF.preload(ESCAVATOR_PATH);
 
 export default function VerifiedPavilion({ onBack, user }) {
     const { t } = useTranslation();
