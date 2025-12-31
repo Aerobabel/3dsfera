@@ -8,7 +8,7 @@ function SceneContent() {
         <>
             {/* --- Environment & Lighting (Studio Setup) --- */}
             {/* Lower ambient light to reduce "whiteness" */}
-            <Environment preset="city" blur={1} background={false} />
+            <Environment files="/hdris/convertio.in_image.hdr" blur={1} background={false} />
             <ambientLight intensity={0.2} color="#ffffff" />
 
             {/* Main Key Light - Soft White */}
