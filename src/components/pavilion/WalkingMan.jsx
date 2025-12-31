@@ -205,4 +205,4 @@ export default function WalkingMan({
     );
 }
 
-// useFBX.preload(WALKMAN_PATH);
+useFBX.preload(WALKMAN_PATH);

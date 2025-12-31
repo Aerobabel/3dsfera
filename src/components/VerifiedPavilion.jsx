@@ -366,29 +366,33 @@ export default function VerifiedPavilion({ onBack, user }) {
                     {/* --- ANIMATED CHARACTERS --- */}
                     {/* Character 1: Wandering the main left aisle */}
                     {/* Character 1: Wandering the main left aisle (SAFE ZONE: Left of Conveyor) */}
-                    {/* Character 1: Left Aisle (Corrected: Outside Conveyors, Before Aegis) */}
-                    <WalkingMan
-                        startPosition={[-18, 0, 0]}
-                        bounds={{ x: [-20, -15], z: [-5, 10] }} // Lane between Conveyor(x=-10) and Aegis(x=-25)
-                        speed={1.0}
-                    />
+                    {/* Character 1: Far Left Lane (Relocated: Behind Kiosks to avoid partitions entirely) */}
+                    {/* Character 1: Wandering the main left aisle */}
+                    {/* Character 1: Wandering the main left aisle */}
+                    <Suspense fallback={null}>
+                        <WalkingMan
+                            startPosition={[-42, 0, 0]}
+                            bounds={{ x: [-46, -40], z: [-20, 20] }} // Adjusted Left to avoid AI Kiosk (x=-34)
+                            speed={1.0}
+                        />
 
-                    {/* Character 2: Back Crosswalk (Safe: Behind Center Kiosk (z=-5), In front of Back Row (z=-38)) */}
-                    <WalkingMan
-                        startPosition={[0, 0, -15]}
-                        bounds={{ x: [-12, 12], z: [-25, -12] }} // Strictly mid-ground
-                        speed={0.8}
-                    />
+                        {/* Character 2: Back Crosswalk */}
+                        <WalkingMan
+                            startPosition={[0, 0, -15]}
+                            bounds={{ x: [-8, 8], z: [-25, -18] }} // Narrowed center path
+                            speed={0.8}
+                        />
 
-                    {/* Character 3: Far Right Aisle (Safe: Strictly Right of Titan/Genesis Kiosks (x=25)) */}
-                    <WalkingMan
-                        startPosition={[35, 0, 0]}
-                        bounds={{ x: [32, 40], z: [-10, 30] }} // Far right wall walk
-                        speed={1.0}
-                    />
+                        {/* Character 3: Far Right Aisle */}
+                        <WalkingMan
+                            startPosition={[32, 0, 0]}
+                            bounds={{ x: [30, 35], z: [-12, 25] }} // Pulled in from right wall
+                            speed={1.0}
+                        />
+                    </Suspense>
 
                     {/* Standing on the central platform greeting users */}
-                    <HologramGuide position={[0, 0.6, 12]} rotation={[0, 0, 0]} scale={0.013} />
+                    <HologramGuide position={[0, 0.9, 12]} rotation={[0, 0, 0]} scale={0.013} />
 
                     {/* --- BOOTHS / KIOSKS (Default Cyberpunk) --- */}
 

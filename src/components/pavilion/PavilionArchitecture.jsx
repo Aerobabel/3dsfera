@@ -40,6 +40,17 @@ export function PavilionArchitecture() {
             <pointLight position={[30, 20, 0]} intensity={10} distance={50} decay={2} color="#e0e0ff" />
             <pointLight position={[-30, 20, 0]} intensity={5} distance={50} decay={2} color="#e0e0ff" />
 
+            {/* --- CINEMATIC GROUNDING --- */}
+            <ContactShadows
+                position={[0, 0.001, 0]}
+                opacity={0.6}
+                scale={80}
+                blur={2.5}
+                far={2}
+                resolution={512}
+                color="#000000"
+            />
+
             {/* --- ATMOSPHERE --- */}
             <Sparkles count={300} scale={[100, 40, 100]} size={6} speed={0.4} opacity={0.2} color="#ccffff" />
 

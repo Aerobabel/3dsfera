@@ -1,66 +1,117 @@
-import React, { useEffect, useRef, useMemo } from 'react';
-import { useFBX, useAnimations } from '@react-three/drei';
+import React, { useEffect, useMemo, useRef } from 'react';
+import { useFBX, useTexture } from '@react-three/drei';
 import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
 import { SkeletonUtils } from 'three-stdlib';
 
-const HOLOGRAM_PATH = '/objects/3dsfera.Fbx';
+const HOLOGRAM_PATH = '/objects/actor/Actor/party-f-0001/party-f-0001.fbx';
+const TEXTURE_PATH = '/objects/actor/Actor/party-f-0001/party-f-0001.fbm/Character_Pbr_Diffuse.png';
+const NORMAL_PATH = '/objects/actor/Actor/party-f-0001/party-f-0001.fbm/Character_Pbr_Normal.jpg';
 
-export default function HologramGuide({ position = [0, 0, 0], rotation = [0, 0, 0], scale = 0.013 }) {
+export default function HologramGuide({ position = [0, 0, 0], rotation = [0, 0, 0], scale = 0.01 }) {
     const group = useRef();
-    const fbx = useFBX(HOLOGRAM_PATH);
 
-    // Clone Scene
-    const clonedScene = useMemo(() => {
-        const clone = SkeletonUtils.clone(fbx);
+    // Load Assets
+    const sourceFbx = useFBX(HOLOGRAM_PATH);
+    const textureMap = useTexture(TEXTURE_PATH);
+    const normalMap = useTexture(NORMAL_PATH);
+    textureMap.colorSpace = THREE.SRGBColorSpace;
 
-        // Apply Transparency to Original Materials
+    const fbx = useMemo(() => {
+        const clone = SkeletonUtils.clone(sourceFbx);
+
+        // --- BONE FINDER ---
+        const bones = {
+            spine: null,
+            neck: null,
+            leftArm: null,
+            rightArm: null,
+        };
+
         clone.traverse((child) => {
-            if (child.isMesh) {
-                // Ensure material is cloned to avoid side effects
-                child.material = child.material.clone();
-                child.material.transparent = true;
-                child.material.opacity = 0.85; // Slightly more solid
-                child.material.depthWrite = true; // Fixes "inside-out" sorting issues
-                child.material.side = THREE.FrontSide; // Better for characters than DoubleSide
-
-                // Fix "Dark/Metallic" look by removing reflections
-                if (child.material.metalness !== undefined) child.material.metalness = 0.1;
-                if (child.material.roughness !== undefined) child.material.roughness = 0.8;
-
-                // Add slight emission if it supports it, to prevent being pitch black
-                if (child.material.emissive) {
-                    child.material.emissive = new THREE.Color(0x222222);
+            if (child.isBone) {
+                const n = child.name;
+                // Spine
+                if (n === 'CC_Base_Spine01' || n === 'CC_Base_Spine02' || n.includes('Spine')) {
+                    if (!bones.spine) bones.spine = child;
+                }
+                // Head/Neck
+                if (n === 'CC_Base_NeckTwist01' || n === 'CC_Base_Head' || n.includes('Neck')) {
+                    if (!bones.neck) bones.neck = child;
+                }
+                // Arms
+                if (n === 'CC_Base_L_Upperarm' || n === 'mixamorig:LeftArm' || n === 'LeftArm') {
+                    bones.leftArm = child;
+                }
+                if (n === 'CC_Base_R_Upperarm' || n === 'mixamorig:RightArm' || n === 'RightArm') {
+                    bones.rightArm = child;
                 }
             }
         });
-        return clone;
-    }, [fbx]);
 
-    const { actions, names } = useAnimations(fbx.animations, clonedScene);
+        clone.userData.bones = bones;
 
-    // Play Idle Animation
-    useEffect(() => {
-        if (actions && names.length > 0) {
-            const action = actions[names[0]]; // Assume first is Idle
-            if (action) {
-                action.reset().fadeIn(0.5).play();
+        // Material Surgery
+        clone.traverse((child) => {
+            if (child.isMesh) {
+                const newMat = new THREE.MeshStandardMaterial({
+                    name: 'Safe_Skin',
+                    map: textureMap,
+                    normalMap: normalMap,
+                    color: 0xffffff,
+                    metalness: 0.0,
+                    roughness: 0.8,
+                    side: THREE.FrontSide,
+                });
+                if (child.material) child.material.dispose();
+                child.material = newMat;
+                child.castShadow = true;
+                child.receiveShadow = true;
             }
-        }
-    }, [actions, names]);
+        });
 
-    // No useFrame needed (Shader logic removed)
+        // Feet Align
+        const box = new THREE.Box3().setFromObject(clone);
+        clone.position.y += -box.min.y;
+
+        const center = new THREE.Vector3();
+        box.getCenter(center);
+        clone.position.x -= center.x;
+        clone.position.z -= center.z;
+
+        return clone;
+    }, [sourceFbx, textureMap, normalMap]);
+
+    // PROCEDURAL ANIMATION LOOP
+    useFrame((state) => {
+        const t = state.clock.elapsedTime;
+        const { spine, neck, leftArm, rightArm } = fbx.userData.bones;
+
+        // Breathing
+        if (spine) {
+            spine.rotation.x = (Math.sin(t * 2) * 0.03);
+            spine.rotation.y = (Math.cos(t * 1) * 0.03);
+        }
+
+        // Subtle neck movement (Convai friendly)
+        if (neck) {
+            neck.rotation.x = -(Math.sin(t * 2) * 0.01);
+        }
+
+        // FORCE ARMS DOWN (A-Pose)
+        if (leftArm) {
+            leftArm.rotation.z = -1.4 + (Math.sin(t) * 0.02);
+            leftArm.rotation.x = 0.3;
+        }
+        if (rightArm) {
+            rightArm.rotation.z = 1.4 - (Math.sin(t) * 0.02);
+            rightArm.rotation.x = 0.3;
+        }
+    });
 
     return (
         <group ref={group} position={position} rotation={rotation} dispose={null}>
-            <primitive object={clonedScene} scale={scale} />
-
-            {/* Base Ring Hologram Projector */}
-            <mesh position={[0, 0.05, 0]} rotation={[-Math.PI / 2, 0, 0]}>
-                <ringGeometry args={[0.3, 0.4, 32]} />
-                <meshBasicMaterial color="#00ffff" transparent opacity={0.5} side={THREE.DoubleSide} />
-            </mesh>
-            <pointLight position={[0, 1, 0]} color="cyan" intensity={2} distance={3} />
+            <primitive object={fbx} scale={scale} />
         </group>
     );
 }

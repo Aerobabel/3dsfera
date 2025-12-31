@@ -457,7 +457,7 @@ export function UltimateFloor() {
 
             {/* Grid Overlay - "Architectural White" Style */}
             <Grid
-                position={[0, 0.02, 0]}
+                position={[0, 0.05, 0]}
                 args={[120, 120]}
                 cellSize={2}
                 cellThickness={1}
