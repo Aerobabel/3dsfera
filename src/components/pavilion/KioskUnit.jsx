@@ -8,6 +8,24 @@ import ProductDisplay from './ProductDisplay';
 import VolumetricBeam from './VolumetricBeam';
 import videoUrlDefault from '../../assets/videos/Cyberpunk_Holographic_Girl_Video_Generation.mp4';
 
+// Helper for Distance-Based Loading (LOD)
+const ProgressiveModelLoader = ({ children, threshold = 25 }) => {
+    const group = useRef();
+    const [shouldLoad, setShouldLoad] = useState(false);
+
+    useFrame((state) => {
+        if (!group.current || shouldLoad) return; // Stop checking once loaded
+        const dist = state.camera.position.distanceTo(group.current.getWorldPosition(new THREE.Vector3()));
+        if (dist < threshold) setShouldLoad(true);
+    });
+
+    return (
+        <group ref={group}>
+            {shouldLoad ? children : null}
+        </group>
+    );
+};
+
 // The screen inside the booth
 // The screen inside the booth
 const DataDashboardScreen = ({ width, height }) => {
@@ -484,25 +502,27 @@ function KioskUnit({
                     </Text>
                 </group>
 
-                {/* 6. Content (Model or Hologram) */}
+                {/* 6. Content (Model or Hologram) - PROGRESSIVE LOADING (LOD) */}
                 <group position={[0, 0, 0]}> {/* Lowered from 0.4 to 0 so pedestal sits on floor */}
-                    {modelPath || isTv || useEscavator ? (
-                        <ProductDisplay
-                            modelPath={modelPath}
-                            isTv={isTv}
-                            hidePedestal={hideMainPedestal}
-                            position={[0, 0, 0]}
-                            scale={0.8} // Scaled to fit in kiosk
-                            heightOffset={heightOffset}
-                            useEscavator={useEscavator}
-                            isRoboticArm={isRoboticArm}
-                        />
-                    ) : hasHologram ? (
-                        <group position={[0, 1, 0]}>
-                            <Hologram color={effectiveGlow} />
-                            <VolumetricBeam color={effectiveGlow} />
-                        </group>
-                    ) : null}
+                    <ProgressiveModelLoader>
+                        {modelPath || isTv || useEscavator ? (
+                            <ProductDisplay
+                                modelPath={modelPath}
+                                isTv={isTv}
+                                hidePedestal={hideMainPedestal}
+                                position={[0, 0, 0]}
+                                scale={0.8} // Scaled to fit in kiosk
+                                heightOffset={heightOffset}
+                                useEscavator={useEscavator}
+                                isRoboticArm={isRoboticArm}
+                            />
+                        ) : hasHologram ? (
+                            <group position={[0, 1, 0]}>
+                                <Hologram color={effectiveGlow} />
+                                <VolumetricBeam color={effectiveGlow} />
+                            </group>
+                        ) : null}
+                    </ProgressiveModelLoader>
                 </group>
 
                 {/* 7. Side Satellites (Optional - floating minis) */}
@@ -579,6 +599,12 @@ function KioskUnit({
         if (roofMatRef.current) {
             roofMatRef.current.opacity = THREE.MathUtils.lerp(roofMatRef.current.opacity, targetRoofOpacity, 0.1);
             roofMatRef.current.transparent = true;
+        }
+
+        // 4. Lazy Load Latch (Performance Optimization)
+        // Only load heavy models when user approaches within 25 units
+        if (!isNear && localCameraPos.length() < 25) {
+            setIsNear(true);
         }
     });
 
