@@ -8,23 +8,7 @@ import ProductDisplay from './ProductDisplay';
 import VolumetricBeam from './VolumetricBeam';
 import videoUrlDefault from '../../assets/videos/Cyberpunk_Holographic_Girl_Video_Generation.mp4';
 
-// Helper for Distance-Based Loading (LOD)
-const ProgressiveModelLoader = ({ children, threshold = 25 }) => {
-    const group = useRef();
-    const [shouldLoad, setShouldLoad] = useState(false);
-
-    useFrame((state) => {
-        if (!group.current || shouldLoad) return; // Stop checking once loaded
-        const dist = state.camera.position.distanceTo(group.current.getWorldPosition(new THREE.Vector3()));
-        if (dist < threshold) setShouldLoad(true);
-    });
-
-    return (
-        <group ref={group}>
-            {shouldLoad ? children : null}
-        </group>
-    );
-};
+import { ProgressiveModelLoader } from './ProgressiveModelLoader';
 
 // The screen inside the booth
 // The screen inside the booth

@@ -29,6 +29,7 @@ import HologramGuide from './pavilion/HologramGuide';
 import { CameraManager } from './pavilion/CameraManager';
 import { SceneReadyNotifier } from './pavilion/PavilionUtils';
 import { PavilionArchitecture } from './pavilion/PavilionArchitecture';
+import { ProgressiveModelLoader } from './pavilion/ProgressiveModelLoader';
 
 // Assets
 
@@ -287,50 +288,54 @@ export default function VerifiedPavilion({ onBack, user }) {
                     {/* --- PRODUCT SHOWCASE ON FLOOR --- */}
                     {/* 2. Road Grader on Right (Replacing Crane) */}
                     {/* 2. Construction Crane on Right (Restored) */}
-                    <ProductDisplay
-                        modelPath={CRANE_MACHINE_PATH}
-                        position={[22, 0.1, 2]}
-                        rotation={[0, -Math.PI / 4, 0]}
-                        scale={0.35}
-                        floating={true}
-                        heightOffset={0.8} // Raise it up a bit from pedestal
-                        onClick={(e) => {
-                            const position = [22, 0.1, 2]; // Update click target matches new pos
-                            if (inspectMode && orbitTarget && orbitTarget[0] === position[0] && orbitTarget[2] === position[2]) {
-                                return;
-                            }
-                            e.stopPropagation();
-                            console.log("Clicked Crane - Taking selection");
-                            SoundManager.playClick();
-                            setSelectedObject(PAVILIONS['heavy']);
-                            setInspectMode(true);
-                            setOrbitTarget(position);
-                            setCameraPosition([position[0], position[1] + 2.5, position[2] + 8.0]);
-                        }}
-                        onPointerOver={(e) => { e.stopPropagation(); document.body.style.cursor = 'pointer'; }}
-                        onPointerOut={(e) => { e.stopPropagation(); document.body.style.cursor = 'auto'; }}
-                    />
+                    <ProgressiveModelLoader>
+                        <ProductDisplay
+                            modelPath={CRANE_MACHINE_PATH}
+                            position={[22, 0.1, 2]}
+                            rotation={[0, -Math.PI / 4, 0]}
+                            scale={0.35}
+                            floating={true}
+                            heightOffset={0.8} // Raise it up a bit from pedestal
+                            onClick={(e) => {
+                                const position = [22, 0.1, 2]; // Update click target matches new pos
+                                if (inspectMode && orbitTarget && orbitTarget[0] === position[0] && orbitTarget[2] === position[2]) {
+                                    return;
+                                }
+                                e.stopPropagation();
+                                console.log("Clicked Crane - Taking selection");
+                                SoundManager.playClick();
+                                setSelectedObject(PAVILIONS['heavy']);
+                                setInspectMode(true);
+                                setOrbitTarget(position);
+                                setCameraPosition([position[0], position[1] + 2.5, position[2] + 8.0]);
+                            }}
+                            onPointerOver={(e) => { e.stopPropagation(); document.body.style.cursor = 'pointer'; }}
+                            onPointerOut={(e) => { e.stopPropagation(); document.body.style.cursor = 'auto'; }}
+                        />
+                    </ProgressiveModelLoader>
 
                     {/* 3. Valve on Floor */}
-                    <ProductDisplay
-                        modelPath={VALVE_PATH}
-                        position={[-10, 0, 10]} // Ground level
-                        rotation={[0, Math.PI / 3, 0]}
-                        scale={0.15} // Reduced size by a lot
-                        heightOffset={-0.9} // Reduce distance to pedestal
-                        onClick={(e) => {
-                            const position = [-10, 0, 10];
-                            if (inspectMode && orbitTarget && orbitTarget[0] === position[0] && orbitTarget[2] === position[2]) return;
-                            e.stopPropagation();
-                            SoundManager.playClick();
-                            setSelectedObject(PAVILIONS['aero']);
-                            setInspectMode(true);
-                            setOrbitTarget(position);
-                            setCameraPosition([position[0], position[1] + 2.5, position[2] + 8.0]);
-                        }}
-                        onPointerOver={(e) => { e.stopPropagation(); document.body.style.cursor = 'pointer'; }}
-                        onPointerOut={(e) => { e.stopPropagation(); document.body.style.cursor = 'auto'; }}
-                    />
+                    <ProgressiveModelLoader>
+                        <ProductDisplay
+                            modelPath={VALVE_PATH}
+                            position={[-10, 0, 10]} // Ground level
+                            rotation={[0, Math.PI / 3, 0]}
+                            scale={0.15} // Reduced size by a lot
+                            heightOffset={-0.9} // Reduce distance to pedestal
+                            onClick={(e) => {
+                                const position = [-10, 0, 10];
+                                if (inspectMode && orbitTarget && orbitTarget[0] === position[0] && orbitTarget[2] === position[2]) return;
+                                e.stopPropagation();
+                                SoundManager.playClick();
+                                setSelectedObject(PAVILIONS['aero']);
+                                setInspectMode(true);
+                                setOrbitTarget(position);
+                                setCameraPosition([position[0], position[1] + 2.5, position[2] + 8.0]);
+                            }}
+                            onPointerOver={(e) => { e.stopPropagation(); document.body.style.cursor = 'pointer'; }}
+                            onPointerOut={(e) => { e.stopPropagation(); document.body.style.cursor = 'auto'; }}
+                        />
+                    </ProgressiveModelLoader>
 
                     {/* --- FACTORY FLOOR EXPANSION --- */}
 
