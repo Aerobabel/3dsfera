@@ -8,11 +8,9 @@ const HEAVY_MODELS = [
     // '/objects/optimized/mobile_crane.glb',
     // '/objects/optimized/escavator.glb',
     // '/objects/optimized/road_grader.glb',
-    '/objects/optimized/camera.glb',
-    // Temporarily disabled to prevent HTTP2/Connection errors on slow networks
-    // '/objects/optimized/microscope.glb',
-    // '/objects/drone.glb',
-    '/objects/valve.glb'
+    // Temporarily disabled to prevent HTTP2/Connection errors
+    // '/objects/optimized/camera.glb',
+    // '/objects/valve.glb'
 ];
 
 export default function AssetPreloader() {
