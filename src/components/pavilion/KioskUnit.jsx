@@ -11,6 +11,7 @@ import videoUrlDefault from '../../assets/videos/Cyberpunk_Holographic_Girl_Vide
 // The screen inside the booth
 // The screen inside the booth
 const DataDashboardScreen = ({ width, height }) => {
+    const { t } = useTranslation();
     const fontUrl = "https://fonts.gstatic.com/s/inter/v12/UcCO3FwrK3iLTeHuS_fvQtMwCp50KnMw2boKoduKmMEVuLyfAZ9hjp-Ek-_EeA.woff";
 
     // Centered label, clean look
@@ -35,12 +36,12 @@ const DataDashboardScreen = ({ width, height }) => {
             </mesh>
 
             {/* Left Data Column */}
-            <Ticker label="ACTIVE NODES" value="8,492" position={[-width / 3.2, height / 4, 0]} />
-            <Ticker label="BTC / USD" value="$98,420" position={[-width / 3.2, -height / 4, 0]} />
+            <Ticker label={t('pavilion_ui.stats.active_nodes', 'ACTIVE NODES')} value="8,492" position={[-width / 3.2, height / 4, 0]} />
+            <Ticker label={t('pavilion_ui.stats.btc_usd', 'BTC / USD')} value="$98,420" position={[-width / 3.2, -height / 4, 0]} />
 
             {/* Right Data Column */}
-            <Ticker label="NETWORK LATENCY" value="12ms" position={[width / 3.2, height / 4, 0]} />
-            <Ticker label="SYSTEM STATUS" value="ONLINE" position={[width / 3.2, -height / 4, 0]} color="#00ff00" />
+            <Ticker label={t('pavilion_ui.stats.network_latency', 'NETWORK LATENCY')} value="12ms" position={[width / 3.2, height / 4, 0]} />
+            <Ticker label={t('pavilion_ui.stats.system_status', 'SYSTEM STATUS')} value={t('pavilion_ui.stats.online', 'ONLINE')} position={[width / 3.2, -height / 4, 0]} color="#00ff00" />
 
             {/* Aesthetic Divider Lines */}
             <mesh position={[0, 0, 0]}>
@@ -227,6 +228,7 @@ function InfoDesk() {
 // 4. Corporate Pavilion Structure (Match Reference)
 // 4. Corporate Pavilion Structure (Match Reference)
 function CorporatePavilion({ width = 14, height = 7, depth = 8 }) {
+    const { t } = useTranslation();
     const fontUrl = "https://fonts.gstatic.com/s/inter/v12/UcCO3FwrK3iLTeHuS_fvQtMwCp50KnMw2boKoduKmMEVuLyfAZ9hjp-Ek-_EeA.woff";
 
     const logoRef = useRef();
@@ -297,7 +299,7 @@ function CorporatePavilion({ width = 14, height = 7, depth = 8 }) {
                     outlineWidth={0.01}
                     outlineColor="#00aaff"
                 >
-                    3DSFERA
+                    {t('pavilion_content.pavilions.3dsfera.name', '3DSFERA')}
                 </Text>
                 <mesh position={[0, -3.8, 0]}>
                     <planeGeometry args={[1.5, 0.05]} />
@@ -329,7 +331,7 @@ function CorporatePavilion({ width = 14, height = 7, depth = 8 }) {
                         font={fontUrl}
                         letterSpacing={0.1}
                     >
-                        WELCOME TO
+                        {t('pavilion_ui.welcome_to', 'WELCOME TO')}
                         <meshBasicMaterial color="#00ffff" toneMapped={false} />
                     </Text>
                     <Text
@@ -342,7 +344,7 @@ function CorporatePavilion({ width = 14, height = 7, depth = 8 }) {
                         letterSpacing={0.1}
                         fontWeight="bold"
                     >
-                        3DSFERA
+                        {t('pavilion_content.pavilions.3dsfera.name', '3DSFERA')}
                         <meshBasicMaterial color="#ffffff" toneMapped={false} />
                     </Text>
                 </group>

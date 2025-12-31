@@ -138,6 +138,14 @@
         "buyer_only_here": "Chat is available to buyers only in this view.",
         "products_in_showroom": "Products in Showroom",
         "company_info": "COMPANY INFO",
+        "welcome_to": "WELCOME TO",
+        "stats": {
+            "active_nodes": "ACTIVE NODES",
+            "btc_usd": "BTC / USD",
+            "network_latency": "NETWORK LATENCY",
+            "system_status": "SYSTEM STATUS",
+            "online": "ONLINE"
+        },
         "pavilion_label": "PAVILION",
         "enter_pavilion": "ENTER PAVILION",
         "company": "COMPANY",
@@ -322,46 +330,314 @@
     "pavilion_content": {
         "pavilions": {
             "3dsfera": {
-                "description": "Leading digital marketplace connecting buyers and verified suppliers across 140 countries. Focused on industrial equipment, aerospace components, and heavy machinery."
+                "name": "3DSFERA",
+                "description": "Leading digital marketplace connecting buyers and verified suppliers across 140 countries. Our platform specializes in industrial equipment, aerospace components, and heavy machinery with industry-leading reliability and support.",
+                "stats": {
+                    "Global Reach": "140 Countries",
+                    "Product SKUs": "2.4M",
+                    "Platform Uptime": "99.9%",
+                    "Verified Suppliers": "50k+"
+                }
             },
             "aero": {
-                "description": "Specialized manufacturer of high-performance turbine engines and precision valves for aerospace and industrial applications."
+                "name": "W&T ENGINEERING",
+                "description": "Specialized manufacturer of high-performance turbine engines and precision valves for aerospace and industrial applications. Engineering excellence since 1987.",
+                "stats": {
+                    "Engine Thrust": "240kN",
+                    "Efficiency Rating": "94%",
+                    "Global Installations": "12,000+",
+                    "ISO Certified": "AS9100D"
+                }
             },
             "heavy": {
-                "description": "Global leader in heavy machinery and industrial robotics, delivering lifting and automation solutions worldwide."
+                "name": "TITAN HEAVY INDUSTRIES",
+                "description": "Vertical transportation solutions for modern infrastructure. Global leader in heavy machinery and industrial robotics.",
+                "stats": {
+                    "Projects": "500+",
+                    "Global Fleet": "2000+",
+                    "Safety Rating": "A+"
+                }
+            },
+            "logistics": {
+                "name": "VELOCITY LOGISTICS",
+                "description": "Advanced automated logistics and supply chain management solutions. Optimizing global trade with AI-driven sorting and pneumatics.",
+                "stats": {
+                    "Throughput": "10k/hr",
+                    "Accuracy": "99.99%",
+                    "Network": "Global",
+                    "AI Core": "Gen-5"
+                }
+            },
+            "security": {
+                "name": "AEGIS SECURITY",
+                "description": "Next-generation surveillance and threat detection systems."
+            },
+            "data": {
+                "name": "QUANTUM DATA CORP",
+                "description": "Scalable cloud infrastructure and high-density server solutions."
+            },
+            "biotech": {
+                "name": "GENESIS BIO-LABS",
+                "description": "Precision laboratory equipment for genetic sequencing and analysis."
+            },
+            "ai_systems": {
+                "name": "SYNTHETIC MINDS",
+                "description": "Autonomous drones and robotic systems for industrial automation."
             }
         },
         "products": {
             "smart_microwave": {
                 "title": "Smart Inverter Microwave",
-                "description": "AI cooking sensors, rapid defrost, and stainless finish for modern kitchens."
+                "description": "Next-gen kitchen appliance with AI cooking sensors and rapid defrost technology. Sleek stainless steel finish.",
+                "stats": {
+                    "Power": "1200W",
+                    "Capacity": "2.2 cu ft",
+                    "Sensors": "Humidity/Temp"
+                },
+                "features": [
+                    "AI Cooking Sensors",
+                    "Smart Inverter Technology",
+                    "EasyClean Antibacterial Coating",
+                    "Hexagonal Stable Ring",
+                    "Bright LED Interior Light"
+                ]
             },
             "oled_tv": {
                 "title": "65\" 4K OLED TV",
-                "description": "Bezel-less 4K OLED panel with infinite contrast and cinematic color accuracy."
+                "description": "Ultra-thin bezel-less display with infinite contrast and cinematic color accuracy.",
+                "stats": {
+                    "Resolution": "3840 x 2160",
+                    "Panel Type": "OLED",
+                    "Refresh Rate": "120Hz"
+                },
+                "features": [
+                    "Self-lit OLED Pixels",
+                    "α9 Gen5 AI Processor 4K",
+                    "Dolby Vision IQ & Dolby Atmos",
+                    "NVIDIA G-SYNC Compatible",
+                    "ThinQ AI with Voice Control"
+                ]
             },
             "turbine_valve": {
                 "title": "High-Temp Turbine Valve",
-                "description": "Precision titanium-alloy valve engineered for extreme turbine temperatures and durability."
+                "description": "Precision-engineered valve designed for extreme temperature turbine applications. Titanium-X alloy construction ensures maximum durability and reliability.",
+                "stats": {
+                    "Max Temperature": "2500°C",
+                    "Material": "Titanium-X Alloy",
+                    "Warranty": "5000 Flight Hours",
+                    "Pressure Rating": "250 Bar"
+                },
+                "features": [
+                    "Titanium-X Alloy Body",
+                    "Thermal Shock Resistance",
+                    "Precision Flow Control",
+                    "2500°C Max Operating Temp",
+                    "ISO 9001 Certified"
+                ]
+            },
+            "single_seat_valve": {
+                "title": "Single-Seat Control Valve",
+                "description": "Versatile single-seat control valve for precise flow regulation. Available in WCB, WC6, WC9, and stainless steel variants for diverse industrial needs.",
+                "stats": {
+                    "Diameter": "DN15-DN400",
+                    "Pressure": "150-2500LB",
+                    "Temp Range": "-196~+538°C",
+                    "Drive": "Pneumatic/Elec"
+                },
+                "features": [
+                    "Wide Diameter Range (1/2\"-16\")",
+                    "High Pressure Class",
+                    "WCB/Stainless Construction",
+                    "Pneumatic or Electric Drive",
+                    "Flanged/Welded Connection"
+                ]
+            },
+            "fluorine_lined_valve": {
+                "title": "Fluorine-Lined Valve",
+                "description": "High-performance control valve with fluorine lining for hazardous media. Features double-seal tightness and superior corrosion resistance.",
+                "stats": {
+                    "Lining": "F46/PFA",
+                    "Tightness": "Double Seal",
+                    "Temp": "-30~+200°C",
+                    "Pressure": "PN10-PN25"
+                },
+                "features": [
+                    "Extreme Corrosion Resistance",
+                    "Zero Leakage (Soft Seal)",
+                    "WCB+F46/PFA Body",
+                    "Visual Position Indicator",
+                    "Chemical Safe Design"
+                ]
             },
             "pneumatic_system": {
                 "title": "Industrial Pneumatic Actuator",
-                "description": "Heavy-duty pneumatic control system for high-pressure airflow with rapid response."
+                "description": "Heavy-duty pneumatic control system for high-pressure industrial airflow management. Engineered for rapid response and extreme durability.",
+                "stats": {
+                    "Max Pressure": "350 Bar",
+                    "Actuation Time": "0.05s",
+                    "Cycle Life": "10M Cycles",
+                    "Material": "Stainless 316L"
+                },
+                "features": [
+                    "Heavy-Duty Stainless Steel 316L",
+                    "Rapid Response Actuation (0.05s)",
+                    "High Pressure Tolerance (350 Bar)",
+                    "Corrosion Resistant Coating",
+                    "Integrated Position Feedback"
+                ]
             },
-            "robotic_arm": {
-                "title": "6-Axis Industrial Robot",
-                "description": "High-precision robotic arm with strong payload capacity for automated manufacturing."
+            "road_grader_Main": {
+                "title": "Mega-Grader 5000",
+                "description": "Advanced road grading machine with GPS-guided blade control and autonomous leveling systems. Perfect for high-speed highway construction.",
+                "stats": {
+                    "Weight": "18 Tons",
+                    "Blade Width": "14 ft",
+                    "Power": "250 HP"
+                },
+                "features": [
+                    "GPS Leveling: Precision grade control within 1mm.",
+                    "Articulated Frame: Superior maneuverability in tight spaces.",
+                    "Eco-Diesel Engine: High torque with low emissions."
+                ]
             },
-            "mobile_crane": {
+            "mobile_crane_heavy": {
                 "title": "Mobile Crane MC-500",
-                "description": "Hybrid diesel-electric mobile crane for all-terrain construction and industrial lifts."
+                "description": "Heavy-duty mobile crane for construction and industrial applications. Diesel-electric hybrid power system for maximum efficiency.",
+                "stats": {
+                    "Lift Capacity": "40 Tons",
+                    "Boom Length": "32m",
+                    "Power System": "Diesel-Electric",
+                    "Mobility": "All-Terrain"
+                },
+                "features": [
+                    "40 Ton Lift Capacity",
+                    "Diesel-Electric Hybrid Drive",
+                    "32m Telescopic Boom"
+                ]
+            },
+            "pneumatic_sorter": {
+                "title": "Pneumatic Sorter Unit",
+                "description": "High-speed pneumatic diversion unit for automated conveyor systems. Handles up to 5000 units per hour with precise soft-touch actuation.",
+                "stats": {
+                    "Speed": "5m/s",
+                    "Pressure": "6 Bar",
+                    "Response": "10ms",
+                    "Rating": "IP67"
+                },
+                "features": [
+                    "Soft-Touch Diverter",
+                    "Real-Time Tracking",
+                    "Energy Efficient Air-Drive",
+                    "Modular Design",
+                    "Predictive Maintenance"
+                ]
+            },
+            "sec_camera": {
+                "title": "AI Sentinel Camera",
+                "description": "360-degree autonomous surveillance unit with facial recognition.",
+                "stats": {
+                    "Resolution": "8K",
+                    "AI Model": "Sentinel-V3",
+                    "Vision": "Night/Thermal"
+                },
+                "features": [
+                    "Facial Recognition",
+                    "Motion Tracking",
+                    "Thermal Vision"
+                ]
+            },
+            "server_blade": {
+                "title": "Quantum Server Rack",
+                "description": "High-density liquid cooled server rack for AI training.",
+                "stats": {
+                    "Cores": "1024",
+                    "RAM": "4TB",
+                    "Cooling": "Liquid N2"
+                },
+                "features": [
+                    "Liquid Cooling",
+                    "Hot-Swappable",
+                    "Quantum Ready"
+                ]
+            },
+            "electron_microscope": {
+                "title": "Electron Microscope",
+                "description": "High-resolution imaging for cellular analysis.",
+                "stats": {
+                    "Magnification": "100,000x",
+                    "Res": "0.1nm",
+                    "Type": "TEM"
+                },
+                "features": [
+                    "Atomic Resolution",
+                    "Auto-Focus",
+                    "Cloud Analysis"
+                ]
+            },
+            "ind_drone": {
+                "title": "Inspector Drone X1",
+                "description": "Autonomous inspection drone for hazardous environments.",
+                "stats": {
+                    "Flight Time": "45 min",
+                    "Range": "5km",
+                    "Sensors": "LiDAR/Thermal"
+                },
+                "features": [
+                    "Obstacle Avoidance",
+                    "Auto-Docking",
+                    "Swarm Capable"
+                ]
             }
         },
         "stats": {
             "Global Reach": "Global Reach",
             "Product SKUs": "Product SKUs",
             "Platform Uptime": "Platform Uptime",
-            "Verified Suppliers": "Verified Suppliers"
+            "Verified Suppliers": "Verified Suppliers",
+            "Engine Thrust": "Engine Thrust",
+            "Efficiency Rating": "Efficiency Rating",
+            "Global Installations": "Global Installations",
+            "ISO Certified": "ISO Certified",
+            "Max Temperature": "Max Temperature",
+            "Material": "Material",
+            "Warranty": "Warranty",
+            "Pressure Rating": "Pressure Rating",
+            "Diameter": "Diameter",
+            "Pressure": "Pressure",
+            "Temp Range": "Temp Range",
+            "Drive": "Drive",
+            "Lining": "Lining",
+            "Tightness": "Tightness",
+            "Temp": "Temp",
+            "Max Pressure": "Max Pressure",
+            "Actuation Time": "Actuation Time",
+            "Cycle Life": "Cycle Life",
+            "Weight": "Weight",
+            "Blade Width": "Blade Width",
+            "Power": "Power",
+            "Lift Capacity": "Lift Capacity",
+            "Boom Length": "Boom Length",
+            "Power System": "Power System",
+            "Mobility": "Mobility",
+            "Throughput": "Throughput",
+            "Accuracy": "Accuracy",
+            "Network": "Network",
+            "AI Core": "AI Core",
+            "Speed": "Speed",
+            "Response": "Response",
+            "Rating": "Rating",
+            "Resolution": "Resolution",
+            "AI Model": "AI Model",
+            "Vision": "Vision",
+            "Cores": "Cores",
+            "RAM": "RAM",
+            "Cooling": "Cooling",
+            "Magnification": "Magnification",
+            "Res": "Res",
+            "Type": "Type",
+            "Flight Time": "Flight Time",
+            "Range": "Range",
+            "Sensors": "Sensors"
         }
     },
     "app": {

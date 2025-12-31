@@ -196,6 +196,11 @@ export default function ShowroomView({ pavilionData, onBack, user }) {
         defaultValue: currentProduct.description || 'A masterpiece of engineering. Select to view details.'
     });
 
+    const productFeatures = t(`pavilion_content.products.${currentProduct.id}.features`, {
+        returnObjects: true,
+        defaultValue: currentProduct.features || []
+    });
+
     useEffect(() => {
         if (isSeller) setShowChat(false);
     }, [isSeller]);
@@ -300,7 +305,7 @@ export default function ShowroomView({ pavilionData, onBack, user }) {
 
                     <div className="text-right">
                         <h1 className="text-3xl md:text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white to-slate-400 font-[Orbitron] tracking-tighter">
-                            {pavilionData.name}
+                            {t(`pavilion_content.pavilions.${pavilionSlug}.name`, { defaultValue: pavilionData.name })}
                         </h1>
                         <p className="text-cyan-400 text-[10px] font-bold tracking-[0.3em] uppercase mt-1">
                             {t('pavilion_ui.products_catalog', 'Product Catalog')}
@@ -314,7 +319,7 @@ export default function ShowroomView({ pavilionData, onBack, user }) {
                         {/* Intro Blurb */}
                         <div className="max-w-3xl">
                             <p className="text-xl md:text-2xl text-slate-300 font-light leading-relaxed">
-                                {t(`pavilion_content.pavilions.${pavilionData.slug || pavilionData.id}.description`, { defaultValue: pavilionData.description })}
+                                {t(`pavilion_content.pavilions.${pavilionSlug}.description`, { defaultValue: pavilionData.description })}
                             </p>
                         </div>
 
@@ -334,7 +339,7 @@ export default function ShowroomView({ pavilionData, onBack, user }) {
                                         ${product.modelPath ? 'hover:border-cyan-500/50 hover:bg-white/10 hover:shadow-cyan-500/10 cursor-pointer' : 'opacity-80 cursor-default'}`}
                                 >
                                     {/* Image Placeholder area */}
-                                    <div className="h-48 w-full bg-black/50 relative overflow-hidden group-hover:opacity-90 transition-opacity">
+                                    <div className="h-72 w-full bg-black/50 relative overflow-hidden group-hover:opacity-90 transition-opacity">
                                         {product.image ? (
                                             <img
                                                 src={product.image}
@@ -533,7 +538,7 @@ export default function ShowroomView({ pavilionData, onBack, user }) {
 
                 <div className="text-right">
                     <h1 className="text-5xl font-black text-white tracking-tighter mb-1 font-[Orbitron] drop-shadow-[0_0_30px_rgba(255,255,255,0.2)]">
-                        {pavilionData?.name?.toUpperCase() || 'SHOWROOM'}
+                        {t(`pavilion_content.pavilions.${pavilionSlug}.name`, { defaultValue: pavilionData?.name?.toUpperCase() || 'SHOWROOM' })}
                     </h1>
                     <div className="flex items-center justify-end gap-2 text-cyan-400">
                         <div className="w-1.5 h-1.5 rounded-full bg-cyan-400 shadow-[0_0_10px_#22d3ee] animate-pulse" />
@@ -552,7 +557,7 @@ export default function ShowroomView({ pavilionData, onBack, user }) {
                         {productTitle}
                     </h2>
                     <p className="text-cyan-400 text-sm tracking-widest mb-4 uppercase" style={{ fontFamily: 'Inter, "Segoe UI", Arial, sans-serif' }}>
-                        {currentProduct.category || pavilionData?.name} // SERIES NO. {activeIndex + 1}
+                        {currentProduct.category || t(`pavilion_content.pavilions.${pavilionSlug}.name`, { defaultValue: pavilionData?.name })} // SERIES NO. {activeIndex + 1}
                     </p>
                     <div className="h-px w-24 bg-gradient-to-r from-cyan-500 to-transparent mb-4" />
                     <p
@@ -628,7 +633,7 @@ export default function ShowroomView({ pavilionData, onBack, user }) {
                     <div className="flex items-center justify-between px-4 py-3 border-b border-white/10 bg-white/5">
                         <div>
                             <p className="text-[11px] uppercase tracking-[0.25em] text-cyan-300">{t('pavilion_ui.chat_with_supplier')}</p>
-                            <p className="text-sm text-white/80 font-semibold">{pavilionData?.name}</p>
+                            <p className="text-sm text-white/80 font-semibold">{t(`pavilion_content.pavilions.${pavilionSlug}.name`, { defaultValue: pavilionData?.name })}</p>
                         </div>
                         <button
                             onClick={() => setShowChat(false)}
@@ -645,7 +650,7 @@ export default function ShowroomView({ pavilionData, onBack, user }) {
 
             {showFeatures && (
                 <FeaturesModal
-                    features={currentProduct.features}
+                    features={productFeatures}
                     title={productTitle}
                     onClose={() => setShowFeatures(false)}
                 />

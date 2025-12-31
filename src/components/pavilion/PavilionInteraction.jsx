@@ -136,9 +136,43 @@ animate -in fade -in slide -in -from - bottom - 4 pointer - events - auto
     );
 }
 // 2D Static HUD Card (Replaces FloatingAnnotation for reliability)
-export function InspectionCard({ title, description, stats, pavilionName, visible, onDetailsClick }) {
+export function InspectionCard({ title, description, stats, pavilionName, visible, onDetailsClick, productId, pavilionId }) {
     const { t } = useTranslation();
     if (!visible) return null;
+
+    // Resolve Trans keys
+    // If productId is provided, use it. Otherwise, use title slug logic as fallback (or handle based on context)
+    // Structure: pavilion_content.products.[id].title / description
+    // Structure: pavilion_content.pavilions.[id].name / description
+
+    let displayTitle = title;
+    let displayDescription = description;
+    let displayPavilionName = pavilionName;
+
+    if (productId) {
+        displayTitle = t(`pavilion_content.products.${productId}.title`, title);
+        displayDescription = t(`pavilion_content.products.${productId}.description`, description);
+    } else if (pavilionId) {
+        // It's a pavilion description/intro
+        displayPavilionName = t(`pavilion_content.pavilions.${pavilionId}.name`, pavilionName);
+        displayDescription = t(`pavilion_content.pavilions.${pavilionId}.description`, description);
+    }
+    // Fallback for generic objects or legacy format
+    // If no productId, we might try to infer from title if needed, but really we should pass productId.
+
+    let displayStats = stats;
+    if (productId) {
+        const productStats = t(`pavilion_content.products.${productId}.stats`, { returnObjects: true });
+        // Check if we got a real object back (not the key string or undefined)
+        if (productStats && typeof productStats === 'object' && !Array.isArray(productStats)) {
+            displayStats = productStats;
+        }
+    } else if (pavilionId) {
+        const pavStats = t(`pavilion_content.pavilions.${pavilionId}.stats`, { returnObjects: true });
+        if (pavStats && typeof pavStats === 'object' && !Array.isArray(pavStats)) {
+            displayStats = pavStats;
+        }
+    }
 
     return (
         <div className={`
@@ -159,7 +193,7 @@ export function InspectionCard({ title, description, stats, pavilionName, visibl
                         </div>
                     )}
                     <h3 className="text-white font-bold tracking-widest uppercase text-lg">
-                        {pavilionName || title}
+                        {displayPavilionName || displayTitle}
                     </h3>
                     <div className="h-0.5 w-12 bg-cyan-400 mt-2 shadow-[0_0_12px_#22d3ee]" />
                 </div>
@@ -167,13 +201,13 @@ export function InspectionCard({ title, description, stats, pavilionName, visibl
 
             {/* Description */}
             <p className="text-gray-300 text-sm leading-relaxed font-light mb-4">
-                {t(`pavilion_content.pavilions.${title?.toLowerCase?.()?.replace(/[^a-z0-9]+/g, '-') || ''}.description`, { defaultValue: description })}
+                {displayDescription}
             </p>
 
             {/* Stats Grid */}
-            {stats && (
+            {displayStats && (
                 <div className="grid grid-cols-2 gap-3 text-xs mb-4">
-                    {Object.entries(stats).map(([label, value]) => (
+                    {Object.entries(displayStats).map(([label, value]) => (
                         <div key={label} className="bg-white/5 p-3 rounded-lg border border-white/5">
                             <div className="text-gray-400 text-[10px] uppercase mb-1">
                                 {t(`pavilion_content.stats.${label}`, label)}

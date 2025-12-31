@@ -420,7 +420,7 @@ export default function VerifiedPavilion({ onBack, user }) {
                     <KioskUnit
                         position={[0, 0, -5]}
                         rotation={[0, 0, 0]}
-                        title="Welcome to 3DSFERA"
+                        title={t('pavilion_content.pavilions.3dsfera.name', "3DSFERA")}
                         glowColor="#00ffff"
                         roofColor="white"
                         type="info-desk"
@@ -431,7 +431,7 @@ export default function VerifiedPavilion({ onBack, user }) {
                     <KioskUnit
                         position={[-25, 0, -5]}
                         rotation={[0, Math.PI / 4, 0]}
-                        title="W&T ENGINEERING"
+                        title={t('pavilion_content.pavilions.aero.name', "W&T ENGINEERING")}
                         glowColor="#ff0055"
                         roofColor="white"
                         imageUrl={aeroWallUrl} // Static Image
@@ -465,7 +465,7 @@ export default function VerifiedPavilion({ onBack, user }) {
                     <KioskUnit
                         position={[25, 0, -5]}
                         rotation={[0, -Math.PI / 4, 0]}
-                        title="TITAN HEAVY INDUSTRIES"
+                        title={t('pavilion_content.pavilions.heavy.name', "TITAN HEAVY INDUSTRIES")}
                         glowColor="#00aaff"
                         roofColor="white"
                         imageUrl={liftWallUrl}
@@ -511,7 +511,7 @@ export default function VerifiedPavilion({ onBack, user }) {
                     <KioskUnit
                         position={[-21, 0, -38]}
                         rotation={[0, Math.PI / 6, 0]}
-                        title="VOLT ENERGY"
+                        title={t('pavilion_content.pavilions.energy.name', "VOLT ENERGY")}
                         glowColor="#ffaa00"
                         interactable={false}
                         roofColor="white"
@@ -536,7 +536,7 @@ export default function VerifiedPavilion({ onBack, user }) {
                     <KioskUnit
                         position={[21, 0, -38]}
                         rotation={[0, -Math.PI / 6, 0]}
-                        title="VELOCITY LOGISTICS"
+                        title={t('pavilion_content.pavilions.logistics.name', "VELOCITY LOGISTICS")}
                         glowColor="#00ff55"
                         interactable={false}
                         roofColor="white"
@@ -580,7 +580,7 @@ export default function VerifiedPavilion({ onBack, user }) {
                     <KioskUnit
                         position={[-25, 0, 20]}
                         rotation={[0, Math.PI / 2, 0]}
-                        title="AEGIS SECURITY"
+                        title={t('pavilion_content.pavilions.security.name', "AEGIS SECURITY")}
                         glowColor="#e63946"
                         hideSideModels={false} // Restored side models
                         videoUrl={null}
@@ -886,6 +886,8 @@ export default function VerifiedPavilion({ onBack, user }) {
                 description={selectedObject?.description}
                 stats={selectedObject?.stats}
                 onDetailsClick={openFullOverlay}
+                productId={selectedObject?.title ? selectedObject?.id : undefined}
+                pavilionId={selectedObject?.name ? selectedObject?.id : undefined}
             />
 
             {/* WELCOME OVERLAY */}

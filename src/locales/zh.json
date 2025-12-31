@@ -138,6 +138,14 @@
         "buyer_only_here": "此视图仅买家可用聊天。",
         "products_in_showroom": "展厅内的产品",
         "company_info": "公司信息",
+        "welcome_to": "欢迎来到",
+        "stats": {
+            "active_nodes": "活跃节点",
+            "btc_usd": "BTC / USD",
+            "network_latency": "网络延迟",
+            "system_status": "系统状态",
+            "online": "在线"
+        },
         "pavilion_label": "展馆",
         "enter_pavilion": "进入展馆",
         "company": "公司",
@@ -322,46 +330,314 @@
     "pavilion_content": {
         "pavilions": {
             "3dsfera": {
-                "description": "领先的数字化采购平台，连接140个国家的买家与认证供应商，专注工业设备、航空航天零件和重型机械。"
+                "name": "3DSFERA",
+                "description": "领先的数字市场，连接全球 140 个国家的买家和经过验证的供应商。我们的平台专注于工业设备、航空航天零部件和重型机械，拥有行业领先的可靠性和支持。",
+                "stats": {
+                    "Global Reach": "140 Countries",
+                    "Product SKUs": "2.4M",
+                    "Platform Uptime": "99.9%",
+                    "Verified Suppliers": "50k+"
+                }
             },
             "aero": {
-                "description": "专注高性能涡轮发动机与精密阀门的制造商，服务航空和工业应用。"
+                "name": "W&T 工程",
+                "description": "专注于航空航天和工业应用的高性能涡轮发动机和精密阀门的制造商。自 1987 年以来的卓越工程技术。",
+                "stats": {
+                    "Engine Thrust": "240kN",
+                    "Efficiency Rating": "94%",
+                    "Global Installations": "12,000+",
+                    "ISO Certified": "AS9100D"
+                }
             },
             "heavy": {
-                "description": "重型机械与工业机器人领域的全球领导者，提供吊装与自动化解决方案。"
+                "name": "泰坦重工",
+                "description": "现代基础设施的垂直运输解决方案。重型机械和工业机器人领域的全球领导者。",
+                "stats": {
+                    "Projects": "500+",
+                    "Global Fleet": "2000+",
+                    "Safety Rating": "A+"
+                }
+            },
+            "logistics": {
+                "name": "极速物流",
+                "description": "先进的自动化物流和供应链管理解决方案。利用 AI 驱动的分拣和气动技术优化全球贸易。",
+                "stats": {
+                    "Throughput": "10k/hr",
+                    "Accuracy": "99.99%",
+                    "Network": "Global",
+                    "AI Core": "Gen-5"
+                }
+            },
+            "security": {
+                "name": "埃吉斯安防",
+                "description": "下一代监控和威胁检测系统。"
+            },
+            "data": {
+                "name": "量子数据集团",
+                "description": "可扩展的云基础设施和高密度服务器解决方案。"
+            },
+            "biotech": {
+                "name": "创世纪生物实验室",
+                "description": "用于基因测序和分析的精密实验室设备。"
+            },
+            "ai_systems": {
+                "name": "合成思维",
+                "description": "用于工业自动化的自主无人机和机器人系统。"
             }
         },
         "products": {
             "smart_microwave": {
                 "title": "智能变频微波炉",
-                "description": "AI烹饪传感器，极速解冻，不锈钢外观，适配现代厨房。"
+                "description": "配备 AI 烹饪传感器和快速解冻技术的下一代厨房电器。时尚的不锈钢外观。",
+                "stats": {
+                    "Power": "1200W",
+                    "Capacity": "2.2 cu ft",
+                    "Sensors": "Humidity/Temp"
+                },
+                "features": [
+                    "AI 烹饪传感器",
+                    "智能变频技术",
+                    "易洁抗菌涂层",
+                    "六边形稳定环",
+                    "明亮 LED 内部照明"
+                ]
             },
             "oled_tv": {
                 "title": "65英寸 4K OLED 电视",
-                "description": "无边框4K OLED面板，极高对比度与影院级色彩。"
+                "description": "超薄无边框显示屏，具有无限对比度和电影般的色彩准确度。",
+                "stats": {
+                    "Resolution": "3840 x 2160",
+                    "Panel Type": "OLED",
+                    "Refresh Rate": "120Hz"
+                },
+                "features": [
+                    "自发光 OLED 像素",
+                    "α9 Gen5 AI 处理器 4K",
+                    "杜比视界 IQ 和杜比全景声",
+                    "兼容 NVIDIA G-SYNC",
+                    "带语音控制的 ThinQ AI"
+                ]
             },
             "turbine_valve": {
                 "title": "高温涡轮阀",
-                "description": "钛合金精密阀门，专为极端温度与高可靠性而设计。"
+                "description": "专为极端温度涡轮应用设计的精密阀门。Titanium-X 合金结构确保最大的耐用性和可靠性。",
+                "stats": {
+                    "Max Temperature": "2500°C",
+                    "Material": "Titanium-X Alloy",
+                    "Warranty": "5000 Flight Hours",
+                    "Pressure Rating": "250 Bar"
+                },
+                "features": [
+                    "Titanium-X 合金阀体",
+                    "抗热冲击",
+                    "精确流量控制",
+                    "最高工作温度 2500°C",
+                    "ISO 9001 认证"
+                ]
+            },
+            "single_seat_valve": {
+                "title": "单座调节阀",
+                "description": "用于精确流量调节的多功能单座调节阀。提供 WCB、WC6、WC9 和不锈钢型号，满足各种工业需求。",
+                "stats": {
+                    "Diameter": "DN15-DN400",
+                    "Pressure": "150-2500LB",
+                    "Temp Range": "-196~+538°C",
+                    "Drive": "Pneumatic/Elec"
+                },
+                "features": [
+                    "宽口径范围 (1/2\"-16\")",
+                    "高压力等级",
+                    "WCB/不锈钢 结构",
+                    "气动或电动驱动",
+                    "法兰/焊接连接"
+                ]
+            },
+            "fluorine_lined_valve": {
+                "title": "衬氟阀门",
+                "description": "用于危险介质的高性能衬氟控制阀。具有双重密封严密性和卓越的耐腐蚀性。",
+                "stats": {
+                    "Lining": "F46/PFA",
+                    "Tightness": "Double Seal",
+                    "Temp": "-30~+200°C",
+                    "Pressure": "PN10-PN25"
+                },
+                "features": [
+                    "极佳的耐腐蚀性",
+                    "零泄漏 (软密封)",
+                    "WCB+F46/PFA 阀体",
+                    "可视化位置指示器",
+                    "化学安全设计"
+                ]
             },
             "pneumatic_system": {
-                "title": "工业级气动执行器",
-                "description": "重载高压气动控制系统，响应迅速、耐用可靠。"
+                "title": "工业气动执行器",
+                "description": "用于高压工业气流管理的重型气动控制系统。专为快速响应和极高耐用性而设计。",
+                "stats": {
+                    "Max Pressure": "350 Bar",
+                    "Actuation Time": "0.05s",
+                    "Cycle Life": "10M Cycles",
+                    "Material": "Stainless 316L"
+                },
+                "features": [
+                    "重型不锈钢 316L",
+                    "快速响应驱动 (0.05s)",
+                    "高耐压 (350 Bar)",
+                    "耐腐蚀涂层",
+                    "集成位置反馈"
+                ]
             },
-            "robotic_arm": {
-                "title": "六轴工业机器人",
-                "description": "高精度、大负载机械臂，适用于自动化生产线。"
+            "road_grader_Main": {
+                "title": "超级平地机 5000",
+                "description": "配备 GPS 引导铲刀控制和自主平整系统的先进平地机。非常适合高速公路建设。",
+                "stats": {
+                    "Weight": "18 Tons",
+                    "Blade Width": "14 ft",
+                    "Power": "250 HP"
+                },
+                "features": [
+                    "GPS 平整: 精度控制在 1mm 以内。",
+                    "铰接式车架: 狭窄空间内极佳的机动性。",
+                    "环保柴油发动机: 大扭矩低排放。"
+                ]
             },
-            "mobile_crane": {
-                "title": "MC-500 移动起重机",
-                "description": "柴油电混动全地形起重机，适配施工与工业吊装。"
+            "mobile_crane_heavy": {
+                "title": "移动起重机 MC-500",
+                "description": "用于建筑和工业应用的重型移动起重机。柴油-电动混合动力系统实现最高效率。",
+                "stats": {
+                    "Lift Capacity": "40 Tons",
+                    "Boom Length": "32m",
+                    "Power System": "Diesel-Electric",
+                    "Mobility": "All-Terrain"
+                },
+                "features": [
+                    "40 吨起重能力",
+                    "柴油-电动混合驱动",
+                    "32米伸缩臂"
+                ]
+            },
+            "pneumatic_sorter": {
+                "title": "气动分拣装置",
+                "description": "用于自动输送系统的高速气动分流装置。每小时处理高达 5000 个单元，具有精确的柔性触动。",
+                "stats": {
+                    "Speed": "5m/s",
+                    "Pressure": "6 Bar",
+                    "Response": "10ms",
+                    "Rating": "IP67"
+                },
+                "features": [
+                    "柔性触动分流器",
+                    "实时追踪",
+                    "节能气动驱动",
+                    "模块化设计",
+                    "预测性维护"
+                ]
+            },
+            "sec_camera": {
+                "title": "AI 哨兵摄像头",
+                "description": "具有面部识别功能的 360 度自主监控单元。",
+                "stats": {
+                    "Resolution": "8K",
+                    "AI Model": "Sentinel-V3",
+                    "Vision": "Night/Thermal"
+                },
+                "features": [
+                    "面部识别",
+                    "运动追踪",
+                    "热成像视觉"
+                ]
+            },
+            "server_blade": {
+                "title": "量子服务器机架",
+                "description": "用于 AI 训练的高密度液冷服务器机架。",
+                "stats": {
+                    "Cores": "1024",
+                    "RAM": "4TB",
+                    "Cooling": "Liquid N2"
+                },
+                "features": [
+                    "液体冷却",
+                    "热插拔",
+                    "量子就绪"
+                ]
+            },
+            "electron_microscope": {
+                "title": "电子显微镜",
+                "description": "用于细胞分析的高分辨率成像。",
+                "stats": {
+                    "Magnification": "100,000x",
+                    "Res": "0.1nm",
+                    "Type": "TEM"
+                },
+                "features": [
+                    "原子级分辨率",
+                    "自动对焦",
+                    "云端分析"
+                ]
+            },
+            "ind_drone": {
+                "title": "巡检无人机 X1",
+                "description": "用于危险环境的自主巡检无人机。",
+                "stats": {
+                    "Flight Time": "45 min",
+                    "Range": "5km",
+                    "Sensors": "LiDAR/Thermal"
+                },
+                "features": [
+                    "避障",
+                    "自动对接",
+                    "集群能力"
+                ]
             }
         },
         "stats": {
             "Global Reach": "全球覆盖",
             "Product SKUs": "产品 SKU",
             "Platform Uptime": "平台正常运行时间",
-            "Verified Suppliers": "认证供应商"
+            "Verified Suppliers": "认证供应商",
+            "Engine Thrust": "引擎推力",
+            "Efficiency Rating": "效率等级",
+            "Global Installations": "全球安装量",
+            "ISO Certified": "ISO 认证",
+            "Max Temperature": "最高温度",
+            "Material": "材质",
+            "Warranty": "质保",
+            "Pressure Rating": "压力等级",
+            "Diameter": "直径",
+            "Pressure": "压力",
+            "Temp Range": "温度范围",
+            "Drive": "驱动",
+            "Lining": "衬里",
+            "Tightness": "密封性",
+            "Temp": "温度",
+            "Max Pressure": "最大压力",
+            "Actuation Time": "致动时间",
+            "Cycle Life": "循环寿命",
+            "Weight": "重量",
+            "Blade Width": "铲刀宽度",
+            "Power": "功率",
+            "Lift Capacity": "起重能力",
+            "Boom Length": "臂长",
+            "Power System": "动力系统",
+            "Mobility": "机动性",
+            "Throughput": "吞吐量",
+            "Accuracy": "准确率",
+            "Network": "网络",
+            "AI Core": "AI 核心",
+            "Speed": "速度",
+            "Response": "响应",
+            "Rating": "等级",
+            "Resolution": "分辨率",
+            "AI Model": "AI 模型",
+            "Vision": "视觉",
+            "Cores": "核心",
+            "RAM": "内存",
+            "Cooling": "冷却",
+            "Magnification": "放大倍率",
+            "Res": "分辨率",
+            "Type": "类型",
+            "Flight Time": "飞行时间",
+            "Range": "航程",
+            "Sensors": "传感器"
         }
     },
     "app": {
