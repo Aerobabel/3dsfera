@@ -2,112 +2,103 @@
 import { useTranslation } from 'react-i18next';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { Preload, useGLTF, useProgress, PerformanceMonitor } from '@react-three/drei';
+import * as THREE from 'three';
+import { EffectComposer, Bloom, Vignette, Noise, DepthOfField } from '@react-three/postprocessing';
+import { supabase } from '../lib/supabaseClient';
+import { resolveVerifiedDemoId } from '../lib/resolveVerifiedDemoId';
+
+// Components
+import SoundManager from './pavilion/SoundManager';
+import MaintenanceDrone from './pavilion/MaintenanceDrone';
+import KioskUnit from './pavilion/KioskUnit';
+import ShowroomView from './pavilion/ShowroomView';
+import InfographicOverlay from './pavilion/InfographicOverlay';
+import { PAVILIONS } from './pavilion/pavilionData';
+import { OrbitControls } from '@react-three/drei';
+import { CameraSmoother, InspectionCard } from './pavilion/PavilionInteraction';
+
+
+import ProductDisplay from './pavilion/ProductDisplay';
+import { ConveyorBelt } from './pavilion/subsystems/ConveyorBelt';
+import { FactoryPartition } from './pavilion/subsystems/FactoryPartition';
+
+
+import WalkingMan from './pavilion/WalkingMan';
+import HologramGuide from './pavilion/HologramGuide';
+
+import { CameraManager } from './pavilion/CameraManager';
+import { SceneReadyNotifier } from './pavilion/PavilionUtils';
+import { PavilionArchitecture } from './pavilion/PavilionArchitecture';
+
+// Assets
+
+// Generated Kiosk Screens
+import kioskSecurityUrl from '../assets/images/kiosk_security.png';
+import kioskResearchUrl from '../assets/images/kiosk_research.png';
+import kioskDataUrl from '../assets/images/kiosk_data.png';
+import kioskManufacturingUrl from '../assets/images/kiosk_manufacturing.png';
+import kioskAiUrl from '../assets/images/kiosk_ai.png';
+import kioskQuantumUrl from '../assets/images/kiosk_quantum.png';
+import kioskBiotechUrl from '../assets/images/kiosk_biotech.png';
+import kioskEnergyUrl from '../assets/images/kiosk_energy.png';
+import kioskLogisticsUrl from '../assets/images/kiosk_logistics.png';
+
+// Legacy/Placeholder Assets (Required for main kiosks)
+import aeroWallUrl from '../assets/images/aerowall.png';
+import liftWallUrl from '../assets/images/liftwall.png';
+
+
+const TURBO_ENGINE_PATH = '/objects/turbo_schaft_engine_ivchenko_al-20.glb';
+const PNEUMATIC_PATH = '/objects/optimized/Pneumatic.glb';
+const CRANE_PATH = '/objects/optimized/mobile_crane.glb';
+const CRANE_MACHINE_PATH = '/objects/optimized/crane_machine.glb';
+const ROAD_GRADER_PATH = '/objects/optimized/road_grader.glb';
+const VALVE_PATH = '/objects/valve.glb';
+const CAMERA_PATH = '/objects/optimized/camera.glb';
+const DRONE_PATH = '/objects/drone.glb';
+const ESCAVATOR_PATH = '/objects/optimized/escavator.glb';
+
+// Pre-load assets
+// Pre-load assets
+// useGLTF.preload(TURBO_ENGINE_PATH);
+// useGLTF.preload(CRANE_PATH);
+// useGLTF.preload(CRANE_MACHINE_PATH);
+// useGLTF.preload(ESCAVATOR_PATH);
 
 export default function VerifiedPavilion({ onBack, user }) {
     const { t } = useTranslation();
-    const [dpr, setDpr] = useState(1.5); // Start high, degrade if needed
-    // ... existing state ...
+    const [dpr, setDpr] = useState(1.5); // Performance Monitor State
+    const [selectedObject, setSelectedObject] = useState(null);
+    const [inspectMode, setInspectMode] = useState(false); // New: Inspect Mode State
+    const [isTransitioning, setTransitioning] = useState(false);
+    const [savedCameraState, setSavedCameraState] = useState(null); // Save cam before inspect
+    const [captureReq, setCaptureReq] = useState(false); // Trigger for camera capture
+    const [pendingData, setPendingData] = useState(null); // Data waiting for capture
+    const [orbitTarget, setOrbitTarget] = useState(null); // New: Target for Orbit Controls
+    const [cameraPosition, setCameraPosition] = useState(null); // New: Smoother Target Cam Pos
+    const [isOpen, setIsOpen] = useState(false); // Pavilion info overlay state
+    const controlsRef = useRef(); // Ref for OrbitControls
+    const [pavilionId, setPavilionId] = useState(null);
+    const [isShowroomOpen, setIsShowroomOpen] = useState(false);
+    const [showroomData, setShowroomData] = useState(null);
+    const { progress, active } = useProgress();
+    const [visualProgress, setVisualProgress] = useState(0); // Smooth progress
+    const [minHoldDone, setMinHoldDone] = useState(false);
+    const [sceneReady, setSceneReady] = useState(false);
+    const [showLoader, setShowLoader] = useState(true);
+    const [showWelcome, setShowWelcome] = useState(true); // New Welcome State
 
-    // ... (inside Canvas) ...
-    <PerformanceMonitor onIncline={() => setDpr(1.5)} onDecline={() => setDpr(0.75)}>
-        <Suspense fallback={null}>
-            <SceneReadyNotifier onReady={() => setSceneReady(true)} />
-            import * as THREE from 'three';
-            import {EffectComposer, Bloom, Vignette, Noise, DepthOfField} from '@react-three/postprocessing';
-            import {supabase} from '../lib/supabaseClient';
-            import {resolveVerifiedDemoId} from '../lib/resolveVerifiedDemoId';
-
-            // Components
-            import SoundManager from './pavilion/SoundManager';
-            import MaintenanceDrone from './pavilion/MaintenanceDrone';
-            import KioskUnit from './pavilion/KioskUnit';
-            import ShowroomView from './pavilion/ShowroomView';
-            import InfographicOverlay from './pavilion/InfographicOverlay';
-            import {PAVILIONS} from './pavilion/pavilionData';
-            import {OrbitControls} from '@react-three/drei';
-            import {CameraSmoother, InspectionCard} from './pavilion/PavilionInteraction';
-
-
-            import ProductDisplay from './pavilion/ProductDisplay';
-            import {ConveyorBelt} from './pavilion/subsystems/ConveyorBelt';
-            import {FactoryPartition} from './pavilion/subsystems/FactoryPartition';
-
-
-            import WalkingMan from './pavilion/WalkingMan';
-            import HologramGuide from './pavilion/HologramGuide';
-
-            import {CameraManager} from './pavilion/CameraManager';
-            import {SceneReadyNotifier} from './pavilion/PavilionUtils';
-            import {PavilionArchitecture} from './pavilion/PavilionArchitecture';
-
-            // Assets
-
-            // Generated Kiosk Screens
-            import kioskSecurityUrl from '../assets/images/kiosk_security.png';
-            import kioskResearchUrl from '../assets/images/kiosk_research.png';
-            import kioskDataUrl from '../assets/images/kiosk_data.png';
-            import kioskManufacturingUrl from '../assets/images/kiosk_manufacturing.png';
-            import kioskAiUrl from '../assets/images/kiosk_ai.png';
-            import kioskQuantumUrl from '../assets/images/kiosk_quantum.png';
-            import kioskBiotechUrl from '../assets/images/kiosk_biotech.png';
-            import kioskEnergyUrl from '../assets/images/kiosk_energy.png';
-            import kioskLogisticsUrl from '../assets/images/kiosk_logistics.png';
-
-            // Legacy/Placeholder Assets (Required for main kiosks)
-            import aeroWallUrl from '../assets/images/aerowall.png';
-            import liftWallUrl from '../assets/images/liftwall.png';
-
-
-            const TURBO_ENGINE_PATH = '/objects/turbo_schaft_engine_ivchenko_al-20.glb';
-            const PNEUMATIC_PATH = '/objects/optimized/Pneumatic.glb';
-            const CRANE_PATH = '/objects/optimized/mobile_crane.glb';
-            const CRANE_MACHINE_PATH = '/objects/optimized/crane_machine.glb';
-            const ROAD_GRADER_PATH = '/objects/optimized/road_grader.glb';
-            const VALVE_PATH = '/objects/valve.glb';
-            const CAMERA_PATH = '/objects/optimized/camera.glb';
-            const DRONE_PATH = '/objects/drone.glb';
-            const ESCAVATOR_PATH = '/objects/optimized/escavator.glb';
-
-            // Pre-load assets
-            // Pre-load assets
-            // useGLTF.preload(TURBO_ENGINE_PATH);
-            // useGLTF.preload(CRANE_PATH);
-            // useGLTF.preload(CRANE_MACHINE_PATH);
-            // useGLTF.preload(ESCAVATOR_PATH);
-
-            export default function VerifiedPavilion({onBack, user}) {
-    const {t} = useTranslation();
-            const [selectedObject, setSelectedObject] = useState(null);
-            const [inspectMode, setInspectMode] = useState(false); // New: Inspect Mode State
-            const [isTransitioning, setTransitioning] = useState(false);
-            const [savedCameraState, setSavedCameraState] = useState(null); // Save cam before inspect
-            const [captureReq, setCaptureReq] = useState(false); // Trigger for camera capture
-            const [pendingData, setPendingData] = useState(null); // Data waiting for capture
-            const [orbitTarget, setOrbitTarget] = useState(null); // New: Target for Orbit Controls
-            const [cameraPosition, setCameraPosition] = useState(null); // New: Smoother Target Cam Pos
-            const [isOpen, setIsOpen] = useState(false); // Pavilion info overlay state
-            const controlsRef = useRef(); // Ref for OrbitControls
-            const [pavilionId, setPavilionId] = useState(null);
-            const [isShowroomOpen, setIsShowroomOpen] = useState(false);
-            const [showroomData, setShowroomData] = useState(null);
-            const {progress, active} = useProgress();
-            const [visualProgress, setVisualProgress] = useState(0); // Smooth progress
-            const [minHoldDone, setMinHoldDone] = useState(false);
-            const [sceneReady, setSceneReady] = useState(false);
-            const [showLoader, setShowLoader] = useState(true);
-            const [showWelcome, setShowWelcome] = useState(true); // New Welcome State
-
-            // Tank Controls don't need pointer lock state for navigation
-            const cameraRef = useRef();
-            const velocityRef = useRef(new THREE.Vector3());
+    // Tank Controls don't need pointer lock state for navigation
+    const cameraRef = useRef();
+    const velocityRef = useRef(new THREE.Vector3());
 
     // Resolve Pavilion ID
     useEffect(() => {
         if (user) {
-                resolveVerifiedDemoId(supabase, user.id).then(setPavilionId);
+            resolveVerifiedDemoId(supabase, user.id).then(setPavilionId);
         } else {
-                // Fallback if no user, still needs supabase
-                resolveVerifiedDemoId(supabase, null).then(setPavilionId);
+            // Fallback if no user, still needs supabase
+            resolveVerifiedDemoId(supabase, null).then(setPavilionId);
         }
     }, [user]);
 
@@ -123,10 +114,10 @@ export default function VerifiedPavilion({ onBack, user }) {
     // Init Audio
     useEffect(() => {
         const handleInteraction = () => {
-                SoundManager.init();
+            SoundManager.init();
             window.removeEventListener('click', handleInteraction);
         };
-            window.addEventListener('click', handleInteraction);
+        window.addEventListener('click', handleInteraction);
         return () => window.removeEventListener('click', handleInteraction);
     }, []);
 
@@ -146,125 +137,126 @@ export default function VerifiedPavilion({ onBack, user }) {
     // --- HANDLERS ---
 
     const handleCameraCaptured = useCallback((capturedState) => {
-                // 2. Camera is saved. Now transition.
-                setSavedCameraState(capturedState);
-            setCaptureReq(false);
+        // 2. Camera is saved. Now transition.
+        setSavedCameraState(capturedState);
+        setCaptureReq(false);
 
-            if (pendingData) {
-            const {data, position} = pendingData;
+        if (pendingData) {
+            const { data, position } = pendingData;
             SoundManager.playClick();
             setSelectedObject(data);
 
             if (position) {
                 setInspectMode(true);
-            setOrbitTarget(position);
-            const viewOffset = [position[0], position[1] + 2.5, position[2] + 8.0];
-            setCameraPosition(viewOffset);
+                setOrbitTarget(position);
+                const viewOffset = [position[0], position[1] + 2.5, position[2] + 8.0];
+                setCameraPosition(viewOffset);
             }
         }
-            setPendingData(null);
+        setPendingData(null);
     }, [pendingData]);
 
     const handleObjectClick = useCallback((data, position) => {
-                // 1. Request Capture first. Don't move yet.
-                setPendingData({ data, position });
-            setCaptureReq(true);
+        // 1. Request Capture first. Don't move yet.
+        setPendingData({ data, position });
+        setCaptureReq(true);
     }, []);
 
     const closeInspectMode = () => {
         if (savedCameraState) {
-                setTransitioning(true);
+            setTransitioning(true);
         }
-            setInspectMode(false);
-            setSelectedObject(null);
-            setOrbitTarget(null);
-            setCameraPosition(null);
-            setIsOpen(false);
+        setInspectMode(false);
+        setSelectedObject(null);
+        setOrbitTarget(null);
+        setCameraPosition(null);
+        setIsOpen(false);
     };
 
     const closeOverlayOnly = () => {
-                setIsOpen(false);
+        setIsOpen(false);
         // Keep inspect mode active after closing overlay
     };
 
     const openShowroom = (pavilion) => {
         // Ensure we carry the real pavilion id for Supabase chat; preserve slug for filtering
         const resolvedId = pavilionId || pavilion?.id;
-            setShowroomData({...pavilion, id: resolvedId, slug: pavilion?.slug || pavilion?.id });
-            setIsShowroomOpen(true);
+        setShowroomData({ ...pavilion, id: resolvedId, slug: pavilion?.slug || pavilion?.id });
+        setIsShowroomOpen(true);
     };
 
     const openFullOverlay = () => {
-                // Instead of opening another overlay, directly enter the showroom
-                openShowroom(selectedObject);
+        // Instead of opening another overlay, directly enter the showroom
+        openShowroom(selectedObject);
     };
 
     const handleBack = () => {
-                SoundManager.playClick();
-            onBack();
+        SoundManager.playClick();
+        onBack();
     };
 
 
 
 
 
-            return (
-            <div id="game-container" className="w-full h-screen bg-black relative select-none overflow-hidden">
+    return (
+        <div id="game-container" className="w-full h-screen bg-black relative select-none overflow-hidden">
 
-                {/* Header / HUD */}
-                <div className="absolute top-0 left-0 w-full p-6 z-10 flex justify-between items-start pointer-events-none">
-                    <div className="pointer-events-auto">
-                        <button
-                            onClick={handleBack}
-                            onMouseEnter={() => SoundManager.playHover()}
-                            className="px-6 py-2 bg-white/10 backdrop-blur-md border border-white/20 rounded text-white font-bold hover:bg-white/20 transition flex items-center gap-2 group"
-                        >
-                            <svg className="w-5 h-5 transition-transform group-hover:-translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
-                            {t('pavilion_ui.back')}
-                        </button>
-                    </div>
+            {/* Header / HUD */}
+            <div className="absolute top-0 left-0 w-full p-6 z-10 flex justify-between items-start pointer-events-none">
+                <div className="pointer-events-auto">
+                    <button
+                        onClick={handleBack}
+                        onMouseEnter={() => SoundManager.playHover()}
+                        className="px-6 py-2 bg-white/10 backdrop-blur-md border border-white/20 rounded text-white font-bold hover:bg-white/20 transition flex items-center gap-2 group"
+                    >
+                        <svg className="w-5 h-5 transition-transform group-hover:-translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
+                        {t('pavilion_ui.back')}
+                    </button>
+                </div>
 
-                    <div className="pointer-events-auto flex gap-4">
-                        <div className="text-right px-5 py-4 bg-gradient-to-br from-[#0a192f]/70 via-[#0c223d]/60 to-[#0a1020]/70 backdrop-blur-xl border border-cyan-400/15 rounded-2xl shadow-[0_20px_60px_rgba(0,0,0,0.55)] animate-fadeIn">
-                            <div className="flex items-center justify-end gap-2">
-                                <div className="w-2 h-2 rounded-full bg-cyan-300 shadow-[0_0_12px_rgba(34,211,238,0.9)]" />
-                                <span className="text-[11px] tracking-[0.25em] text-cyan-200/80 uppercase">{t('verified_pavilion.ui.live_link', 'LIVE LINK')}</span>
-                            </div>
-                            <div className="mt-2 text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-200 via-blue-300 to-indigo-400 tracking-tight drop-shadow-[0_0_12px_rgba(56,189,248,0.45)] font-[Orbitron]">
-                                3DSFERA
-                            </div>
-                            <div className="text-[11px] text-slate-200/80 tracking-[0.18em] font-semibold mt-1">
-                                Verified Supplier Pavilion
-                            </div>
+                <div className="pointer-events-auto flex gap-4">
+                    <div className="text-right px-5 py-4 bg-gradient-to-br from-[#0a192f]/70 via-[#0c223d]/60 to-[#0a1020]/70 backdrop-blur-xl border border-cyan-400/15 rounded-2xl shadow-[0_20px_60px_rgba(0,0,0,0.55)] animate-fadeIn">
+                        <div className="flex items-center justify-end gap-2">
+                            <div className="w-2 h-2 rounded-full bg-cyan-300 shadow-[0_0_12px_rgba(34,211,238,0.9)]" />
+                            <span className="text-[11px] tracking-[0.25em] text-cyan-200/80 uppercase">{t('verified_pavilion.ui.live_link', 'LIVE LINK')}</span>
+                        </div>
+                        <div className="mt-2 text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-200 via-blue-300 to-indigo-400 tracking-tight drop-shadow-[0_0_12px_rgba(56,189,248,0.45)] font-[Orbitron]">
+                            3DSFERA
+                        </div>
+                        <div className="text-[11px] text-slate-200/80 tracking-[0.18em] font-semibold mt-1">
+                            Verified Supplier Pavilion
                         </div>
                     </div>
                 </div>
+            </div>
 
-                {/* Navigation hint (bottom-left) */}
-                <div className="absolute bottom-10 left-10 z-10 pointer-events-none">
-                    <div className="bg-black/70 border border-white/20 rounded-xl px-6 py-5 text-sm text-white/90 backdrop-blur-md shadow-2xl max-w-sm space-y-2">
-                        <div className="text-xs uppercase tracking-[0.25em] text-cyan-300 font-bold mb-2 border-b border-white/10 pb-2">{t('verified_pavilion.ui_nav.nav_title')}</div>
-                        <div className="flex items-center gap-3"><span className="font-mono text-cyan-400 font-bold">LMB</span> {t('verified_pavilion.ui_nav.nav_orbit', 'Rotate')}</div>
-                        <div className="flex items-center gap-3"><span className="font-mono text-cyan-400 font-bold">RMB</span> {t('verified_pavilion.ui_nav.nav_pan', 'Pan')}</div>
-                        <div className="flex items-center gap-3"><span className="font-mono text-cyan-400 font-bold">Scroll</span> {t('verified_pavilion.ui_nav.nav_zoom', 'Zoom')}</div>
-                        {/* <div className="text-xs opacity-60 mt-1">{t('verified_pavilion.ui_nav.nav_inspect')}</div> */}
-                    </div>
+            {/* Navigation hint (bottom-left) */}
+            <div className="absolute bottom-10 left-10 z-10 pointer-events-none">
+                <div className="bg-black/70 border border-white/20 rounded-xl px-6 py-5 text-sm text-white/90 backdrop-blur-md shadow-2xl max-w-sm space-y-2">
+                    <div className="text-xs uppercase tracking-[0.25em] text-cyan-300 font-bold mb-2 border-b border-white/10 pb-2">{t('verified_pavilion.ui_nav.nav_title')}</div>
+                    <div className="flex items-center gap-3"><span className="font-mono text-cyan-400 font-bold">LMB</span> {t('verified_pavilion.ui_nav.nav_orbit', 'Rotate')}</div>
+                    <div className="flex items-center gap-3"><span className="font-mono text-cyan-400 font-bold">RMB</span> {t('verified_pavilion.ui_nav.nav_pan', 'Pan')}</div>
+                    <div className="flex items-center gap-3"><span className="font-mono text-cyan-400 font-bold">Scroll</span> {t('verified_pavilion.ui_nav.nav_zoom', 'Zoom')}</div>
+                    {/* <div className="text-xs opacity-60 mt-1">{t('verified_pavilion.ui_nav.nav_inspect')}</div> */}
                 </div>
+            </div>
 
 
-                <Canvas
-                    shadows
-                    camera={{ position: [0, 2.5, 45], fov: 60 }}
-                    dpr={[1, 1.5]}
-                    gl={{
-                        antialias: false,
-                        toneMapping: THREE.ACESFilmicToneMapping, // MOVIE-QUALITY TONE MAPPING
-                        toneMappingExposure: 1.0,
-                        stencil: false,
-                        depth: true
-                    }}
-                // Removed onCreated to wait for real frames via SceneReadyNotifier
-                >
+            <Canvas
+                shadows
+                camera={{ position: [0, 2.5, 45], fov: 60 }}
+                dpr={dpr}
+                gl={{
+                    antialias: false,
+                    toneMapping: THREE.ACESFilmicToneMapping, // MOVIE-QUALITY TONE MAPPING
+                    toneMappingExposure: 1.0,
+                    stencil: false,
+                    depth: true
+                }}
+            // Removed onCreated to wait for real frames via SceneReadyNotifier
+            >
+                <PerformanceMonitor onIncline={() => setDpr(1.5)} onDecline={() => setDpr(0.75)}>
                     <Suspense fallback={null}>
                         <SceneReadyNotifier onReady={() => setSceneReady(true)} />
 
@@ -790,158 +782,159 @@ export default function VerifiedPavilion({ onBack, user }) {
                         <Vignette eskil={false} offset={0.1} darkness={0.5} /> {/* Stronger Vignette for focus */}
 
                     </EffectComposer>
-                </Canvas>
+                </PerformanceMonitor>
+            </Canvas>
 
 
-                {/* OVERLAYS */}
-                {isOpen && !isShowroomOpen && (
-                    <InfographicOverlay
-                        data={selectedObject}
-                        isOpen={isOpen}
-                        onClose={closeOverlayOnly} // Close overlay but keep inspect mode
-                        realPavilionId={pavilionId}
-                        user={user}
-                        startMode="info"
-                        onEnterRoom={() => {
-                            openShowroom(selectedObject);
-                        }}
-                    />
-                )}
-
-                {/* Exit Inspect Button (visible when not in overlay) */}
-                {inspectMode && !isOpen && (
-                    <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20 pointer-events-auto animate-fadeIn">
-                        <button
-                            onClick={closeInspectMode}
-                            className="px-6 py-2 bg-black/60 border border-white/20 rounded-full text-white text-xs tracking-widest hover:bg-white/10 transition backdrop-blur-md"
-                        >
-                            {t('verified_pavilion.loader.exit_inspection')}
-                        </button>
-                        <p className="text-center text-[10px] text-white/40 mt-2 uppercase tracking-widest">
-                            {t('verified_pavilion.ui_nav.nav_hint')}
-                        </p>
-                    </div>
-                )}
-
-                {showLoader && (
-                    <div className="absolute inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-md text-white">
-                        <div className="relative w-full max-w-lg px-8 py-10 border border-cyan-400/20 rounded-3xl bg-white/5 shadow-[0_20px_80px_rgba(0,0,0,0.65)]">
-                            <div className="flex items-center justify-between text-xs uppercase tracking-[0.3em] text-cyan-200/80 mb-4">
-                                <span>{t('verified_pavilion.loader.title')}</span>
-                                <span>{Math.round(visualProgress)}%</span>
-                            </div>
-                            <div className="w-full h-2 rounded-full bg-white/10 overflow-hidden">
-                                <div
-                                    className="h-full bg-gradient-to-r from-cyan-400 via-blue-400 to-indigo-500 transition-all duration-200"
-                                    style={{ width: `${Math.min(Math.max(visualProgress, 5), 100)}%` }}
-                                />
-                            </div>
-                            <div className="mt-6 text-sm text-slate-200/80 space-y-2">
-                                <div className="flex items-center gap-2">
-                                    <span className="w-2 h-2 rounded-full bg-cyan-300 animate-pulse" />
-                                    <span>{t('verified_pavilion.loader.asset')}</span>
-                                </div>
-                                <div className="flex items-center gap-2">
-                                    <span className="w-2 h-2 rounded-full bg-cyan-300 animate-pulse" />
-                                    <span>{t('verified_pavilion.loader.chat')}</span>
-                                </div>
-                                <div className="flex items-center gap-2">
-                                    <span className="w-2 h-2 rounded-full bg-cyan-300 animate-pulse" />
-                                    <span>{t('verified_pavilion.loader.standby', { state: active ? t('verified_pavilion.loader.state_streaming') : t('verified_pavilion.loader.state_priming') })}</span>
-                                </div>
-                            </div>
-
-                            <div className="mt-8 border border-white/10 rounded-2xl p-4 bg-black/30">
-                                <div className="text-[10px] uppercase tracking-[0.3em] text-cyan-200 mb-2">{t('verified_pavilion.loader.controls')}</div>
-                                <div className="grid grid-cols-2 gap-2 text-xs text-slate-100">
-                                    <div className="flex items-center gap-2">
-                                        <span className="px-2 py-1 rounded bg-white/10 border border-white/10">W / Up</span>
-                                        <span>{t('verified_pavilion.loader.forward')}</span>
-                                    </div>
-                                    <div className="flex items-center gap-2">
-                                        <span className="px-2 py-1 rounded bg-white/10 border border-white/10">S / Down</span>
-                                        <span>{t('verified_pavilion.loader.backward')}</span>
-                                    </div>
-                                    <div className="flex items-center gap-2">
-                                        <span className="px-2 py-1 rounded bg-white/10 border border-white/10">A / Left</span>
-                                        <span>{t('verified_pavilion.loader.orbit_left')}</span>
-                                    </div>
-                                    <div className="flex items-center gap-2">
-                                        <span className="px-2 py-1 rounded bg-white/10 border border-white/10">D / Right</span>
-                                        <span>{t('verified_pavilion.loader.orbit_right')}</span>
-                                    </div>
-                                    <div className="col-span-2 text-slate-300 text-xs mt-1">{t('verified_pavilion.loader.inspect_hint')}</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                )}
-                {/* Showroom Overlay - Renders ON TOP of Canvas so scene doesn't unmount */}
-                {isShowroomOpen && (
-                    <div className="absolute inset-0 z-50 bg-black animate-in fade-in duration-300">
-                        <ShowroomView
-                            pavilionData={showroomData}
-                            onBack={() => {
-                                setIsShowroomOpen(false);
-                                closeInspectMode();
-                            }}
-                            user={user}
-                        />
-                    </div>
-                )}
-
-                {/* 2D HUD Inspection Card (Fixed Positioning) */}
-                <InspectionCard
-                    visible={inspectMode && selectedObject && !isOpen && !isShowroomOpen}
-                    pavilionName={selectedObject?.name}
-                    title={selectedObject?.title}
-                    description={selectedObject?.description}
-                    stats={selectedObject?.stats}
-                    onDetailsClick={openFullOverlay}
-                    productId={selectedObject?.title ? selectedObject?.id : undefined}
-                    pavilionId={selectedObject?.name ? selectedObject?.id : undefined}
+            {/* OVERLAYS */}
+            {isOpen && !isShowroomOpen && (
+                <InfographicOverlay
+                    data={selectedObject}
+                    isOpen={isOpen}
+                    onClose={closeOverlayOnly} // Close overlay but keep inspect mode
+                    realPavilionId={pavilionId}
+                    user={user}
+                    startMode="info"
+                    onEnterRoom={() => {
+                        openShowroom(selectedObject);
+                    }}
                 />
+            )}
 
-                {/* WELCOME OVERLAY */}
-                {showWelcome && !showLoader && (
-                    <div className="absolute inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center animate-in fade-in duration-700">
-                        <div className="bg-[#0a0a0a] border border-white/10 p-12 max-w-2xl text-center rounded-3xl shadow-[0_0_100px_rgba(0,0,0,0.8)] relative overflow-hidden">
-                            {/* Decorative background glow */}
-                            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-1/2 bg-cyan-500/10 blur-[100px] pointer-events-none" />
+            {/* Exit Inspect Button (visible when not in overlay) */}
+            {inspectMode && !isOpen && (
+                <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20 pointer-events-auto animate-fadeIn">
+                    <button
+                        onClick={closeInspectMode}
+                        className="px-6 py-2 bg-black/60 border border-white/20 rounded-full text-white text-xs tracking-widest hover:bg-white/10 transition backdrop-blur-md"
+                    >
+                        {t('verified_pavilion.loader.exit_inspection')}
+                    </button>
+                    <p className="text-center text-[10px] text-white/40 mt-2 uppercase tracking-widest">
+                        {t('verified_pavilion.ui_nav.nav_hint')}
+                    </p>
+                </div>
+            )}
 
-                            <div className="relative z-10 flex flex-col items-center gap-6">
-                                <div className="w-16 h-16 rounded-full bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center mb-2 shadow-[0_0_30px_rgba(34,211,238,0.2)]">
-                                    <div className="w-2 h-2 rounded-full bg-cyan-400 shadow-[0_0_10px_#22d3ee] animate-pulse" />
+            {showLoader && (
+                <div className="absolute inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-md text-white">
+                    <div className="relative w-full max-w-lg px-8 py-10 border border-cyan-400/20 rounded-3xl bg-white/5 shadow-[0_20px_80px_rgba(0,0,0,0.65)]">
+                        <div className="flex items-center justify-between text-xs uppercase tracking-[0.3em] text-cyan-200/80 mb-4">
+                            <span>{t('verified_pavilion.loader.title')}</span>
+                            <span>{Math.round(visualProgress)}%</span>
+                        </div>
+                        <div className="w-full h-2 rounded-full bg-white/10 overflow-hidden">
+                            <div
+                                className="h-full bg-gradient-to-r from-cyan-400 via-blue-400 to-indigo-500 transition-all duration-200"
+                                style={{ width: `${Math.min(Math.max(visualProgress, 5), 100)}%` }}
+                            />
+                        </div>
+                        <div className="mt-6 text-sm text-slate-200/80 space-y-2">
+                            <div className="flex items-center gap-2">
+                                <span className="w-2 h-2 rounded-full bg-cyan-300 animate-pulse" />
+                                <span>{t('verified_pavilion.loader.asset')}</span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                                <span className="w-2 h-2 rounded-full bg-cyan-300 animate-pulse" />
+                                <span>{t('verified_pavilion.loader.chat')}</span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                                <span className="w-2 h-2 rounded-full bg-cyan-300 animate-pulse" />
+                                <span>{t('verified_pavilion.loader.standby', { state: active ? t('verified_pavilion.loader.state_streaming') : t('verified_pavilion.loader.state_priming') })}</span>
+                            </div>
+                        </div>
+
+                        <div className="mt-8 border border-white/10 rounded-2xl p-4 bg-black/30">
+                            <div className="text-[10px] uppercase tracking-[0.3em] text-cyan-200 mb-2">{t('verified_pavilion.loader.controls')}</div>
+                            <div className="grid grid-cols-2 gap-2 text-xs text-slate-100">
+                                <div className="flex items-center gap-2">
+                                    <span className="px-2 py-1 rounded bg-white/10 border border-white/10">W / Up</span>
+                                    <span>{t('verified_pavilion.loader.forward')}</span>
                                 </div>
-
-                                <h1 className="text-4xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-b from-white to-slate-400 font-[Orbitron] tracking-tight">
-                                    {t('verified_pavilion.welcome.title')}
-                                </h1>
-
-                                <p className="text-lg text-slate-400 font-light leading-relaxed max-w-lg">
-                                    {t('verified_pavilion.welcome.subtitle')}
-                                </p>
-
-                                <div className="h-px w-24 bg-gradient-to-r from-transparent via-white/20 to-transparent my-4" />
-
-                                <button
-                                    onClick={() => {
-                                        SoundManager.playClick();
-                                        setShowWelcome(false);
-                                    }}
-                                    className="group relative px-10 py-4 bg-white text-black font-bold uppercase tracking-[0.2em] text-sm overflow-hidden transition-all hover:scale-105 hover:shadow-[0_0_40px_rgba(255,255,255,0.3)]"
-                                >
-                                    <span className="relative z-10">{t('verified_pavilion.welcome.btn_enter')}</span>
-                                    <div className="absolute inset-0 bg-cyan-400 mix-blend-overlay opacity-0 group-hover:opacity-100 transition-opacity" />
-                                </button>
-
-                                <p className="text-[10px] text-slate-600 uppercase tracking-widest mt-4">
-                                    {t('verified_pavilion.welcome.controls_hint')}
-                                </p>
+                                <div className="flex items-center gap-2">
+                                    <span className="px-2 py-1 rounded bg-white/10 border border-white/10">S / Down</span>
+                                    <span>{t('verified_pavilion.loader.backward')}</span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                    <span className="px-2 py-1 rounded bg-white/10 border border-white/10">A / Left</span>
+                                    <span>{t('verified_pavilion.loader.orbit_left')}</span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                    <span className="px-2 py-1 rounded bg-white/10 border border-white/10">D / Right</span>
+                                    <span>{t('verified_pavilion.loader.orbit_right')}</span>
+                                </div>
+                                <div className="col-span-2 text-slate-300 text-xs mt-1">{t('verified_pavilion.loader.inspect_hint')}</div>
                             </div>
                         </div>
                     </div>
-                )}
-            </div >
-            );
+                </div>
+            )}
+            {/* Showroom Overlay - Renders ON TOP of Canvas so scene doesn't unmount */}
+            {isShowroomOpen && (
+                <div className="absolute inset-0 z-50 bg-black animate-in fade-in duration-300">
+                    <ShowroomView
+                        pavilionData={showroomData}
+                        onBack={() => {
+                            setIsShowroomOpen(false);
+                            closeInspectMode();
+                        }}
+                        user={user}
+                    />
+                </div>
+            )}
+
+            {/* 2D HUD Inspection Card (Fixed Positioning) */}
+            <InspectionCard
+                visible={inspectMode && selectedObject && !isOpen && !isShowroomOpen}
+                pavilionName={selectedObject?.name}
+                title={selectedObject?.title}
+                description={selectedObject?.description}
+                stats={selectedObject?.stats}
+                onDetailsClick={openFullOverlay}
+                productId={selectedObject?.title ? selectedObject?.id : undefined}
+                pavilionId={selectedObject?.name ? selectedObject?.id : undefined}
+            />
+
+            {/* WELCOME OVERLAY */}
+            {showWelcome && !showLoader && (
+                <div className="absolute inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center animate-in fade-in duration-700">
+                    <div className="bg-[#0a0a0a] border border-white/10 p-12 max-w-2xl text-center rounded-3xl shadow-[0_0_100px_rgba(0,0,0,0.8)] relative overflow-hidden">
+                        {/* Decorative background glow */}
+                        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-1/2 bg-cyan-500/10 blur-[100px] pointer-events-none" />
+
+                        <div className="relative z-10 flex flex-col items-center gap-6">
+                            <div className="w-16 h-16 rounded-full bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center mb-2 shadow-[0_0_30px_rgba(34,211,238,0.2)]">
+                                <div className="w-2 h-2 rounded-full bg-cyan-400 shadow-[0_0_10px_#22d3ee] animate-pulse" />
+                            </div>
+
+                            <h1 className="text-4xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-b from-white to-slate-400 font-[Orbitron] tracking-tight">
+                                {t('verified_pavilion.welcome.title')}
+                            </h1>
+
+                            <p className="text-lg text-slate-400 font-light leading-relaxed max-w-lg">
+                                {t('verified_pavilion.welcome.subtitle')}
+                            </p>
+
+                            <div className="h-px w-24 bg-gradient-to-r from-transparent via-white/20 to-transparent my-4" />
+
+                            <button
+                                onClick={() => {
+                                    SoundManager.playClick();
+                                    setShowWelcome(false);
+                                }}
+                                className="group relative px-10 py-4 bg-white text-black font-bold uppercase tracking-[0.2em] text-sm overflow-hidden transition-all hover:scale-105 hover:shadow-[0_0_40px_rgba(255,255,255,0.3)]"
+                            >
+                                <span className="relative z-10">{t('verified_pavilion.welcome.btn_enter')}</span>
+                                <div className="absolute inset-0 bg-cyan-400 mix-blend-overlay opacity-0 group-hover:opacity-100 transition-opacity" />
+                            </button>
+
+                            <p className="text-[10px] text-slate-600 uppercase tracking-widest mt-4">
+                                {t('verified_pavilion.welcome.controls_hint')}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            )}
+        </div >
+    );
 }
