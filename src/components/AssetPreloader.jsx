@@ -9,8 +9,9 @@ const HEAVY_MODELS = [
     // '/objects/optimized/escavator.glb',
     // '/objects/optimized/road_grader.glb',
     '/objects/optimized/camera.glb',
-    '/objects/optimized/microscope.glb',
-    '/objects/drone.glb',
+    // Temporarily disabled to prevent HTTP2/Connection errors on slow networks
+    // '/objects/optimized/microscope.glb',
+    // '/objects/drone.glb',
     '/objects/valve.glb'
 ];
 

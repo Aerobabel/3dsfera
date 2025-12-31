@@ -4,6 +4,7 @@ import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
 import { SkeletonUtils } from 'three-stdlib';
 
+// Verified paths on disk: public/objects/actor/Actor/party-f-0001/party-f-0001.fbm/
 const HOLOGRAM_PATH = '/objects/actor/Actor/party-f-0001/party-f-0001.fbx';
 const TEXTURE_PATH = '/objects/actor/Actor/party-f-0001/party-f-0001.fbm/Character_Pbr_Diffuse.png';
 const NORMAL_PATH = '/objects/actor/Actor/party-f-0001/party-f-0001.fbm/Character_Pbr_Normal.jpg';
