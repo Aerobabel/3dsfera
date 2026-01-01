@@ -2,15 +2,16 @@ import { useEffect } from 'react';
 import { useGLTF } from '@react-three/drei';
 
 const HEAVY_MODELS = [
-    // '/objects/optimized/crane_machine.glb',
-    // '/objects/optimized/Pneumatic.glb',
-    // '/objects/turbo_schaft_engine_ivchenko_al-20.glb',
-    // '/objects/optimized/mobile_crane.glb',
-    // '/objects/optimized/escavator.glb',
-    // '/objects/optimized/road_grader.glb',
-    // Temporarily disabled to prevent HTTP2/Connection errors
-    // '/objects/optimized/camera.glb',
-    // '/objects/valve.glb'
+    // Preload lighter assets only (< 5MB)
+    '/objects/optimized/escavator.glb',
+    '/objects/optimized/mobile_crane.glb',
+    '/objects/optimized/Pneumatic.glb',
+
+    // DISABLED HEAVY ASSETS (Lazy Load to prevent Netlify Timeout/Crash)
+    // '/objects/optimized/crane_machine.glb', // ~14MB
+    // '/objects/optimized/microscope.glb', // ~14MB
+    // '/objects/optimized/road_grader.glb', // ~15MB
+    // '/objects/optimized/camera.glb', // ~7MB
 ];
 
 export default function AssetPreloader() {
