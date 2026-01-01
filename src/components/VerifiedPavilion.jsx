@@ -376,7 +376,12 @@ export default function VerifiedPavilion({ onBack, user }) {
                         {/* Standing on the central platform greeting users */}
                         {/* Standing at W&T Engineering greeting users */}
                         <Suspense fallback={null}>
-                            <HologramGuide position={[-21, 0.9, -1]} rotation={[0, Math.PI / 2, 0]} scale={0.013} />
+                            <HologramGuide
+                                position={[-21, 0.9, -1]}
+                                rotation={[0, Math.PI / 2, 0]}
+                                scale={0.013}
+                                showUI={!isShowroomOpen}
+                            />
                         </Suspense>
 
                         {/* --- BOOTHS / KIOSKS (Default Cyberpunk) --- */}

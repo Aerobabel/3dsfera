@@ -10,7 +10,7 @@ const HOLOGRAM_PATH = '/objects/actor/Actor/party-f-0001/party-f-0001.fbx';
 const TEXTURE_PATH = '/objects/actor/Actor/party-f-0001/Character_Pbr_Diffuse.png';
 const NORMAL_PATH = '/objects/actor/Actor/party-f-0001/Character_Pbr_Normal.jpg';
 
-export default function HologramGuide({ position = [0, 0, 0], rotation = [0, 0, 0], scale = 0.01 }) {
+export default function HologramGuide({ position = [0, 0, 0], rotation = [0, 0, 0], scale = 0.01, showUI = true }) {
     const group = useRef();
     const [isListening, setIsListening] = useState(false);
     const convaiManager = useRef(null);
@@ -316,76 +316,79 @@ export default function HologramGuide({ position = [0, 0, 0], rotation = [0, 0, 
             <primitive object={fbx} scale={scale} />
 
             {/* Professional Interaction Tag - Fixed World Scale */}
-            <Html
-                position={[0, 1.85, 0]}
-                center
-                transform
-                scale={0.25} // Fixed size: 0.25 meters (approx head size)
-            >
-                <div
-                    onClick={toggleListening}
-                    style={{
-                        cursor: 'pointer',
-                        display: 'flex',
-                        flexDirection: 'column',
-                        alignItems: 'center',
-                        gap: '2px',
-                        opacity: 0.9,
-                        transition: 'opacity 0.2s',
-                        pointerEvents: 'auto',
-                        transform: 'scale(0.5)' // Increases resolution
-                    }}
+            {showUI && (
+                <Html
+                    position={[0, 1.85, 0]}
+                    center
+                    transform
+                    scale={0.25} // Fixed size: 0.25 meters (approx head size)
+                    style={{ pointerEvents: 'none' }} // Ensure click-through when hidden (though showUI handles removal)
                 >
-                    {/* Circle Button */}
-                    <div style={{
-                        width: '80px', // Visual size in the scaled down HTML
-                        height: '80px',
-                        borderRadius: '50%',
-                        background: isListening ? 'rgba(0, 255, 128, 0.8)' : 'rgba(0, 0, 0, 0.6)',
-                        backdropFilter: 'blur(8px)',
-                        border: isListening ? '4px solid #00ff80' : '2px solid rgba(255,255,255,0.2)',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        boxShadow: isListening ? '0 0 30px rgba(0, 255, 128, 0.5)' : '0 5px 15px rgba(0,0,0,0.3)',
-                        transition: 'all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
-                        animation: isListening ? 'pulse-ring 2s infinite' : 'none'
-                    }}>
-                        {/* Mic Icon SVG */}
-                        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke={isListening ? "#000" : "#fff"} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                            <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z" />
-                            <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
-                            <line x1="12" y1="19" x2="12" y2="23" />
-                            <line x1="8" y1="23" x2="16" y2="23" />
-                        </svg>
-                    </div>
+                    <div
+                        onClick={toggleListening}
+                        style={{
+                            cursor: 'pointer',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'center',
+                            gap: '2px',
+                            opacity: 0.9,
+                            transition: 'opacity 0.2s',
+                            pointerEvents: 'auto',
+                            transform: 'scale(0.5)' // Increases resolution
+                        }}
+                    >
+                        {/* Circle Button */}
+                        <div style={{
+                            width: '80px', // Visual size in the scaled down HTML
+                            height: '80px',
+                            borderRadius: '50%',
+                            background: isListening ? 'rgba(0, 255, 128, 0.8)' : 'rgba(0, 0, 0, 0.6)',
+                            backdropFilter: 'blur(8px)',
+                            border: isListening ? '4px solid #00ff80' : '2px solid rgba(255,255,255,0.2)',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            boxShadow: isListening ? '0 0 30px rgba(0, 255, 128, 0.5)' : '0 5px 15px rgba(0,0,0,0.3)',
+                            transition: 'all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
+                            animation: isListening ? 'pulse-ring 2s infinite' : 'none'
+                        }}>
+                            {/* Mic Icon SVG */}
+                            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke={isListening ? "#000" : "#fff"} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                                <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z" />
+                                <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
+                                <line x1="12" y1="19" x2="12" y2="23" />
+                                <line x1="8" y1="23" x2="16" y2="23" />
+                            </svg>
+                        </div>
 
-                    {/* Compact Label */}
-                    <div style={{
-                        background: 'rgba(0,0,0,0.85)',
-                        padding: '4px 12px',
-                        borderRadius: '6px',
-                        color: 'white',
-                        fontSize: '20px', // High res text
-                        fontWeight: '600',
-                        marginTop: '6px',
-                        opacity: isListening ? 1 : 0,
-                        transform: isListening ? 'translateY(0)' : 'translateY(-10px)',
-                        transition: 'all 0.2s',
-                        pointerEvents: 'none',
-                        whiteSpace: 'nowrap'
-                    }}>
-                        {isListening ? "Listening" : "Chat"}
+                        {/* Compact Label */}
+                        <div style={{
+                            background: 'rgba(0,0,0,0.85)',
+                            padding: '4px 12px',
+                            borderRadius: '6px',
+                            color: 'white',
+                            fontSize: '20px', // High res text
+                            fontWeight: '600',
+                            marginTop: '6px',
+                            opacity: isListening ? 1 : 0,
+                            transform: isListening ? 'translateY(0)' : 'translateY(-10px)',
+                            transition: 'all 0.2s',
+                            pointerEvents: 'none',
+                            whiteSpace: 'nowrap'
+                        }}>
+                            {isListening ? "Listening" : "Chat"}
+                        </div>
                     </div>
-                </div>
-                <style>{`
+                    <style>{`
                     @keyframes pulse-ring {
                         0% { box-shadow: 0 0 0 0 rgba(0, 255, 128, 0.7); }
                         70% { box-shadow: 0 0 0 20px rgba(0, 255, 128, 0); }
                         100% { box-shadow: 0 0 0 0 rgba(0, 255, 128, 0); }
                     }
                 `}</style>
-            </Html>
+                </Html>
+            )}
         </group>
     );
 }
