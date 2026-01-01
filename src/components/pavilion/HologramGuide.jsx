@@ -13,6 +13,7 @@ const NORMAL_PATH = '/objects/actor/Actor/party-f-0001/Character_Pbr_Normal.jpg'
 export default function HologramGuide({ position = [0, 0, 0], rotation = [0, 0, 0], scale = 0.01, showUI = true }) {
     const group = useRef();
     const [isListening, setIsListening] = useState(false);
+    const [hasError, setHasError] = useState(false); // New Error State
     const convaiManager = useRef(null);
 
     const [isTalking, setIsTalking] = useState(false);
@@ -66,6 +67,7 @@ export default function HologramGuide({ position = [0, 0, 0], rotation = [0, 0, 
 
         } else {
             console.warn("Convai Credentials Missing in .env");
+            setHasError(true);
         }
 
         const handleKeyDown = (e) => {
@@ -343,9 +345,10 @@ export default function HologramGuide({ position = [0, 0, 0], rotation = [0, 0, 
                             width: '80px', // Visual size in the scaled down HTML
                             height: '80px',
                             borderRadius: '50%',
-                            background: isListening ? 'rgba(0, 255, 128, 0.8)' : 'rgba(0, 0, 0, 0.6)',
+                            borderRadius: '50%',
+                            background: hasError ? 'rgba(255, 0, 0, 0.6)' : (isListening ? 'rgba(0, 255, 128, 0.8)' : 'rgba(0, 0, 0, 0.6)'),
                             backdropFilter: 'blur(8px)',
-                            border: isListening ? '4px solid #00ff80' : '2px solid rgba(255,255,255,0.2)',
+                            border: hasError ? '2px solid #ff0000' : (isListening ? '4px solid #00ff80' : '2px solid rgba(255,255,255,0.2)'),
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
@@ -377,7 +380,7 @@ export default function HologramGuide({ position = [0, 0, 0], rotation = [0, 0, 
                             pointerEvents: 'none',
                             whiteSpace: 'nowrap'
                         }}>
-                            {isListening ? "Listening" : "Chat"}
+                            {hasError ? "No API Key" : (isListening ? "Listening" : "Chat")}
                         </div>
                     </div>
                     <style>{`

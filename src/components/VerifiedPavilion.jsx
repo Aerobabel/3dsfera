@@ -732,7 +732,7 @@ export default function VerifiedPavilion({ onBack, user }) {
 
                         <OrbitControls
                             ref={controlsRef}
-                            {...(orbitTarget ? { target: orbitTarget } : {})}
+                            // Removed target prop to prevent conflict with CameraSmoother
                             enablePan={!inspectMode}
                             enableZoom={true}
 
