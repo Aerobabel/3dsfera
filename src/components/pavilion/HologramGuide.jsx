@@ -316,7 +316,7 @@ export default function HologramGuide({ position = [0, 0, 0], rotation = [0, 0, 
             <primitive object={fbx} scale={scale} />
 
             {/* Professional Interaction Tag */}
-            <Html position={[0, 1.65, 0]} center transform distanceFactor={15}>
+            <Html position={[0, 1.62, 0]} center transform distanceFactor={50}>
                 <div
                     onClick={toggleListening}
                     style={{
@@ -324,30 +324,30 @@ export default function HologramGuide({ position = [0, 0, 0], rotation = [0, 0, 
                         display: 'flex',
                         flexDirection: 'column',
                         alignItems: 'center',
-                        gap: '4px',
-                        opacity: 0.95,
+                        gap: '2px',
+                        opacity: 0.9,
                         transition: 'opacity 0.2s',
                         pointerEvents: 'auto'
                     }}
                 >
                     {/* Circle Button */}
                     <div style={{
-                        width: '40px',
-                        height: '40px',
+                        width: '28px',
+                        height: '28px',
                         borderRadius: '50%',
                         background: isListening ? 'rgba(0, 255, 128, 0.8)' : 'rgba(0, 0, 0, 0.6)',
                         backdropFilter: 'blur(8px)',
-                        border: isListening ? '2px solid #00ff80' : '1px solid rgba(255,255,255,0.2)',
+                        border: isListening ? '1.5px solid #00ff80' : '1px solid rgba(255,255,255,0.2)',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        boxShadow: isListening ? '0 0 15px rgba(0, 255, 128, 0.5)' : '0 2px 8px rgba(0,0,0,0.3)',
+                        boxShadow: isListening ? '0 0 10px rgba(0, 255, 128, 0.5)' : '0 2px 6px rgba(0,0,0,0.3)',
                         transition: 'all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
                         transform: isListening ? 'scale(1.1)' : 'scale(1)',
                         animation: isListening ? 'pulse-ring 2s infinite' : 'none'
                     }}>
                         {/* Mic Icon SVG */}
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={isListening ? "#000" : "#fff"} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={isListening ? "#000" : "#fff"} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                             <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z" />
                             <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
                             <line x1="12" y1="19" x2="12" y2="23" />
@@ -358,13 +358,13 @@ export default function HologramGuide({ position = [0, 0, 0], rotation = [0, 0, 
                     {/* Compact Label */}
                     <div style={{
                         background: 'rgba(0,0,0,0.85)',
-                        padding: '2px 6px',
+                        padding: '1px 5px',
                         borderRadius: '3px',
                         color: 'white',
-                        fontSize: '9px',
+                        fontSize: '8px',
                         fontWeight: '500',
                         opacity: isListening ? 1 : 0,
-                        transform: isListening ? 'translateY(0)' : 'translateY(-5px)',
+                        transform: isListening ? 'translateY(0)' : 'translateY(-3px)',
                         transition: 'all 0.2s',
                         pointerEvents: 'none',
                         whiteSpace: 'nowrap'
@@ -375,7 +375,7 @@ export default function HologramGuide({ position = [0, 0, 0], rotation = [0, 0, 
                 <style>{`
                     @keyframes pulse-ring {
                         0% { box-shadow: 0 0 0 0 rgba(0, 255, 128, 0.7); }
-                        70% { box-shadow: 0 0 0 10px rgba(0, 255, 128, 0); }
+                        70% { box-shadow: 0 0 0 6px rgba(0, 255, 128, 0); }
                         100% { box-shadow: 0 0 0 0 rgba(0, 255, 128, 0); }
                     }
                 `}</style>
