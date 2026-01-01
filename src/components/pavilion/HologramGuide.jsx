@@ -316,7 +316,7 @@ export default function HologramGuide({ position = [0, 0, 0], rotation = [0, 0, 
             <primitive object={fbx} scale={scale} />
 
             {/* Professional Interaction Tag */}
-            <Html position={[0, 1.8, 0]} center transform distanceFactor={10}>
+            <Html position={[0, 1.65, 0]} center transform distanceFactor={15}>
                 <div
                     onClick={toggleListening}
                     style={{
@@ -324,32 +324,30 @@ export default function HologramGuide({ position = [0, 0, 0], rotation = [0, 0, 
                         display: 'flex',
                         flexDirection: 'column',
                         alignItems: 'center',
-                        gap: '8px',
-                        opacity: 0.9,
+                        gap: '4px',
+                        opacity: 0.95,
                         transition: 'opacity 0.2s',
-                        pointerEvents: 'auto' // Make clickable
+                        pointerEvents: 'auto'
                     }}
-                    onMouseEnter={(e) => e.currentTarget.style.opacity = '1'}
-                    onMouseLeave={(e) => e.currentTarget.style.opacity = '0.9'}
                 >
                     {/* Circle Button */}
                     <div style={{
-                        width: '48px',
-                        height: '48px',
+                        width: '40px',
+                        height: '40px',
                         borderRadius: '50%',
                         background: isListening ? 'rgba(0, 255, 128, 0.8)' : 'rgba(0, 0, 0, 0.6)',
-                        backdropFilter: 'blur(10px)',
+                        backdropFilter: 'blur(8px)',
                         border: isListening ? '2px solid #00ff80' : '1px solid rgba(255,255,255,0.2)',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        boxShadow: isListening ? '0 0 20px rgba(0, 255, 128, 0.6)' : '0 4px 12px rgba(0,0,0,0.3)',
+                        boxShadow: isListening ? '0 0 15px rgba(0, 255, 128, 0.5)' : '0 2px 8px rgba(0,0,0,0.3)',
                         transition: 'all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
                         transform: isListening ? 'scale(1.1)' : 'scale(1)',
                         animation: isListening ? 'pulse-ring 2s infinite' : 'none'
                     }}>
                         {/* Mic Icon SVG */}
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke={isListening ? "#000" : "#fff"} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={isListening ? "#000" : "#fff"} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                             <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z" />
                             <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
                             <line x1="12" y1="19" x2="12" y2="23" />
@@ -357,27 +355,27 @@ export default function HologramGuide({ position = [0, 0, 0], rotation = [0, 0, 
                         </svg>
                     </div>
 
-                    {/* Label/Tooltip */}
+                    {/* Compact Label */}
                     <div style={{
-                        background: 'rgba(0,0,0,0.8)',
-                        padding: '4px 8px',
-                        borderRadius: '4px',
+                        background: 'rgba(0,0,0,0.85)',
+                        padding: '2px 6px',
+                        borderRadius: '3px',
                         color: 'white',
-                        fontSize: '10px',
+                        fontSize: '9px',
                         fontWeight: '500',
-                        opacity: isListening ? 1 : 0, // Hide label when not listening for cleaner look, or visible on hover? Let's keep it clean.
-                        transform: isListening ? 'translateY(0)' : 'translateY(-10px)',
-                        transition: 'all 0.3s',
+                        opacity: isListening ? 1 : 0,
+                        transform: isListening ? 'translateY(0)' : 'translateY(-5px)',
+                        transition: 'all 0.2s',
                         pointerEvents: 'none',
                         whiteSpace: 'nowrap'
                     }}>
-                        {isListening ? "Listening..." : "Chat"}
+                        {isListening ? "Listening" : "Chat"}
                     </div>
                 </div>
                 <style>{`
                     @keyframes pulse-ring {
                         0% { box-shadow: 0 0 0 0 rgba(0, 255, 128, 0.7); }
-                        70% { box-shadow: 0 0 0 15px rgba(0, 255, 128, 0); }
+                        70% { box-shadow: 0 0 0 10px rgba(0, 255, 128, 0); }
                         100% { box-shadow: 0 0 0 0 rgba(0, 255, 128, 0); }
                     }
                 `}</style>
