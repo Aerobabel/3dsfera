@@ -375,7 +375,9 @@ export default function VerifiedPavilion({ onBack, user }) {
 
                         {/* Standing on the central platform greeting users */}
                         {/* Standing at W&T Engineering greeting users */}
-                        <HologramGuide position={[-21, 0.9, -1]} rotation={[0, Math.PI / 2, 0]} scale={0.013} />
+                        <Suspense fallback={null}>
+                            <HologramGuide position={[-21, 0.9, -1]} rotation={[0, Math.PI / 2, 0]} scale={0.013} />
+                        </Suspense>
 
                         {/* --- BOOTHS / KIOSKS (Default Cyberpunk) --- */}
 
@@ -411,78 +413,82 @@ export default function VerifiedPavilion({ onBack, user }) {
                         />
 
                         {/* 2. Mid Left: AERO DYNAMICS */}
-                        <KioskUnit
-                            position={[-25, 0, -5]}
-                            rotation={[0, Math.PI / 4, 0]}
-                            title={t('pavilion_content.pavilions.aero.name', "W&T ENGINEERING")}
-                            glowColor="#ff0055"
-                            roofColor="white"
-                            imageUrl={aeroWallUrl} // Static Image
-                            modelPath={PNEUMATIC_PATH} // Swapped to Pneumatic per request
-                            productScale={1.2} // Adjusted scale for Pneumatic (matches Logistics)
-                            hideSideModels={true} // Only one per request
-                            heightOffset={1} // Safely above pedestal
-                            onClick={(e) => {
-                                const target = [-25, 1.5, -5]; // True Kiosk Product Center
-                                if (inspectMode && orbitTarget && orbitTarget[0] === target[0] && orbitTarget[2] === target[2]) return;
-                                e.stopPropagation();
-                                SoundManager.playClick();
-                                setSelectedObject(PAVILIONS['aero']);
-                                setInspectMode(true);
-                                setOrbitTarget(target);
-                                setCameraPosition([-20, 3.5, 0]); // Comfortable viewing angle
-                            }}
-                            onProductClick={(e) => {
-                                e.stopPropagation();
-                                if (inspectMode && selectedObject === PAVILIONS['aero']) return;
-                                SoundManager.playClick();
-                                const target = [-25, 1.5, -5];
-                                setSelectedObject(PAVILIONS['aero']);
-                                setInspectMode(true);
-                                setOrbitTarget(target);
-                                setCameraPosition([-20, 3.5, 0]);
-                            }}
-                        />
+                        <Suspense fallback={<group />}>
+                            <KioskUnit
+                                position={[-25, 0, -5]}
+                                rotation={[0, Math.PI / 4, 0]}
+                                title={t('pavilion_content.pavilions.aero.name', "W&T ENGINEERING")}
+                                glowColor="#ff0055"
+                                roofColor="white"
+                                imageUrl={aeroWallUrl} // Static Image
+                                modelPath={PNEUMATIC_PATH} // Swapped to Pneumatic per request
+                                productScale={1.2} // Adjusted scale for Pneumatic (matches Logistics)
+                                hideSideModels={true} // Only one per request
+                                heightOffset={1} // Safely above pedestal
+                                onClick={(e) => {
+                                    const target = [-25, 1.5, -5]; // True Kiosk Product Center
+                                    if (inspectMode && orbitTarget && orbitTarget[0] === target[0] && orbitTarget[2] === target[2]) return;
+                                    e.stopPropagation();
+                                    SoundManager.playClick();
+                                    setSelectedObject(PAVILIONS['aero']);
+                                    setInspectMode(true);
+                                    setOrbitTarget(target);
+                                    setCameraPosition([-20, 3.5, 0]); // Comfortable viewing angle
+                                }}
+                                onProductClick={(e) => {
+                                    e.stopPropagation();
+                                    if (inspectMode && selectedObject === PAVILIONS['aero']) return;
+                                    SoundManager.playClick();
+                                    const target = [-25, 1.5, -5];
+                                    setSelectedObject(PAVILIONS['aero']);
+                                    setInspectMode(true);
+                                    setOrbitTarget(target);
+                                    setCameraPosition([-20, 3.5, 0]);
+                                }}
+                            />
+                        </Suspense>
 
                         {/* 3. Mid Right: HEAVY MACHINERY */}
-                        <KioskUnit
-                            position={[25, 0, -5]}
-                            rotation={[0, -Math.PI / 4, 0]}
-                            title={t('pavilion_content.pavilions.heavy.name', "TITAN HEAVY INDUSTRIES")}
-                            glowColor="#00aaff"
-                            roofColor="white"
-                            imageUrl={liftWallUrl}
-                            modelPath={ROAD_GRADER_PATH} // Replaced Crane with Road Grader
-                            productScale={0.5} // Increased scale to make it visible
-                            modelRotation={[0, Math.PI / 2, 0]} // Rotated 90 deg anticlockwise
-                            modelPosition={[0, 1, 0]} // Center and lift
-                            hideSideModels={true}
-                            // hideMainPedestal={true} 
-                            heightOffset={0} // Reset offset
-                            useEscavator={false}
-                            onClick={(e) => {
-                                const position = [25, 1, -5]; // Focus on the Kiosk itself (Road Grader)
-                                if (inspectMode && orbitTarget && orbitTarget[0] === position[0] && orbitTarget[2] === position[2]) {
-                                    return; // Allow propagation if already selected
-                                }
-                                e.stopPropagation(); // Stop only if taking action
-                                SoundManager.playClick();
-                                setSelectedObject(PAVILIONS['heavy']);
-                                setInspectMode(true);
-                                setOrbitTarget(position);
-                                setCameraPosition([position[0], position[1] + 2, position[2] + 8]);
-                            }}
-                            onProductClick={(e) => {
-                                e.stopPropagation();
-                                const position = [25, 1, -5];
-                                if (inspectMode && orbitTarget && orbitTarget[0] === position[0] && orbitTarget[2] === position[2]) return;
-                                SoundManager.playClick();
-                                setSelectedObject(PAVILIONS['heavy']);
-                                setInspectMode(true);
-                                setOrbitTarget(position);
-                                setCameraPosition([position[0], position[1] + 2, position[2] + 8]);
-                            }}
-                        />
+                        <Suspense fallback={<group />}>
+                            <KioskUnit
+                                position={[25, 0, -5]}
+                                rotation={[0, -Math.PI / 4, 0]}
+                                title={t('pavilion_content.pavilions.heavy.name', "TITAN HEAVY INDUSTRIES")}
+                                glowColor="#00aaff"
+                                roofColor="white"
+                                imageUrl={liftWallUrl}
+                                modelPath={ROAD_GRADER_PATH} // Replaced Crane with Road Grader
+                                productScale={0.5} // Increased scale to make it visible
+                                modelRotation={[0, Math.PI / 2, 0]} // Rotated 90 deg anticlockwise
+                                modelPosition={[0, 1, 0]} // Center and lift
+                                hideSideModels={true}
+                                // hideMainPedestal={true} 
+                                heightOffset={0} // Reset offset
+                                useEscavator={false}
+                                onClick={(e) => {
+                                    const position = [25, 1, -5]; // Focus on the Kiosk itself (Road Grader)
+                                    if (inspectMode && orbitTarget && orbitTarget[0] === position[0] && orbitTarget[2] === position[2]) {
+                                        return; // Allow propagation if already selected
+                                    }
+                                    e.stopPropagation(); // Stop only if taking action
+                                    SoundManager.playClick();
+                                    setSelectedObject(PAVILIONS['heavy']);
+                                    setInspectMode(true);
+                                    setOrbitTarget(position);
+                                    setCameraPosition([position[0], position[1] + 2, position[2] + 8]);
+                                }}
+                                onProductClick={(e) => {
+                                    e.stopPropagation();
+                                    const position = [25, 1, -5];
+                                    if (inspectMode && orbitTarget && orbitTarget[0] === position[0] && orbitTarget[2] === position[2]) return;
+                                    SoundManager.playClick();
+                                    setSelectedObject(PAVILIONS['heavy']);
+                                    setInspectMode(true);
+                                    setOrbitTarget(position);
+                                    setCameraPosition([position[0], position[1] + 2, position[2] + 8]);
+                                }}
+                            />
+                        </Suspense>
 
 
 
@@ -560,44 +566,46 @@ export default function VerifiedPavilion({ onBack, user }) {
                         {/* --- EXTRA KIOSKS (Filling Sides & Far Back as requested) --- */}
 
                         {/* 6. Front Left: SECURITY */}
-                        <KioskUnit
-                            position={[-25, 0, 20]}
-                            rotation={[0, Math.PI / 2, 0]}
-                            title={t('pavilion_content.pavilions.security.name', "AEGIS SECURITY")}
-                            glowColor="#e63946"
-                            hideSideModels={false} // Restored side models
-                            videoUrl={null}
-                            imageUrl={kioskSecurityUrl}
-                            modelPath={CAMERA_PATH}
-                            sideModelPath={DRONE_PATH}
-                            productScale={2.0} // Reduced to 2.0 (Double the 'very small' 1.0) to fix hitbox
-                            sideModelScale={0.035} // Reduced by 30% from 0.05
-                            onClick={(e) => {
-                                const target = [-25, 1, 20]; // Center
-                                if (inspectMode && orbitTarget && orbitTarget[0] === target[0] && orbitTarget[2] === target[2]) return;
-                                e.stopPropagation();
-                                SoundManager.playClick();
-                                SoundManager.playClick();
-                                setSelectedObject(PAVILIONS['security']);
-                                setInspectMode(true);
-                                setOrbitTarget(target);
-                                setCameraPosition([-18, 2, 20]);
-                            }}
-                            onSideClick={(e, side) => {
-                                e.stopPropagation();
-                                SoundManager.playClick();
-                                setSelectedObject(PAVILIONS['security']);
-                                setInspectMode(true);
+                        <Suspense fallback={<group />}>
+                            <KioskUnit
+                                position={[-25, 0, 20]}
+                                rotation={[0, Math.PI / 2, 0]}
+                                title={t('pavilion_content.pavilions.security.name', "AEGIS SECURITY")}
+                                glowColor="#e63946"
+                                hideSideModels={false} // Restored side models
+                                videoUrl={null}
+                                imageUrl={kioskSecurityUrl}
+                                modelPath={CAMERA_PATH}
+                                sideModelPath={DRONE_PATH}
+                                productScale={2.0} // Reduced to 2.0 (Double the 'very small' 1.0) to fix hitbox
+                                sideModelScale={0.035} // Reduced by 30% from 0.05
+                                onClick={(e) => {
+                                    const target = [-25, 1, 20]; // Center
+                                    if (inspectMode && orbitTarget && orbitTarget[0] === target[0] && orbitTarget[2] === target[2]) return;
+                                    e.stopPropagation();
+                                    SoundManager.playClick();
+                                    SoundManager.playClick();
+                                    setSelectedObject(PAVILIONS['security']);
+                                    setInspectMode(true);
+                                    setOrbitTarget(target);
+                                    setCameraPosition([-18, 2, 20]);
+                                }}
+                                onSideClick={(e, side) => {
+                                    e.stopPropagation();
+                                    SoundManager.playClick();
+                                    setSelectedObject(PAVILIONS['security']);
+                                    setInspectMode(true);
 
-                                // Calculate side positions based on rotation (PI/2)
-                                // Left Global: [-23, 0.5, 25], Right Global: [-23, 0.5, 15]
-                                const target = side === 'left' ? [-23, 0.5, 25] : [-23, 0.5, 15];
-                                const camPos = side === 'left' ? [-16, 2, 25] : [-16, 2, 15];
+                                    // Calculate side positions based on rotation (PI/2)
+                                    // Left Global: [-23, 0.5, 25], Right Global: [-23, 0.5, 15]
+                                    const target = side === 'left' ? [-23, 0.5, 25] : [-23, 0.5, 15];
+                                    const camPos = side === 'left' ? [-16, 2, 25] : [-16, 2, 15];
 
-                                setOrbitTarget(target);
-                                setCameraPosition(camPos);
-                            }}
-                        />
+                                    setOrbitTarget(target);
+                                    setCameraPosition(camPos);
+                                }}
+                            />
+                        </Suspense>
 
                         {/* 7. Front Right: RESEARCH */}
                         <KioskUnit
