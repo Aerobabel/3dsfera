@@ -371,32 +371,11 @@ export default function VerifiedPavilion({ onBack, user }) {
                         {/* Character 1: Far Left Lane (Relocated: Behind Kiosks to avoid partitions entirely) */}
                         {/* Character 1: Wandering the main left aisle */}
                         {/* Character 1: Wandering the main left aisle */}
-                        {sceneReady && (
-                            <Suspense fallback={null}>
-                                <WalkingMan
-                                    startPosition={[-42, 0, 0]}
-                                    bounds={{ x: [-46, -40], z: [-20, 20] }} // Adjusted Left to avoid AI Kiosk (x=-34)
-                                    speed={1.0}
-                                />
-
-                                {/* Character 2: Back Crosswalk */}
-                                <WalkingMan
-                                    startPosition={[0, 0, -15]}
-                                    bounds={{ x: [-8, 8], z: [-25, -18] }} // Narrowed center path
-                                    speed={0.8}
-                                />
-
-                                {/* Character 3: Far Right Aisle */}
-                                <WalkingMan
-                                    startPosition={[32, 0, 0]}
-                                    bounds={{ x: [30, 35], z: [-12, 25] }} // Pulled in from right wall
-                                    speed={1.0}
-                                />
-                            </Suspense>
-                        )}
+                        {/* WalkingMan REMOVED to restore stability */}
 
                         {/* Standing on the central platform greeting users */}
-                        <HologramGuide position={[0, 0.9, 12]} rotation={[0, 0, 0]} scale={0.013} />
+                        {/* Standing at W&T Engineering greeting users */}
+                        <HologramGuide position={[-21, 0.9, -1]} rotation={[0, Math.PI / 2, 0]} scale={0.013} />
 
                         {/* --- BOOTHS / KIOSKS (Default Cyberpunk) --- */}
 
@@ -764,7 +743,7 @@ export default function VerifiedPavilion({ onBack, user }) {
 
 
 
-                        <Preload all />
+                        {/* <Preload all /> REMOVED: Blocking startup */}
                     </Suspense>
 
                     <CameraManager

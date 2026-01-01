@@ -341,10 +341,10 @@ function CorporatePavilion({ width = 14, height = 7, depth = 8 }) {
                 {/* Top Branding Strip - SPLIT */}
                 <group position={[0, 0, depth / 2 + 1.1]}>
                     <Text
-                        position={[-2.5, 0, 0]} // Shift left
+                        position={[-0.4, 0, 0]} // Anchor right, slightly left of center
                         fontSize={0.6}
                         color="#00ffff"
-                        anchorX="center"
+                        anchorX="right"
                         anchorY="middle"
                         font={fontUrl}
                         letterSpacing={0.1}
@@ -353,10 +353,10 @@ function CorporatePavilion({ width = 14, height = 7, depth = 8 }) {
                         <meshBasicMaterial color="#00ffff" toneMapped={false} />
                     </Text>
                     <Text
-                        position={[3.0, 0, 0]} // Shift right and BIGGER
+                        position={[0.4, 0, 0]} // Anchor left, slightly right of center
                         fontSize={1.0} // Increased size
                         color="#ffffff" // White
-                        anchorX="center"
+                        anchorX="left"
                         anchorY="middle"
                         font={fontUrl}
                         letterSpacing={0.1}
@@ -502,27 +502,25 @@ function KioskUnit({
                     </Text>
                 </group>
 
-                {/* 6. Content (Model or Hologram) - PROGRESSIVE LOADING (LOD) */}
+                {/* 6. Content (Model or Hologram) - PROGRESSIVE LOADING (LOD) REMOVED */}
                 <group position={[0, 0, 0]}> {/* Lowered from 0.4 to 0 so pedestal sits on floor */}
-                    <ProgressiveModelLoader>
-                        {modelPath || isTv || useEscavator ? (
-                            <ProductDisplay
-                                modelPath={modelPath}
-                                isTv={isTv}
-                                hidePedestal={hideMainPedestal}
-                                position={[0, 0, 0]}
-                                scale={0.8} // Scaled to fit in kiosk
-                                heightOffset={heightOffset}
-                                useEscavator={useEscavator}
-                                isRoboticArm={isRoboticArm}
-                            />
-                        ) : hasHologram ? (
-                            <group position={[0, 1, 0]}>
-                                <Hologram color={effectiveGlow} />
-                                <VolumetricBeam color={effectiveGlow} />
-                            </group>
-                        ) : null}
-                    </ProgressiveModelLoader>
+                    {modelPath || isTv || useEscavator ? (
+                        <ProductDisplay
+                            modelPath={modelPath}
+                            isTv={isTv}
+                            hidePedestal={hideMainPedestal}
+                            position={[0, 0, 0]}
+                            scale={0.8} // Scaled to fit in kiosk
+                            heightOffset={heightOffset}
+                            useEscavator={useEscavator}
+                            isRoboticArm={isRoboticArm}
+                        />
+                    ) : hasHologram ? (
+                        <group position={[0, 1, 0]}>
+                            <Hologram color={effectiveGlow} />
+                            <VolumetricBeam color={effectiveGlow} />
+                        </group>
+                    ) : null}
                 </group>
 
                 {/* 7. Side Satellites (Optional - floating minis) */}
@@ -601,11 +599,8 @@ function KioskUnit({
             roofMatRef.current.transparent = true;
         }
 
-        // 4. Lazy Load Latch (Performance Optimization)
+        // 4. Lazy Load Latch (Performance Optimization) - REMOVED
         // Only load heavy models when user approaches within 25 units
-        if (!isNear && localCameraPos.length() < 25) {
-            setIsNear(true);
-        }
     });
 
     // --- HIGH-END CYBERPUNK BOOTH VARIANT ---
