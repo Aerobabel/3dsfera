@@ -1,5 +1,5 @@
 // Deployment Trigger: 2026-01-02 Fix Camera & Convai
-import React, { Suspense, useEffect } from 'react';
+import React, { Suspense, useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { supabase } from './lib/supabaseClient';
 import './index.css';
