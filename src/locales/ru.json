@@ -640,6 +640,12 @@
             "Sensors": "Сенсоры"
         }
     },
+    "hologram": {
+        "listening": "Слушаю",
+        "chat": "Чат",
+        "press_to_talk": "Нажмите T, чтобы говорить",
+        "no_api": "Нет API ключа"
+    },
     "app": {
         "back_to_home": "НА ГЛАВНУЮ",
         "loading_dashboard": "ЗАГРУЗКА ПАНЕЛИ...",

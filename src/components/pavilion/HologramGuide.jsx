@@ -4,6 +4,7 @@ import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
 import { SkeletonUtils } from 'three-stdlib';
 import { ConvaiManager } from '../../lib/ConvaiManager';
+import { useTranslation } from 'react-i18next';
 
 // Verified paths on disk: public/objects/actor/Actor/party-f-0001/
 const HOLOGRAM_PATH = '/objects/actor/Actor/party-f-0001/party-f-0001.fbx';
@@ -11,6 +12,7 @@ const TEXTURE_PATH = '/objects/actor/Actor/party-f-0001/Character_Pbr_Diffuse.pn
 const NORMAL_PATH = '/objects/actor/Actor/party-f-0001/Character_Pbr_Normal.jpg';
 
 export default function HologramGuide({ position = [0, 0, 0], rotation = [0, 0, 0], scale = 0.01, showUI = true }) {
+    const { t } = useTranslation();
     const group = useRef();
     const [isListening, setIsListening] = useState(false);
     const [hasError, setHasError] = useState(false); // New Error State
@@ -365,7 +367,6 @@ export default function HologramGuide({ position = [0, 0, 0], rotation = [0, 0, 
                             </svg>
                         </div>
 
-                        {/* Compact Label */}
                         <div style={{
                             background: 'rgba(0,0,0,0.85)',
                             padding: '4px 12px',
@@ -380,7 +381,20 @@ export default function HologramGuide({ position = [0, 0, 0], rotation = [0, 0, 
                             pointerEvents: 'none',
                             whiteSpace: 'nowrap'
                         }}>
-                            {hasError ? "No API Key" : (isListening ? "Listening" : "Chat")}
+                            {hasError ? t('hologram.no_api', "No API Key") : (isListening ? t('hologram.listening', "Listening") : t('hologram.chat', "Chat"))}
+                        </div>
+
+                        {/* Instruction Hint */}
+                        <div style={{
+                            color: 'rgba(255,255,255,0.6)',
+                            fontSize: '14px',
+                            marginTop: '4px',
+                            fontWeight: '400',
+                            textTransform: 'uppercase',
+                            letterSpacing: '1px',
+                            pointerEvents: 'none'
+                        }}>
+                            {t('hologram.press_to_talk', "Press T to talk")}
                         </div>
                     </div>
                     <style>{`

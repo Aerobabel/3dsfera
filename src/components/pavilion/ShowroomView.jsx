@@ -326,10 +326,19 @@ export default function ShowroomView({ pavilionData, onBack, user }) {
                         {/* Product Grid */}
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                             {products.map((product, idx) => (
-                                <button
+                                <div
                                     key={product.id}
+                                    role="button"
+                                    tabIndex={0}
                                     onClick={() => {
                                         if (product.modelPath) {
+                                            SoundManager.playClick();
+                                            setActiveIndex(idx);
+                                            setViewMode('detail');
+                                        }
+                                    }}
+                                    onKeyDown={(e) => {
+                                        if ((e.key === 'Enter' || e.key === ' ') && product.modelPath) {
                                             SoundManager.playClick();
                                             setActiveIndex(idx);
                                             setViewMode('detail');
@@ -367,7 +376,10 @@ export default function ShowroomView({ pavilionData, onBack, user }) {
 
                                         <div className="flex items-center justify-between mt-auto pt-4 border-t border-white/5">
                                             <button
-                                                onClick={(e) => addToCart(e, product)}
+                                                onClick={(e) => {
+                                                    e.stopPropagation(); // Stop bubble to parent div
+                                                    addToCart(e, product);
+                                                }}
                                                 className={`px-3 py-1.5 rounded text-[10px] font-bold uppercase tracking-widest border transition-all ${cart.find(c => c.id === product.id)
                                                     ? 'bg-cyan-500 text-black border-cyan-500 cursor-default'
                                                     : 'bg-transparent text-white/60 border-white/20 hover:border-cyan-400 hover:text-cyan-400'
@@ -389,7 +401,7 @@ export default function ShowroomView({ pavilionData, onBack, user }) {
                                             </div>
                                         </div>
                                     </div>
-                                </button>
+                                </div>
                             ))}
                         </div>
                     </div>

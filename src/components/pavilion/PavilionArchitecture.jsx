@@ -94,8 +94,8 @@ export function PavilionArchitecture() {
             </group>
 
             {/* --- NEW VOID BARRIER (Fog Wall) --- */}
-            {/* Added at Z=-42 to hide artifacts behind the last row of kiosks */}
-            <mesh position={[0, 25, -42]}>
+            {/* Added at Z=-60 to hide artifacts behind the last row of kiosks */}
+            <mesh position={[0, 25, -60]}>
                 <planeGeometry args={[300, 100]} /> {/* Increased size to prevent peeking around */}
                 <meshBasicMaterial color="#000000" side={THREE.DoubleSide} /> {/* Fully Opaque, Double Sided */}
             </mesh>

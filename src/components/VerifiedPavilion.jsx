@@ -1,7 +1,7 @@
 ﻿import React, { Suspense, useRef, useEffect, useState, useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
-import { Preload, useGLTF, useProgress, PerformanceMonitor } from '@react-three/drei';
+import { Preload, useGLTF, useProgress, PerformanceMonitor, Gltf, useTexture } from '@react-three/drei';
 import * as THREE from 'three';
 import { EffectComposer, Bloom, Vignette, Noise, DepthOfField } from '@react-three/postprocessing';
 import { supabase } from '../lib/supabaseClient';
@@ -54,9 +54,24 @@ const CRANE_PATH = '/objects/optimized/mobile_crane.glb';
 const CRANE_MACHINE_PATH = '/objects/optimized/crane_machine.glb';
 const ROAD_GRADER_PATH = '/objects/optimized/road_grader.glb';
 const VALVE_PATH = '/objects/valve.glb';
+const VALVE1_PATH = '/objects/valve1.glb';
+const VALVE2_PATH = '/objects/valve2.glb';
+const VALVE_BOX_TEXTURE = '/textures/valve_box.png?v=' + Date.now();
+const BRANDED_BOX_TEXTURE = '/textures/valve_box_v3.png';
 const CAMERA_PATH = '/objects/optimized/camera.glb';
 const DRONE_PATH = '/objects/drone.glb';
 const ESCAVATOR_PATH = '/objects/optimized/escavator.glb';
+
+// Small helper component for shipment boxes
+function ShipmentBox({ position, rotation, size, textureUrl }) {
+    const texture = useTexture(textureUrl);
+    return (
+        <mesh position={position} rotation={rotation} castShadow receiveShadow>
+            <boxGeometry args={size} />
+            <meshStandardMaterial map={texture} />
+        </mesh>
+    );
+}
 
 // Pre-load assets
 // Pre-load assets
@@ -452,6 +467,122 @@ export default function VerifiedPavilion({ onBack, user }) {
                                 }}
                             />
                         </Suspense>
+
+                        {/* --- DECORATIONS: W&T Engineering (Filling empty space) --- */}
+                        <group position={[-25, 0, -5]}>
+                            {/* Valve 1: Lying on the floor to the left */}
+                            <Gltf
+                                src={VALVE1_PATH}
+                                position={[-5, 0.85, 1.5]} // Raised to 0.85
+                                rotation={[0, Math.PI / 3, Math.PI / 2]}
+                                scale={0.7}
+                                castShadow
+                                receiveShadow
+                            />
+
+                            {/* Valve 2: Upright nearby */}
+                            <Gltf
+                                src={VALVE2_PATH}
+                                position={[-4.5, 0.85, -2.5]} // Raised to 0.85
+                                rotation={[0, -Math.PI / 4, 0]}
+                                scale={0.6}
+                                castShadow
+                                receiveShadow
+                            />
+
+                            {/* Extra Blue Valve 1 */}
+                            <Gltf
+                                src={VALVE1_PATH}
+                                position={[0, 0.85, 3.5]} // Safe height
+                                rotation={[0, Math.PI / 2, 0]}
+                                scale={0.7}
+                                castShadow
+                                receiveShadow
+                            />
+
+                            {/* Extra Blue Valve 2 */}
+                            <Gltf
+                                src={VALVE1_PATH}
+                                position={[3.5, 0.85, -1.0]} // Safe height
+                                rotation={[0, -Math.PI / 6, 0]}
+                                scale={0.7}
+                                castShadow
+                                receiveShadow
+                            />
+
+                            {/* Extra Blue Valve 1 */}
+                            <Gltf
+                                src={VALVE1_PATH}
+                                position={[0, 0.85, 3.5]} // Safe height
+                                rotation={[0, Math.PI / 2, 0]}
+                                scale={0.7}
+                                castShadow
+                                receiveShadow
+                            />
+
+                            {/* Extra Blue Valve 2 */}
+                            <Gltf
+                                src={VALVE1_PATH}
+                                position={[3.5, 0.85, -1.0]} // Safe height
+                                rotation={[0, -Math.PI / 6, 0]}
+                                scale={0.7}
+                                castShadow
+                                receiveShadow
+                            />
+
+                            {/* Pneumatic Cylinder: Resting on a makeshift crate */}
+                            {/* Crate replaced with ShipmentBox */}
+                            <ShipmentBox
+                                position={[2.5, 0.85, 1]} // Base height
+                                rotation={[0, 0, 0]}
+                                size={[1.5, 0.5, 1.5]}
+                                textureUrl={BRANDED_BOX_TEXTURE}
+                            />
+
+                            {/* Pneumatic Cylinder sitting on top of the crate */}
+                            <Gltf
+                                src={PNEUMATIC_PATH}
+                                position={[2.5, 1.35, 1]} // 0.85 (crate center) + 0.25 (half height) + some offset -> 0.85 + 0.25 = 1.1. Let's say 1.1. Previous relative was 0.6. 0.85 (base center) - this math is tricky because mesh position is center. 
+                                // Floor is 0.3. Crate size y=0.5. Crate center y = 0.3 + 0.25 = 0.55. Wait, current code says pos=[2.5, 0.85, 1]. So center is 0.85. Bottom is 0.6. Top is 1.1.
+                                // So item on top should be at y ~ 1.1.
+                                rotation={[0, Math.PI / 2, Math.PI / 2]}
+                                scale={0.5}
+                            />
+
+                            {/* Scattered Pneumatics on floor */}
+                            <Gltf
+                                src={PNEUMATIC_PATH}
+                                position={[2.0, 0.85, -1.5]}
+                                rotation={[0, Math.PI / 6, Math.PI / 2]}
+                                scale={0.5}
+                                castShadow
+                                receiveShadow
+                            />
+
+                            {/* Shipment Box 1: Large Box */}
+                            <ShipmentBox
+                                position={[-2.5, 0.9, 2.5]} // Grounded: 0.3 + 0.6
+                                rotation={[0, 0.2, 0]}
+                                size={[1.2, 1.2, 1.2]}
+                                textureUrl={VALVE_BOX_TEXTURE}
+                            />
+
+                            {/* Shipment Box 2: Smaller Box on top */}
+                            <ShipmentBox
+                                position={[-2.4, 1.9, 2.6]} // On top of Box 1: 0.3 + 1.2 + 0.4
+                                rotation={[0, -0.4, 0]}
+                                size={[0.8, 0.8, 0.8]}
+                                textureUrl={VALVE_BOX_TEXTURE}
+                            />
+
+                            {/* Shipment Box 3: Nearby */}
+                            <ShipmentBox
+                                position={[-1.5, 0.8, 3.5]} // Grounded: 0.3 + 0.5
+                                rotation={[0, 0.8, 0]}
+                                size={[1.0, 1.0, 1.0]}
+                                textureUrl={VALVE_BOX_TEXTURE}
+                            />
+                        </group>
 
                         {/* 3. Mid Right: HEAVY MACHINERY */}
                         <Suspense fallback={<group />}>
@@ -884,7 +1015,7 @@ export default function VerifiedPavilion({ onBack, user }) {
                 stats={selectedObject?.stats}
                 onDetailsClick={openFullOverlay}
                 productId={selectedObject?.title ? selectedObject?.id : undefined}
-                pavilionId={selectedObject?.name ? selectedObject?.id : undefined}
+                pavilionId={selectedObject?.id ? selectedObject?.id : undefined}
             />
 
             {/* WELCOME OVERLAY */}

@@ -640,6 +640,12 @@
             "Sensors": "传感器"
         }
     },
+    "hologram": {
+        "listening": "正在聆听",
+        "chat": "聊天",
+        "press_to_talk": "按 T 键通话",
+        "no_api": "无 API 密钥"
+    },
     "app": {
         "back_to_home": "返回首页",
         "loading_dashboard": "加载仪表板...",

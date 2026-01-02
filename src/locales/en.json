@@ -640,6 +640,12 @@
             "Sensors": "Sensors"
         }
     },
+    "hologram": {
+        "listening": "Listening",
+        "chat": "Chat",
+        "press_to_talk": "Press T to talk",
+        "no_api": "No API Key"
+    },
     "app": {
         "back_to_home": "BACK TO HOME",
         "loading_dashboard": "LOADING DASHBOARD...",
