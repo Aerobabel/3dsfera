@@ -61,6 +61,10 @@ const BRANDED_BOX_TEXTURE = '/textures/valve_box_v3.png';
 const CAMERA_PATH = '/objects/optimized/camera.glb';
 const DRONE_PATH = '/objects/drone.glb';
 const ESCAVATOR_PATH = '/objects/optimized/escavator.glb';
+const BOX_PACKAGE_PATH = '/objects/box_package.glb';
+const INDUSTRIAL_TABLE_PATH = '/objects/industrial_table.glb';
+const BALL_VALVE_PATH = '/objects/ball_valve.glb';
+const WATER_PIPE_VALVE_PATH = '/objects/water_pipe_valve.glb';
 
 // Small helper component for shipment boxes
 function ShipmentBox({ position, rotation, size, textureUrl }) {
@@ -79,9 +83,15 @@ function ShipmentBox({ position, rotation, size, textureUrl }) {
 // useGLTF.preload(CRANE_PATH);
 // useGLTF.preload(CRANE_MACHINE_PATH);
 // useGLTF.preload(ESCAVATOR_PATH);
+useGLTF.preload(BOX_PACKAGE_PATH);
+useGLTF.preload(INDUSTRIAL_TABLE_PATH);
+useGLTF.preload(BALL_VALVE_PATH);
+useGLTF.preload(WATER_PIPE_VALVE_PATH);
+useGLTF.preload(VALVE_PATH);
 
 export default function VerifiedPavilion({ onBack, user }) {
     const { t } = useTranslation();
+
     const [dpr, setDpr] = useState(1.5); // Performance Monitor State
     const [selectedObject, setSelectedObject] = useState(null);
     const [inspectMode, setInspectMode] = useState(false); // New: Inspect Mode State
@@ -480,10 +490,10 @@ export default function VerifiedPavilion({ onBack, user }) {
                                 receiveShadow
                             />
 
-                            {/* Valve 2: Upright nearby */}
+                            {/* Valve 2: Upright nearby (Moved inside) */}
                             <Gltf
                                 src={VALVE2_PATH}
-                                position={[-4.5, 0.85, -2.5]} // Raised to 0.85
+                                position={[-3.0, 0.85, 0.5]} // Moved inside from [-4.5, -2.5]
                                 rotation={[0, -Math.PI / 4, 0]}
                                 scale={0.6}
                                 castShadow
@@ -500,87 +510,92 @@ export default function VerifiedPavilion({ onBack, user }) {
                                 receiveShadow
                             />
 
-                            {/* Extra Blue Valve 2 */}
+                            {/* Extra Blue Valve 2 (Moved Inside) */}
                             <Gltf
                                 src={VALVE1_PATH}
-                                position={[3.5, 0.85, -1.0]} // Safe height
+                                position={[2.0, 0.85, -0.5]} // Moved inside from [3.5, -1.0]
                                 rotation={[0, -Math.PI / 6, 0]}
                                 scale={0.7}
                                 castShadow
                                 receiveShadow
                             />
 
-                            {/* Extra Blue Valve 1 */}
-                            <Gltf
-                                src={VALVE1_PATH}
-                                position={[0, 0.85, 3.5]} // Safe height
-                                rotation={[0, Math.PI / 2, 0]}
-                                scale={0.7}
-                                castShadow
-                                receiveShadow
-                            />
+                            {/* --- NEW ASSETS REPLACING BOXES --- */}
 
-                            {/* Extra Blue Valve 2 */}
+                            {/* Industrial Table */}
                             <Gltf
-                                src={VALVE1_PATH}
-                                position={[3.5, 0.85, -1.0]} // Safe height
-                                rotation={[0, -Math.PI / 6, 0]}
-                                scale={0.7}
-                                castShadow
-                                receiveShadow
-                            />
-
-                            {/* Pneumatic Cylinder: Resting on a makeshift crate */}
-                            {/* Crate replaced with ShipmentBox */}
-                            <ShipmentBox
-                                position={[2.5, 0.85, 1]} // Base height
+                                src={INDUSTRIAL_TABLE_PATH}
+                                position={[2.5, 0.3, 1.0]}
                                 rotation={[0, 0, 0]}
-                                size={[1.5, 0.5, 1.5]}
-                                textureUrl={BRANDED_BOX_TEXTURE}
-                            />
-
-                            {/* Pneumatic Cylinder sitting on top of the crate */}
-                            <Gltf
-                                src={PNEUMATIC_PATH}
-                                position={[2.5, 1.35, 1]} // 0.85 (crate center) + 0.25 (half height) + some offset -> 0.85 + 0.25 = 1.1. Let's say 1.1. Previous relative was 0.6. 0.85 (base center) - this math is tricky because mesh position is center. 
-                                // Floor is 0.3. Crate size y=0.5. Crate center y = 0.3 + 0.25 = 0.55. Wait, current code says pos=[2.5, 0.85, 1]. So center is 0.85. Bottom is 0.6. Top is 1.1.
-                                // So item on top should be at y ~ 1.1.
-                                rotation={[0, Math.PI / 2, Math.PI / 2]}
-                                scale={0.5}
-                            />
-
-                            {/* Scattered Pneumatics on floor */}
-                            <Gltf
-                                src={PNEUMATIC_PATH}
-                                position={[2.0, 0.85, -1.5]}
-                                rotation={[0, Math.PI / 6, Math.PI / 2]}
-                                scale={0.5}
+                                scale={2.8}
                                 castShadow
                                 receiveShadow
                             />
 
-                            {/* Shipment Box 1: Large Box */}
-                            <ShipmentBox
-                                position={[-2.5, 0.9, 2.5]} // Grounded: 0.3 + 0.6
+                            {/* Detailed Valves on Table */}
+                            <Gltf
+                                src={BALL_VALVE_PATH}
+                                position={[2.2, -1.0, 1.2]}
+                                rotation={[0, Math.PI / 4, 0]}
+                                scale={0.01}
+                                castShadow
+                                receiveShadow
+                            />
+
+                            <Gltf
+                                src={WATER_PIPE_VALVE_PATH}
+                                position={[2.8, 2.7, 0.8]}
+                                rotation={[0, -Math.PI / 4, 0]}
+                                scale={0.01}
+                                castShadow
+                                receiveShadow
+                            />
+
+                            {/* Pneumatic */}
+                            <Gltf
+                                src={PNEUMATIC_PATH}
+                                position={[2.2, 2.0, 1.2]}
+                                rotation={[0, Math.PI / 2, Math.PI / 2]}
+                                scale={0.9}
+                                castShadow
+                            />
+
+                            {/* First Object from Showroom (High-Temp Valve) */}
+                            <Gltf
+                                src={VALVE_PATH}
+                                position={[3.0, 0.85, 2.0]} // Raised again
+                                rotation={[-Math.PI / 2, 0, 0]} // Flat horizontally
+                                scale={0.15} // Reduced size
+                                castShadow
+                                receiveShadow
+                            />
+
+                            {/* Shipment Box Replacements */}
+                            {/* Stack 1 */}
+                            <Gltf
+                                src={BOX_PACKAGE_PATH}
+                                position={[-4.0, 1.7, 0.0]}
                                 rotation={[0, 0.2, 0]}
-                                size={[1.2, 1.2, 1.2]}
-                                textureUrl={VALVE_BOX_TEXTURE}
+                                scale={2.8}
+                                castShadow
+                                receiveShadow
                             />
-
-                            {/* Shipment Box 2: Smaller Box on top */}
-                            <ShipmentBox
-                                position={[-2.4, 1.9, 2.6]} // On top of Box 1: 0.3 + 1.2 + 0.4
+                            <Gltf
+                                src={BOX_PACKAGE_PATH}
+                                position={[-4.0, 1.0, 0.0]}
                                 rotation={[0, -0.4, 0]}
-                                size={[0.8, 0.8, 0.8]}
-                                textureUrl={VALVE_BOX_TEXTURE}
+                                scale={2.8}
+                                castShadow
+                                receiveShadow
                             />
-
-                            {/* Shipment Box 3: Nearby */}
-                            <ShipmentBox
-                                position={[-1.5, 0.8, 3.5]} // Grounded: 0.3 + 0.5
+                            {/* Stack 2 */}
+                            <Gltf
+                                src={BOX_PACKAGE_PATH}
+                                position={[-1.5, 1.3, 3.5]}
                                 rotation={[0, 0.8, 0]}
-                                size={[1.0, 1.0, 1.0]}
-                                textureUrl={VALVE_BOX_TEXTURE}
+                                scale={2.8}
+                                castShadow
+                                receiveShadow
                             />
                         </group>
 
