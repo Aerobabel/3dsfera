@@ -4,6 +4,7 @@ import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { Preload, useGLTF, useProgress, PerformanceMonitor, Gltf, useTexture, Text } from '@react-three/drei';
 import * as THREE from 'three';
 import { EffectComposer, Bloom, Vignette, Noise, DepthOfField } from '@react-three/postprocessing';
+import { useControls } from 'leva';
 import { supabase } from '../lib/supabaseClient';
 import { resolveVerifiedDemoId } from '../lib/resolveVerifiedDemoId';
 
@@ -66,6 +67,11 @@ const BOX_PACKAGE_PATH = '/objects/box_package.glb';
 const INDUSTRIAL_TABLE_PATH = '/objects/industrial_table.glb';
 const BALL_VALVE_PATH = '/objects/ball_valve.glb';
 const WATER_PIPE_VALVE_PATH = '/objects/water_pipe_valve.glb';
+
+const INDUSTRIAL_PIPES_PATH = '/objects/industrial_pipes_pack.glb';
+const INDUSTRIAL_ROBOT_PATH = '/objects/industrial_robot.glb';
+const INDUSTRIAL_STAMP_PATH = '/objects/industrial_stamp.glb';
+const INDUSTRIAL_TANK_PATH = '/objects/industrial_storage_tank.glb';
 
 // Small helper component for shipment boxes
 function ShipmentBox({ position, rotation, size, textureUrl }) {
@@ -224,7 +230,24 @@ export default function VerifiedPavilion({ onBack, user }) {
 
 
     // --- DEBUG CONTROLS ---
-    // --- DEBUG CONTROLS REMOVED (Rotations Finalized) ---
+    const { pipesPos, pipesRot, pipesScale, robotPos, robotRot, robotScale, stampPos, stampRot, stampScale, tankPos, tankRot, tankScale } = useControls('Industrial Assets', {
+        Pipes: { value: false, label: 'Show Pipes' }, // Folder grouping
+        pipesPos: { value: [-5, 0, 0], step: 0.1, label: 'Pipes Pos' },
+        pipesRot: { value: [0, 0, 0], step: 0.1, label: 'Pipes Rot' },
+        pipesScale: { value: 1, step: 0.1, label: 'Pipes Scale' },
+
+        robotPos: { value: [0, 0, 0], step: 0.1, label: 'Robot Pos' },
+        robotRot: { value: [0, 0, 0], step: 0.1, label: 'Robot Rot' },
+        robotScale: { value: 1, step: 0.1, label: 'Robot Scale' },
+
+        stampPos: { value: [5, 0, 0], step: 0.1, label: 'Stamp Pos' },
+        stampRot: { value: [0, 0, 0], step: 0.1, label: 'Stamp Rot' },
+        stampScale: { value: 1, step: 0.1, label: 'Stamp Scale' },
+
+        tankPos: { value: [0, 0, 5], step: 0.1, label: 'Tank Pos' },
+        tankRot: { value: [0, 0, 0], step: 0.1, label: 'Tank Rot' },
+        tankScale: { value: 1, step: 0.1, label: 'Tank Scale' },
+    });
 
 
     return (
@@ -525,6 +548,12 @@ export default function VerifiedPavilion({ onBack, user }) {
                             />
 
                             {/* --- NEW ASSETS REPLACING BOXES --- */}
+
+                            {/* Debug Industrial Assets */}
+                            <Gltf src={INDUSTRIAL_PIPES_PATH} position={pipesPos} rotation={pipesRot} scale={pipesScale} castShadow receiveShadow />
+                            <Gltf src={INDUSTRIAL_ROBOT_PATH} position={robotPos} rotation={robotRot} scale={robotScale} castShadow receiveShadow />
+                            <Gltf src={INDUSTRIAL_STAMP_PATH} position={stampPos} rotation={stampRot} scale={stampScale} castShadow receiveShadow />
+                            <Gltf src={INDUSTRIAL_TANK_PATH} position={tankPos} rotation={tankRot} scale={tankScale} castShadow receiveShadow />
 
                             {/* --- NEW ASSETS REPLACING BOXES (Triplicated) --- */}
 
