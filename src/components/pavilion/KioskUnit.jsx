@@ -274,6 +274,10 @@ function CorporatePavilion({ width = 14, height = 7, depth = 8 }) {
         </group>
     )
 
+    const welcomeText = t('pavilion_ui.welcome_to', 'WELCOME TO');
+    // Auto-scale font for longer languages (e.g. Russian)
+    const welcomeFontSize = welcomeText.length > 12 ? 0.45 : 0.6;
+
     return (
         <group>
             {/* 1. Floor Base - Premium Dark Obsidian */}
@@ -342,14 +346,14 @@ function CorporatePavilion({ width = 14, height = 7, depth = 8 }) {
                 <group position={[0, 0, depth / 2 + 1.1]}>
                     <Text
                         position={[-0.4, 0, 0]} // Anchor right, slightly left of center
-                        fontSize={0.6}
+                        fontSize={welcomeFontSize}
                         color="#00ffff"
                         anchorX="right"
                         anchorY="middle"
                         font={fontUrl}
                         letterSpacing={0.1}
                     >
-                        {t('pavilion_ui.welcome_to', 'WELCOME TO')}
+                        {welcomeText}
                         <meshBasicMaterial color="#00ffff" toneMapped={false} />
                     </Text>
                     <Text

@@ -383,8 +383,8 @@ export default function VerifiedPavilion({ onBack, user }) {
 
                         {/* Zone 3: Storage Area (Back Left) */}
                         <group position={[-20, 0, -10]}>
-                            <FactoryPartition position={[0, 0, 0]} rotation={[0, Math.PI / 2, 0]} width={8} />
-                            <ConveyorBelt length={8} position={[2, 0, 0]} rotation={[0, Math.PI / 2, 0]} />
+                            <FactoryPartition position={[0, 0, 0]} rotation={[0, 2.4, 0]} width={8} />
+                            <ConveyorBelt length={8} position={[3.7, 0, 0]} rotation={[0, -29.1, 0]} />
                         </group>
 
 
