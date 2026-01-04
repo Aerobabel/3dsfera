@@ -383,6 +383,12 @@
             "ai_systems": {
                 "name": "SYNTHETIC MINDS",
                 "description": "Autonomous drones and robotic systems for industrial automation."
+            },
+            "empty_medium": {
+                "price_label": "BUY FOR $1500"
+            },
+            "empty_small": {
+                "price_label": "BUY FOR $500"
             }
         },
         "products": {

@@ -383,6 +383,12 @@
             "ai_systems": {
                 "name": "合成思维",
                 "description": "用于工业自动化的自主无人机和机器人系统。"
+            },
+            "empty_medium": {
+                "price_label": "售价 $1500"
+            },
+            "empty_small": {
+                "price_label": "售价 $500"
             }
         },
         "products": {

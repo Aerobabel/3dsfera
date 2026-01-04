@@ -619,7 +619,7 @@ export default function VerifiedPavilion({ onBack, user }) {
                             <KioskUnit
                                 position={[0, 0, 0]}
                                 rotation={[0, 0, 0]}
-                                title="BUY FOR $1500"
+                                title={t('pavilion_content.pavilions.empty_medium.price_label', "BUY FOR $1500")}
                                 glowColor="#ffaa00"
                                 interactable={false}
                                 roofColor="white"
@@ -744,7 +744,7 @@ export default function VerifiedPavilion({ onBack, user }) {
                             <KioskUnit
                                 position={[0, 0, 0]}
                                 rotation={[0, 0, 0]}
-                                title="BUY FOR $500"
+                                title={t('pavilion_content.pavilions.empty_small.price_label', "BUY FOR $500")}
                                 glowColor="#4361ee"
                                 interactable={false} // Disabled per request
                                 hideSideModels={true}
