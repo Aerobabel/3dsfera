@@ -71,6 +71,42 @@ const INDUSTRIAL_ROBOT_PATH = '/objects/industrial_robot.glb';
 const INDUSTRIAL_STAMP_PATH = '/objects/industrial_stamp.glb';
 const INDUSTRIAL_TANK_PATH = '/objects/industrial_storage_tank.glb';
 
+
+// Logic to constrain camera target within bounds
+function CameraBoundaries({ controlsRef, minX, maxX, minZ, maxZ, isActive }) {
+    const { camera } = useThree();
+
+    useFrame(() => {
+        if (!isActive || !controlsRef.current) return;
+
+        const target = controlsRef.current.target;
+
+        // 1. Clamp Target (Pivot point)
+        // This ensures the point we rotate around stays inside
+        target.x = THREE.MathUtils.clamp(target.x, minX, maxX);
+        target.z = THREE.MathUtils.clamp(target.z, minZ, maxZ);
+
+        // 2. Clamp Camera Position (The eye)
+        // This ensures the camera itself doesn't back up through a wall
+        // We use slightly wider bounds for the camera than the target to allow some distance
+        const wallPadding = 2; // Distance from physical wall
+        const camMinX = minX - 5; // Allow camera to back up a bit more than target
+        const camMaxX = maxX + 5;
+        const camMinZ = minZ - 5;
+        const camMaxZ = maxZ + 5;
+
+        // Hard Limit: Physical Walls are at +/- 58 X
+        // Let's set absolute hard limits based on the Architecture
+        const WALL_X = 55; // Inner wall surface roughly
+        const WALL_Z_FRONT = 45;
+        const WALL_Z_BACK = -75;
+
+        camera.position.x = THREE.MathUtils.clamp(camera.position.x, -WALL_X, WALL_X);
+        camera.position.z = THREE.MathUtils.clamp(camera.position.z, WALL_Z_BACK, WALL_Z_FRONT);
+    });
+    return null;
+}
+
 // Small helper component for shipment boxes
 function ShipmentBox({ position, rotation, size, textureUrl }) {
     const texture = useTexture(textureUrl);
@@ -895,6 +931,14 @@ export default function VerifiedPavilion({ onBack, user }) {
                             enableDamping={true}
                             dampingFactor={0.1}
                             makeDefault
+                        />
+
+                        {/* Prevent navigation out of bounds */}
+                        <CameraBoundaries
+                            controlsRef={controlsRef}
+                            minX={-50} maxX={50}
+                            minZ={-55} maxZ={40}
+                            isActive={!inspectMode}
                         />
 
                         <CameraSmoother
