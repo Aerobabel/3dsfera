@@ -619,7 +619,7 @@ export default function VerifiedPavilion({ onBack, user }) {
                             <KioskUnit
                                 position={[0, 0, 0]}
                                 rotation={[0, 0, 0]}
-                                title={t('pavilion_content.pavilions.energy.name', "VOLT ENERGY")}
+                                title="BUY FOR $1500"
                                 glowColor="#ffaa00"
                                 interactable={false}
                                 roofColor="white"
@@ -639,17 +639,6 @@ export default function VerifiedPavilion({ onBack, user }) {
                                     // Restricted Entry
                                 }}
                             />
-                            <Text
-                                position={[0, 9, 0]}
-                                fontSize={2.5}
-                                color="#00ff00"
-                                anchorX="center"
-                                anchorY="middle"
-                                outlineWidth={0.1}
-                                outlineColor="#000000"
-                            >
-                                $1500
-                            </Text>
                         </group>
 
                         {/* 5. Rear Right Corner: LOGISTICS */}
@@ -755,7 +744,7 @@ export default function VerifiedPavilion({ onBack, user }) {
                             <KioskUnit
                                 position={[0, 0, 0]}
                                 rotation={[0, 0, 0]}
-                                title="QUANTUM DATA CORP"
+                                title="BUY FOR $500"
                                 glowColor="#4361ee"
                                 interactable={false} // Disabled per request
                                 hideSideModels={true}
@@ -768,17 +757,6 @@ export default function VerifiedPavilion({ onBack, user }) {
                                     // Restricted Entry
                                 }}
                             />
-                            <Text
-                                position={[0, 9, 0]}
-                                fontSize={3.0} // Larger relative to scale
-                                color="#00ff00"
-                                anchorX="center"
-                                anchorY="middle"
-                                outlineWidth={0.1}
-                                outlineColor="#000000"
-                            >
-                                $500
-                            </Text>
                         </group>
 
                         {/* 9. Deep Back Right: MANUFACTURING */}
