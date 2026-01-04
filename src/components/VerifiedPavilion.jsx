@@ -1,7 +1,7 @@
 ﻿import React, { Suspense, useRef, useEffect, useState, useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
-import { Preload, useGLTF, useProgress, PerformanceMonitor, Gltf, useTexture } from '@react-three/drei';
+import { Preload, useGLTF, useProgress, PerformanceMonitor, Gltf, useTexture, Text } from '@react-three/drei';
 import * as THREE from 'three';
 import { EffectComposer, Bloom, Vignette, Noise, DepthOfField } from '@react-three/postprocessing';
 import { supabase } from '../lib/supabaseClient';
@@ -21,6 +21,7 @@ import { CameraSmoother, InspectionCard } from './pavilion/PavilionInteraction';
 import ProductDisplay from './pavilion/ProductDisplay';
 import { ConveyorBelt } from './pavilion/subsystems/ConveyorBelt';
 import { FactoryPartition } from './pavilion/subsystems/FactoryPartition';
+import { TableWithEquipment } from './pavilion/subsystems/TableWithEquipment';
 
 
 import WalkingMan from './pavilion/WalkingMan';
@@ -78,16 +79,14 @@ function ShipmentBox({ position, rotation, size, textureUrl }) {
 }
 
 // Pre-load assets
-// Pre-load assets
-// useGLTF.preload(TURBO_ENGINE_PATH);
-// useGLTF.preload(CRANE_PATH);
-// useGLTF.preload(CRANE_MACHINE_PATH);
-// useGLTF.preload(ESCAVATOR_PATH);
-useGLTF.preload(BOX_PACKAGE_PATH);
-useGLTF.preload(INDUSTRIAL_TABLE_PATH);
-useGLTF.preload(BALL_VALVE_PATH);
-useGLTF.preload(WATER_PIPE_VALVE_PATH);
-useGLTF.preload(VALVE_PATH);
+// useGLTF.preload(BOX_PACKAGE_PATH);
+// useGLTF.preload(INDUSTRIAL_TABLE_PATH);
+// useGLTF.preload(BALL_VALVE_PATH);
+// useGLTF.preload(WATER_PIPE_VALVE_PATH);
+// useGLTF.preload(VALVE_PATH);
+// useGLTF.preload(VALVE1_PATH);
+// useGLTF.preload(VALVE2_PATH);
+// useGLTF.preload(PNEUMATIC_PATH);
 
 export default function VerifiedPavilion({ onBack, user }) {
     const { t } = useTranslation();
@@ -224,8 +223,13 @@ export default function VerifiedPavilion({ onBack, user }) {
 
 
 
+    // --- DEBUG CONTROLS ---
+    // --- DEBUG CONTROLS REMOVED (Rotations Finalized) ---
+
+
     return (
         <div id="game-container" className="w-full h-screen bg-black relative select-none overflow-hidden">
+            {/* ...Header... */}
 
             {/* Header / HUD */}
             <div className="absolute top-0 left-0 w-full p-6 z-10 flex justify-between items-start pointer-events-none">
@@ -522,53 +526,16 @@ export default function VerifiedPavilion({ onBack, user }) {
 
                             {/* --- NEW ASSETS REPLACING BOXES --- */}
 
-                            {/* Industrial Table */}
-                            <Gltf
-                                src={INDUSTRIAL_TABLE_PATH}
-                                position={[2.5, 0.3, 1.0]}
-                                rotation={[0, 0, 0]}
-                                scale={2.8}
-                                castShadow
-                                receiveShadow
-                            />
+                            {/* --- NEW ASSETS REPLACING BOXES (Triplicated) --- */}
 
-                            {/* Detailed Valves on Table */}
-                            <Gltf
-                                src={BALL_VALVE_PATH}
-                                position={[2.2, -1.0, 1.2]}
-                                rotation={[0, Math.PI / 4, 0]}
-                                scale={0.01}
-                                castShadow
-                                receiveShadow
-                            />
+                            {/* Original Position */}
+                            <TableWithEquipment position={[2.5, 0.7, 1.0]} rotation={[0, 0.0, 0]} />
 
-                            <Gltf
-                                src={WATER_PIPE_VALVE_PATH}
-                                position={[2.8, 2.7, 0.8]}
-                                rotation={[0, -Math.PI / 4, 0]}
-                                scale={0.01}
-                                castShadow
-                                receiveShadow
-                            />
+                            {/* Second Copy */}
+                            <TableWithEquipment position={[-4.0, 0.7, 4.0]} rotation={[0, 1.3, 0]} />
 
-                            {/* Pneumatic */}
-                            <Gltf
-                                src={PNEUMATIC_PATH}
-                                position={[2.2, 2.0, 1.2]}
-                                rotation={[0, Math.PI / 2, Math.PI / 2]}
-                                scale={0.9}
-                                castShadow
-                            />
-
-                            {/* First Object from Showroom (High-Temp Valve) */}
-                            <Gltf
-                                src={VALVE_PATH}
-                                position={[3.0, 0.85, 2.0]} // Raised again
-                                rotation={[-Math.PI / 2, 0, 0]} // Flat horizontally
-                                scale={0.15} // Reduced size
-                                castShadow
-                                receiveShadow
-                            />
+                            {/* Third Copy */}
+                            <TableWithEquipment position={[1.7, 0.7, -3.0]} rotation={[0, 2.4, 0]} />
 
                             {/* Shipment Box Replacements */}
                             {/* Stack 1 */}
@@ -647,30 +614,43 @@ export default function VerifiedPavilion({ onBack, user }) {
 
 
 
-                        {/* 4. Rear Left Corner: ENERGY */}
-                        <KioskUnit
-                            position={[-21, 0, -38]}
-                            rotation={[0, Math.PI / 6, 0]}
-                            title={t('pavilion_content.pavilions.energy.name', "VOLT ENERGY")}
-                            glowColor="#ffaa00"
-                            interactable={false}
-                            roofColor="white"
-                            videoUrl={null}
-                            imageUrl={kioskEnergyUrl} // Inserted Energy Screen
-                            modelPath={TURBO_ENGINE_PATH}
-                            modelPosition={[0, 0.8, 0]}
-                            productScale={0.8}
-                            hideSideModels={true}
-                            heightOffset={-0.95} // Place on pedestal
-                            onClick={(e) => {
-                                // e.stopPropagation();
-                                // Restricted Entry
-                            }}
-                            onProductClick={(e) => {
-                                // e.stopPropagation();
-                                // Restricted Entry
-                            }}
-                        />
+                        {/* 4. Rear Left Corner: ENERGY (Medium, $1500) */}
+                        <group position={[-21, 0, -38]} rotation={[0, Math.PI / 6, 0]} scale={0.8}>
+                            <KioskUnit
+                                position={[0, 0, 0]}
+                                rotation={[0, 0, 0]}
+                                title={t('pavilion_content.pavilions.energy.name', "VOLT ENERGY")}
+                                glowColor="#ffaa00"
+                                interactable={false}
+                                roofColor="white"
+                                videoUrl={null}
+                                imageUrl={kioskEnergyUrl} // Inserted Energy Screen
+                                modelPath={TURBO_ENGINE_PATH}
+                                modelPosition={[0, 0.8, 0]}
+                                productScale={0.8}
+                                hideSideModels={true}
+                                heightOffset={-0.95} // Place on pedestal
+                                onClick={(e) => {
+                                    // e.stopPropagation();
+                                    // Restricted Entry
+                                }}
+                                onProductClick={(e) => {
+                                    // e.stopPropagation();
+                                    // Restricted Entry
+                                }}
+                            />
+                            <Text
+                                position={[0, 9, 0]}
+                                fontSize={2.5}
+                                color="#00ff00"
+                                anchorX="center"
+                                anchorY="middle"
+                                outlineWidth={0.1}
+                                outlineColor="#000000"
+                            >
+                                $1500
+                            </Text>
+                        </group>
 
                         {/* 5. Rear Right Corner: LOGISTICS */}
                         <KioskUnit
@@ -770,23 +750,36 @@ export default function VerifiedPavilion({ onBack, user }) {
                             onClick={() => SoundManager.playClick()}
                         />
 
-                        {/* 8. Deep Back Center: DATA */}
-                        <KioskUnit
-                            position={[0, 0, -50]}
-                            rotation={[0, 0, 0]}
-                            title="QUANTUM DATA CORP"
-                            glowColor="#4361ee"
-                            interactable={false} // Disabled per request
-                            hideSideModels={true}
-                            modelPath={PAVILIONS['data'].products[0].modelPath}
-                            productScale={PAVILIONS['data'].products[0].scale}
-                            modelPosition={[0, 0.5, 0]}
-                            imageUrl={kioskDataUrl}
-                            onClick={(e) => {
-                                // e.stopPropagation();
-                                // Restricted Entry
-                            }}
-                        />
+                        {/* 8. Deep Back Center: DATA (Small, $500) */}
+                        <group position={[0, 0, -50]} rotation={[0, 0, 0]} scale={0.6}>
+                            <KioskUnit
+                                position={[0, 0, 0]}
+                                rotation={[0, 0, 0]}
+                                title="QUANTUM DATA CORP"
+                                glowColor="#4361ee"
+                                interactable={false} // Disabled per request
+                                hideSideModels={true}
+                                modelPath={PAVILIONS['data'].products[0].modelPath}
+                                productScale={PAVILIONS['data'].products[0].scale}
+                                modelPosition={[0, 0.5, 0]}
+                                imageUrl={kioskDataUrl}
+                                onClick={(e) => {
+                                    // e.stopPropagation();
+                                    // Restricted Entry
+                                }}
+                            />
+                            <Text
+                                position={[0, 9, 0]}
+                                fontSize={3.0} // Larger relative to scale
+                                color="#00ff00"
+                                anchorX="center"
+                                anchorY="middle"
+                                outlineWidth={0.1}
+                                outlineColor="#000000"
+                            >
+                                $500
+                            </Text>
+                        </group>
 
                         {/* 9. Deep Back Right: MANUFACTURING */}
                         <KioskUnit
