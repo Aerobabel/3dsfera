@@ -91,7 +91,7 @@ function KeyboardNavigation({ controlsRef, speed = 0.4, isActive }) {
         };
     }, []);
 
-    useFrame(() => {
+    useFrame((state, delta) => {
         if (!isActive || !controlsRef.current) return;
 
         // Calculate move direction based on camera angle
@@ -106,7 +106,11 @@ function KeyboardNavigation({ controlsRef, speed = 0.4, isActive }) {
         right.y = 0; // flatten
         right.normalize();
 
-        const moveSpeed = speed * (keys.current['ShiftLeft'] ? 2.5 : 1); // Sprint with Shift
+        // Speed relative to delta time (seconds)
+        // Base speed was 0.4 per frame. 60fps -> 24 units/sec.
+        // Let's set target speed to ~20 units/sec
+        const baseSpeed = 15.0;
+        const moveSpeed = baseSpeed * delta * (keys.current['ShiftLeft'] ? 2.5 : 1);
         const velocity = new THREE.Vector3();
 
         if (keys.current['KeyW'] || keys.current['ArrowUp']) velocity.add(forward);
@@ -170,10 +174,16 @@ function CameraBoundaries({ controlsRef, minX, maxX, minZ, maxZ, isActive }) {
         const clampedX = THREE.MathUtils.clamp(camera.position.x, -WALL_X, WALL_X);
         const clampedZ = THREE.MathUtils.clamp(camera.position.z, WALL_Z_BACK, WALL_Z_FRONT);
 
+        // Fix: Also clamp Y (Height) to prevent "climbing" the wall physics
+        const WALL_Y_MAX = 5.0; // Don't fly tto high
+        const WALL_Y_MIN = 1.0; // Don't sink floor
+        const clampedY = THREE.MathUtils.clamp(camera.position.y, WALL_Y_MIN, WALL_Y_MAX);
+
         // If we needed to clamp, manually apply and update controls to prevent drift
-        if (camera.position.x !== clampedX || camera.position.z !== clampedZ) {
+        if (camera.position.x !== clampedX || camera.position.z !== clampedZ || camera.position.y !== clampedY) {
             camera.position.x = clampedX;
             camera.position.z = clampedZ;
+            camera.position.y = clampedY;
         }
     }, 1);
 
