@@ -347,7 +347,6 @@ export default function HologramGuide({ position = [0, 0, 0], rotation = [0, 0, 
                             width: '80px', // Visual size in the scaled down HTML
                             height: '80px',
                             borderRadius: '50%',
-                            borderRadius: '50%',
                             background: hasError ? 'rgba(255, 0, 0, 0.6)' : (isListening ? 'rgba(0, 255, 128, 0.8)' : 'rgba(0, 0, 0, 0.6)'),
                             backdropFilter: 'blur(8px)',
                             border: hasError ? '2px solid #ff0000' : (isListening ? '4px solid #00ff80' : '2px solid rgba(255,255,255,0.2)'),
