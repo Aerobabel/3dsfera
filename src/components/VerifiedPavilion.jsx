@@ -73,37 +73,45 @@ const INDUSTRIAL_TANK_PATH = '/objects/industrial_storage_tank.glb';
 
 
 // Logic to constrain camera target within bounds
+// Logic to constrain camera target within bounds
 function CameraBoundaries({ controlsRef, minX, maxX, minZ, maxZ, isActive }) {
     const { camera } = useThree();
 
+    // Priority 1 ensures this runs AFTER OrbitControls (which typically runs at 0)
+    // This prevents the "fighting" jitter where Controls moves it out -> We move it back -> Render
     useFrame(() => {
         if (!isActive || !controlsRef.current) return;
 
         const target = controlsRef.current.target;
 
         // 1. Clamp Target (Pivot point)
-        // This ensures the point we rotate around stays inside
+        // Keep the look-at point well inside the room
         target.x = THREE.MathUtils.clamp(target.x, minX, maxX);
         target.z = THREE.MathUtils.clamp(target.z, minZ, maxZ);
 
         // 2. Clamp Camera Position (The eye)
-        // This ensures the camera itself doesn't back up through a wall
-        // We use slightly wider bounds for the camera than the target to allow some distance
-        const wallPadding = 2; // Distance from physical wall
-        const camMinX = minX - 5; // Allow camera to back up a bit more than target
-        const camMaxX = maxX + 5;
-        const camMinZ = minZ - 5;
-        const camMaxZ = maxZ + 5;
+        // Hard limits based on the actual geometry to prevent clipping
 
-        // Hard Limit: Physical Walls are at +/- 58 X
-        // Let's set absolute hard limits based on the Architecture
-        const WALL_X = 55; // Inner wall surface roughly
+        // WALL_X: 55 is the inner limit of the side walls (at +/- 58)
+        const WALL_X = 55;
+
+        // WALL_Z_BACK: The new fog/void wall is at -60. We stop at -55.
+        const WALL_Z_BACK = -55;
+
+        // WALL_Z_FRONT: Entrance area
         const WALL_Z_FRONT = 45;
-        const WALL_Z_BACK = -75;
 
-        camera.position.x = THREE.MathUtils.clamp(camera.position.x, -WALL_X, WALL_X);
-        camera.position.z = THREE.MathUtils.clamp(camera.position.z, WALL_Z_BACK, WALL_Z_FRONT);
-    });
+        // Check if out of bounds
+        const clampedX = THREE.MathUtils.clamp(camera.position.x, -WALL_X, WALL_X);
+        const clampedZ = THREE.MathUtils.clamp(camera.position.z, WALL_Z_BACK, WALL_Z_FRONT);
+
+        // If we needed to clamp, manually apply and update controls to prevent drift
+        if (camera.position.x !== clampedX || camera.position.z !== clampedZ) {
+            camera.position.x = clampedX;
+            camera.position.z = clampedZ;
+        }
+    }, 1);
+
     return null;
 }
 
