@@ -41,14 +41,16 @@ export function PavilionArchitecture() {
             <pointLight position={[-30, 20, 0]} intensity={5} distance={50} decay={2} color="#e0e0ff" />
 
             {/* --- CINEMATIC GROUNDING --- */}
+            {/* Optimized: Frames=1 bakes the shadow once. Resolution reduced. */}
             <ContactShadows
                 position={[0, 0.001, 0]}
-                opacity={0.6}
-                scale={80}
+                opacity={0.4}
+                scale={60}
                 blur={2.5}
                 far={2}
-                resolution={512}
+                resolution={256}
                 color="#000000"
+                frames={1}
             />
 
             {/* --- ATMOSPHERE --- */}

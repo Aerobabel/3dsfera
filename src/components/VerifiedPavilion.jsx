@@ -73,6 +73,60 @@ const INDUSTRIAL_TANK_PATH = '/objects/industrial_storage_tank.glb';
 
 
 // Logic to constrain camera target within bounds
+// -----------------------------------------------------------------------------
+// KEYBOARD NAVIGATION (WASD / Arrows)
+// -----------------------------------------------------------------------------
+function KeyboardNavigation({ controlsRef, speed = 0.4, isActive }) {
+    const { camera } = useThree();
+    const keys = useRef({});
+
+    useEffect(() => {
+        const onDown = (e) => keys.current[e.code] = true;
+        const onUp = (e) => keys.current[e.code] = false;
+        window.addEventListener('keydown', onDown);
+        window.addEventListener('keyup', onUp);
+        return () => {
+            window.removeEventListener('keydown', onDown);
+            window.removeEventListener('keyup', onUp);
+        };
+    }, []);
+
+    useFrame(() => {
+        if (!isActive || !controlsRef.current) return;
+
+        // Calculate move direction based on camera angle
+        // We only want to move on X and Z (floor plane)
+        const forward = new THREE.Vector3(0, 0, -1);
+        forward.applyQuaternion(camera.quaternion);
+        forward.y = 0; // flatten
+        forward.normalize();
+
+        const right = new THREE.Vector3(1, 0, 0);
+        right.applyQuaternion(camera.quaternion);
+        right.y = 0; // flatten
+        right.normalize();
+
+        const moveSpeed = speed * (keys.current['ShiftLeft'] ? 2.5 : 1); // Sprint with Shift
+        const velocity = new THREE.Vector3();
+
+        if (keys.current['KeyW'] || keys.current['ArrowUp']) velocity.add(forward);
+        if (keys.current['KeyS'] || keys.current['ArrowDown']) velocity.sub(forward);
+        if (keys.current['KeyA'] || keys.current['ArrowLeft']) velocity.sub(right);
+        if (keys.current['KeyD'] || keys.current['ArrowRight']) velocity.add(right);
+
+        if (velocity.lengthSq() > 0) {
+            velocity.normalize().multiplyScalar(moveSpeed);
+
+            // Move both Camera AND OrbitTarget to maintain relative angle (Walk mode)
+            camera.position.add(velocity);
+            controlsRef.current.target.add(velocity);
+        }
+    });
+
+    return null;
+}
+
+
 // Logic to constrain camera target within bounds
 function CameraBoundaries({ controlsRef, minX, maxX, minZ, maxZ, isActive }) {
     const { camera } = useThree();
@@ -332,7 +386,8 @@ export default function VerifiedPavilion({ onBack, user }) {
                 }}
             // Removed onCreated to wait for real frames via SceneReadyNotifier
             >
-                <PerformanceMonitor onIncline={() => setDpr(1.5)} onDecline={() => setDpr(0.75)}>
+                {/* Fix: Clamp DPR between 1 (Crisp) and 2 (Retina). Never go below 1 to avoid pixelation. */}
+                <PerformanceMonitor onIncline={() => setDpr(2)} onDecline={() => setDpr(1)}>
                     <Suspense fallback={null}>
                         <SceneReadyNotifier onReady={() => setSceneReady(true)} />
 
@@ -941,6 +996,14 @@ export default function VerifiedPavilion({ onBack, user }) {
                             makeDefault
                         />
 
+                        {/* Enable WASD / Arrow Navigation */}
+                        <KeyboardNavigation
+                            controlsRef={controlsRef}
+                            isActive={!inspectMode} // Only walk when not inspecting a specific product
+                            speed={0.4}
+                        />
+
+
                         {/* Prevent navigation out of bounds */}
                         <CameraBoundaries
                             controlsRef={controlsRef}
@@ -972,7 +1035,8 @@ export default function VerifiedPavilion({ onBack, user }) {
                     {/* POST PROCESSING */}
                     <EffectComposer disableNormalPass multisampling={0}>
                         <Bloom luminanceThreshold={1} mipmapBlur intensity={1.5} radius={0.4} />
-                        <Noise opacity={inspectMode ? 0 : 0.02} /> {/* Disable noise in inspect for clarity */}
+                        {/* Noise disabled for performance on Retina screens */}
+                        {/* <Noise opacity={inspectMode ? 0 : 0.02} /> */}
                         <Vignette eskil={false} offset={0.1} darkness={0.5} /> {/* Stronger Vignette for focus */}
 
                     </EffectComposer>
