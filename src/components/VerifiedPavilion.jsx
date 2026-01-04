@@ -117,9 +117,20 @@ function KeyboardNavigation({ controlsRef, speed = 0.4, isActive }) {
         if (velocity.lengthSq() > 0) {
             velocity.normalize().multiplyScalar(moveSpeed);
 
-            // Move both Camera AND OrbitTarget to maintain relative angle (Walk mode)
+            // Move Camera
             camera.position.add(velocity);
-            controlsRef.current.target.add(velocity);
+
+            // Update Target to stay LOCKED in front of camera (FPS feel)
+            // This prevents "swinging" by keeping the pivot close
+            const newForward = new THREE.Vector3(0, 0, -1).applyQuaternion(camera.quaternion).normalize();
+            controlsRef.current.target.copy(camera.position).add(newForward.multiplyScalar(2)); // Pivot 2m in front
+        } else {
+            // Even when not moving, if we are in Walk Mode, ensure pivot is close for rotation
+            const dist = camera.position.distanceTo(controlsRef.current.target);
+            if (dist > 5) {
+                const newForward = new THREE.Vector3(0, 0, -1).applyQuaternion(camera.quaternion).normalize();
+                controlsRef.current.target.copy(camera.position).add(newForward.multiplyScalar(2));
+            }
         }
     });
 
@@ -986,7 +997,7 @@ export default function VerifiedPavilion({ onBack, user }) {
                             enableZoom={true}
 
                             // RESTRICTED CAMERA LIMITS
-                            minDistance={inspectMode ? 0.5 : 5} // Prevent clipping through models
+                            minDistance={inspectMode ? 0.5 : 0.1} // 0.1 allows "FPS" pivot logic
                             maxDistance={inspectMode ? 20 : 80} // Prevent leaving the hall
                             minPolarAngle={inspectMode ? Math.PI / 3 : 0.1} // Prevent looking straight up
                             maxPolarAngle={Math.PI / 2 - 0.05} // Ground level limit

@@ -440,9 +440,9 @@ export function UltimateFloor() {
             <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.005, 0]}>
                 <planeGeometry args={[120, 120]} />
                 <MeshReflectorMaterial
-                    resolution={512} // Reduced from 1024 for performance
+                    resolution={256} // Optimized from 512
                     mirror={0.5}
-                    mixBlur={8}
+                    mixBlur={5} // Reduced blur quality
                     mixStrength={1.5}
                     depthScale={1}
                     minDepthThreshold={0.4}
@@ -450,8 +450,9 @@ export function UltimateFloor() {
                     color="#A0A0A0"
                     metalness={0.6}
                     roughness={0.4}
-                    distortion={0.2}
+                    distortion={0} // Disabled distortion for perf
                     distortionMap={null}
+                    blur={[300, 100]} // Keep blur but low res
                 />
             </mesh>
 
