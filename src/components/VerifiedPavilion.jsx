@@ -1009,12 +1009,12 @@ export default function VerifiedPavilion({ onBack, user }) {
                             ref={controlsRef}
                             // Removed target prop to prevent conflict with CameraSmoother
                             enablePan={!inspectMode}
-                            enableZoom={true}
+                            enableZoom={inspectMode} // Disable zoom while walking to keep pivot close
                             enableKeys={false} // Disable default arrow keys to prevent conflict with WASD
 
                             // RESTRICTED CAMERA LIMITS
                             minDistance={inspectMode ? 0.5 : 0.1} // 0.1 allows "FPS" pivot logic
-                            maxDistance={inspectMode ? 20 : 80} // Prevent leaving the hall
+                            maxDistance={inspectMode ? 20 : 1.0} // <--- Tight pivot (1m) for FPS feel while walking
                             minPolarAngle={inspectMode ? Math.PI / 3 : 0.1} // Prevent looking straight up
                             maxPolarAngle={Math.PI / 2 - 0.05} // Ground level limit
 
