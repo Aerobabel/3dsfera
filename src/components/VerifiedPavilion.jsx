@@ -160,6 +160,11 @@ function KeyboardNavigation({ controlsRef, speed = 0.4, isActive }) {
 
                 // CRITICAL: Ground the target slightly to prevent looking at the ceiling indefinitely
                 // If the camera is pitched up, this helps gently bring it back to horizon when moving
+
+                // Force flattening of the look vector to prevent "taking off" like a plane
+                dummy.y = 0;
+                dummy.normalize().multiplyScalar(2.0);
+
                 controlsRef.current.target.copy(camera.position).add(dummy);
             }
         }
@@ -211,6 +216,10 @@ function CameraBoundaries({ controlsRef, minX, maxX, minZ, maxZ, isActive }) {
             // If we don't, the camera stops but the target keeps moving, causing the camera to "spin" or look up/down wildly.
             target.x += deltaX;
             target.z += deltaZ;
+
+            // BUG FIX: Do NOT apply Y delta to target if we hit the floor/ceiling.
+            // This prevents "flying perpetually" if you look up and hold S.
+            // We only want to slide X/Z (walls), not Y (height).
         }
 
         // 3. Double Check Target Bounds (Prevent looking too far out)
