@@ -242,7 +242,7 @@ export default function VerifiedPavilion({ onBack, user }) {
     const [minHoldDone, setMinHoldDone] = useState(false);
     const [sceneReady, setSceneReady] = useState(false);
     const [showLoader, setShowLoader] = useState(true);
-    // Removed showWelcome state
+    const [showWelcome, setShowWelcome] = useState(true); // Restored Welcome State
 
     // Tank Controls don't need pointer lock state for navigation
     const cameraRef = useRef();
@@ -382,7 +382,7 @@ export default function VerifiedPavilion({ onBack, user }) {
         <div id="game-container" className="w-full h-screen bg-black relative select-none overflow-hidden">
             {/* ...Header... */}
 
-            {/* Header / HUD */}
+            {/* Header / HUD - Cleaned up "Weird UI" */}
             <div className="absolute top-0 left-0 w-full p-6 z-10 flex justify-between items-start pointer-events-none">
                 <div className="pointer-events-auto">
                     <button
@@ -394,33 +394,10 @@ export default function VerifiedPavilion({ onBack, user }) {
                         {t('pavilion_ui.back')}
                     </button>
                 </div>
-
-                <div className="pointer-events-auto flex gap-4">
-                    <div className="text-right px-5 py-4 bg-gradient-to-br from-[#0a192f]/70 via-[#0c223d]/60 to-[#0a1020]/70 backdrop-blur-xl border border-cyan-400/15 rounded-2xl shadow-[0_20px_60px_rgba(0,0,0,0.55)] animate-fadeIn">
-                        <div className="flex items-center justify-end gap-2">
-                            <div className="w-2 h-2 rounded-full bg-cyan-300 shadow-[0_0_12px_rgba(34,211,238,0.9)]" />
-                            <span className="text-[11px] tracking-[0.25em] text-cyan-200/80 uppercase">{t('verified_pavilion.ui.live_link', 'LIVE LINK')}</span>
-                        </div>
-                        <div className="mt-2 text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-200 via-blue-300 to-indigo-400 tracking-tight drop-shadow-[0_0_12px_rgba(56,189,248,0.45)] font-[Orbitron]">
-                            3DSFERA
-                        </div>
-                        <div className="text-[11px] text-slate-200/80 tracking-[0.18em] font-semibold mt-1">
-                            Verified Supplier Pavilion
-                        </div>
-                    </div>
-                </div>
             </div>
 
-            {/* Navigation hint (bottom-left) */}
-            <div className="absolute bottom-10 left-10 z-10 pointer-events-none">
-                <div className="bg-black/70 border border-white/20 rounded-xl px-6 py-5 text-sm text-white/90 backdrop-blur-md shadow-2xl max-w-sm space-y-2">
-                    <div className="text-xs uppercase tracking-[0.25em] text-cyan-300 font-bold mb-2 border-b border-white/10 pb-2">{t('verified_pavilion.ui_nav.nav_title')}</div>
-                    <div className="flex items-center gap-3"><span className="font-mono text-cyan-400 font-bold">LMB</span> {t('verified_pavilion.ui_nav.nav_orbit', 'Rotate')}</div>
-                    <div className="flex items-center gap-3"><span className="font-mono text-cyan-400 font-bold">RMB</span> {t('verified_pavilion.ui_nav.nav_pan', 'Pan')}</div>
-                    <div className="flex items-center gap-3"><span className="font-mono text-cyan-400 font-bold">Scroll</span> {t('verified_pavilion.ui_nav.nav_zoom', 'Zoom')}</div>
-                    {/* <div className="text-xs opacity-60 mt-1">{t('verified_pavilion.ui_nav.nav_inspect')}</div> */}
-                </div>
-            </div>
+            {/* Navigation hint removed per user feedback ("weird UI") */}
+
 
 
             <Canvas
@@ -937,8 +914,18 @@ export default function VerifiedPavilion({ onBack, user }) {
             )}
 
             {/* Intro / Welcome Screen */}
-            {/* Intro / Welcome Screen - REMOVED */}
-
+            {/* Intro / Welcome Screen */}
+            {showWelcome && (
+                <div className="absolute inset-0 z-[60] flex items-center justify-center bg-black/90 backdrop-blur-xl animate-fadeOut delay-[3000ms]"
+                    style={{ animationFillMode: 'forwards', pointerEvents: 'none' }}>
+                    <div className="text-center">
+                        <div className="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-200 via-blue-300 to-indigo-400 tracking-tight drop-shadow-[0_0_12px_rgba(56,189,248,0.45)] font-[Orbitron] mb-2">
+                            3DSFERA
+                        </div>
+                        <div className="text-sm text-cyan-200/60 tracking-[0.3em] uppercase">Verified Supplier Pavilion</div>
+                    </div>
+                </div>
+            )}
 
             {/* Inspect Card (Right Side) */}
             <InspectionCard
