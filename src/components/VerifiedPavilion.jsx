@@ -1066,7 +1066,10 @@ export default function VerifiedPavilion({ onBack, user }) {
                         captureReq={captureReq}
                         onCapture={handleCameraCaptured}
                         savedState={savedCameraState}
-                        onRestoreComplete={() => setTransitioning(false)}
+                        onRestoreComplete={() => {
+                            setTransitioning(false);
+                            setSavedCameraState(null); // Clear saved state so next inspection captures fresh position
+                        }}
                     />
 
                     {/* POST PROCESSING - OPTIMIZED */}
