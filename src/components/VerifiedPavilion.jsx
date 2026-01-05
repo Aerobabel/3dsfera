@@ -188,8 +188,9 @@ function CameraBoundaries({ controlsRef, minX, maxX, minZ, maxZ, isActive }) {
 
         // 2. Clamp Target (Look point)
         // Keep the pivot inside the room so we don't look into the void
-        target.x = THREE.MathUtils.clamp(target.x, minX, maxX);
-        target.z = THREE.MathUtils.clamp(target.z, minZ, maxZ);
+        // REMOVED: Clamping target causes "Spin" when camera keeps moving but target stops.
+        // target.x = THREE.MathUtils.clamp(target.x, minX, maxX);
+        // target.z = THREE.MathUtils.clamp(target.z, minZ, maxZ);
 
     }, 1);
 
