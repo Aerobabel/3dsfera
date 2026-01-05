@@ -15,15 +15,18 @@ export function LODModel({ basePath, distances = [10, 30], ...props }) {
     const medPath = `${basePath}_med.glb`;
     const lowPath = `${basePath}_low.glb`;
 
-    // Preload all 3 versions
-    useGLTF.preload(highPath);
-    useGLTF.preload(medPath);
-    useGLTF.preload(lowPath);
+    // Preload removed to prevent network congestion
+    // useGLTF hooks below will trigger fetch when component mounts
+
+    // PERFORMANCE FIX: 
+    // The generated "Low" LODs are still very large (11MB+), so loading 3 versions 
+    // triples the bandwidth without benefit, causing Netlify timeouts.
+    // For now, we strictly load the MEDIUM version only.
 
     // Load geometry
-    const { scene: highScene } = useGLTF(highPath);
+    // const { scene: highScene } = useGLTF(highPath);
     const { scene: medScene } = useGLTF(medPath);
-    const { scene: lowScene } = useGLTF(lowPath);
+    // const { scene: lowScene } = useGLTF(lowPath);
 
     // Clone descriptions for safe reuse and apply shadows
     const prepareScene = (scene) => {
@@ -37,15 +40,13 @@ export function LODModel({ basePath, distances = [10, 30], ...props }) {
         return clone;
     };
 
-    const high = useMemo(() => prepareScene(highScene), [highScene]);
+    // const high = useMemo(() => prepareScene(highScene), [highScene]);
     const med = useMemo(() => prepareScene(medScene), [medScene]);
-    const low = useMemo(() => prepareScene(lowScene), [lowScene]);
+    // const low = useMemo(() => prepareScene(lowScene), [lowScene]);
 
     return (
-        <Detailed distances={[0, ...distances]} {...props}>
-            <primitive object={high} />
+        <group {...props}>
             <primitive object={med} />
-            <primitive object={low} />
-        </Detailed>
+        </group>
     );
 }
