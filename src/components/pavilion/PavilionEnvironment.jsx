@@ -32,29 +32,29 @@ export function CeilingLights() {
                         <meshBasicMaterial color="#ffffff" toneMapped={false} />
                     </mesh>
 
-                    {/* VOLUMETRIC BEAM (God Ray) */}
+                    {/* VOLUMETRIC BEAM (God Ray) - Optimized */}
                     <SpotLight
                         position={[0, -0.4, 0]}
                         distance={35}
                         angle={0.6}
                         attenuation={15}
-                        anglePower={7} // Sharp edges
+                        anglePower={7}
                         radiusTop={0.4}
                         radiusBottom={10}
-                        opacity={0.2} // Subtle dust look
+                        opacity={0.15} // Reduced opacity
                         color="#cceeff"
                         volumetric
                         castShadow={false}
                     />
 
-                    {/* Floor Illuminator (Bounce) */}
-                    <pointLight
+                    {/* Floor Illuminator (Bounce) - REMOVED FOR FPS */}
+                    {/* <pointLight
                         position={[0, -5, 0]}
                         color="#ffffff"
                         intensity={5}
                         distance={40}
                         decay={1.2}
-                    />
+                    /> */}
                 </group>
             ))}
         </group>

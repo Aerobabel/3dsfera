@@ -1065,12 +1065,18 @@ export default function VerifiedPavilion({ onBack, user }) {
                         onRestoreComplete={() => setTransitioning(false)}
                     />
 
-                    {/* POST PROCESSING */}
-                    <EffectComposer disableNormalPass multisampling={0}>
-                        <Bloom luminanceThreshold={1} mipmapBlur intensity={1.5} radius={0.4} />
+                    {/* POST PROCESSING - OPTIMIZED */}
+                    <EffectComposer disableNormalPass>
+                        <Bloom
+                            luminanceThreshold={1}
+                            mipmapBlur
+                            intensity={0.5} // Reduced from 1.5
+                            radius={0.4}
+                        />
                         {/* Noise disabled for performance on Retina screens */}
                         {/* <Noise opacity={inspectMode ? 0 : 0.02} /> */}
-                        <Vignette eskil={false} offset={0.1} darkness={0.5} /> {/* Stronger Vignette for focus */}
+                        {/* Vignette removed for clarity + perf */}
+                        {/* <Vignette eskil={false} offset={0.1} darkness={0.5} /> */}
 
                     </EffectComposer>
                 </PerformanceMonitor>
