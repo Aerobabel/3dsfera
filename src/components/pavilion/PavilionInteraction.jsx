@@ -53,17 +53,21 @@ export function CameraSmoother({ controlsRef, targetPosition, cameraPosition, is
         const cam = state.camera;
         const target = focusRef.current;
 
+        // DISABLE CONTROLS TO PREVENT FIGHTING
+        if (ctrl.enabled) ctrl.enabled = false;
+
         // Smooth Lerp
-        const speed = 4 * delta; // Adjust speed here
+        const speed = Math.min(4 * delta, 1.0); // Clamp speed
         cam.position.lerp(target.cam, speed);
         ctrl.target.lerp(target.target, speed);
         ctrl.update();
 
         // Snap if close enough to stop jitter
         if (cam.position.distanceTo(target.cam) < 0.1 && ctrl.target.distanceTo(target.target) < 0.1) {
-            // cam.position.copy(target.cam);
-            // ctrl.target.copy(target.target);
-            focusRef.current.active = false; // Disable lerp to allow user control
+            cam.position.copy(target.cam);
+            ctrl.target.copy(target.target);
+            focusRef.current.active = false; // Disable lerp
+            ctrl.enabled = true; // Re-enable controls
         }
     });
 

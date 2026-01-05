@@ -49,6 +49,8 @@ import aeroWallUrl from '../assets/images/aerowall.png';
 import liftWallUrl from '../assets/images/liftwall.png';
 
 
+import { LODModel } from './pavilion/LODModel';
+
 const TURBO_ENGINE_PATH = '/objects/turbo_schaft_engine_ivchenko_al-20.glb';
 const PNEUMATIC_PATH = '/objects/optimized/Pneumatic.glb';
 const CRANE_PATH = '/objects/optimized/mobile_crane.glb';
@@ -57,6 +59,14 @@ const ROAD_GRADER_PATH = '/objects/optimized/road_grader.glb';
 const VALVE_PATH = '/objects/valve.glb';
 const VALVE1_PATH = '/objects/valve1.glb';
 const VALVE2_PATH = '/objects/valve2.glb';
+
+// LOD Constants
+const ROAD_GRADER_LOD = '/objects/optimized_lods/road_grader';
+const CRANE_MACHINE_LOD = '/objects/optimized_lods/crane_machine';
+const VALVE_LOD = '/objects/optimized_lods/valve';
+const VALVE1_LOD = '/objects/optimized_lods/valve1';
+const VALVE2_LOD = '/objects/optimized_lods/valve2';
+
 const VALVE_BOX_TEXTURE = '/textures/valve_box.png?v=' + Date.now();
 const BRANDED_BOX_TEXTURE = '/textures/valve_box_v3.png';
 const CAMERA_PATH = '/objects/optimized/camera.glb';
@@ -638,11 +648,13 @@ export default function VerifiedPavilion({ onBack, user }) {
                             />
 
                             {/* Extra Blue Valve 1 */}
-                            <Gltf
-                                src={VALVE1_PATH}
-                                position={[0, 0.85, 3.5]} // Safe height
-                                rotation={[0, Math.PI / 2, 0]}
+                            {/* Valve 1 - LOD Enabled */}
+                            <LODModel
+                                basePath={VALVE1_LOD}
+                                position={[-5, 0.85, 1.5]}
+                                rotation={[0, Math.PI / 4, 0]}
                                 scale={0.7}
+                                castShadow
                                 receiveShadow
                             />
 
@@ -697,11 +709,13 @@ export default function VerifiedPavilion({ onBack, user }) {
 
                             {/* Shipment Box Replacements */}
                             {/* Stack 1 */}
-                            <Gltf
-                                src={BOX_PACKAGE_PATH}
-                                position={[-4.0, 1.7, 0.0]}
-                                rotation={[0, 0.2, 0]}
-                                scale={2.8}
+                            {/* Extra Valve Scatter - LOD Enabled */}
+                            <LODModel
+                                basePath={VALVE_LOD}
+                                position={[-3.0, 0.2, 2.0]}
+                                rotation={[Math.PI / 2, 0, Math.PI / 3]}
+                                scale={0.15}
+                                castShadow
                                 receiveShadow
                             />
                             <Gltf
@@ -712,11 +726,13 @@ export default function VerifiedPavilion({ onBack, user }) {
                                 receiveShadow
                             />
                             {/* Stack 2 */}
-                            <Gltf
-                                src={BOX_PACKAGE_PATH}
-                                position={[-1.5, 1.3, 3.5]}
-                                rotation={[0, 0.8, 0]}
-                                scale={2.8}
+                            {/* Valve 2 - LOD Enabled */}
+                            <LODModel
+                                basePath={VALVE2_LOD}
+                                position={[-4.5, 0.2, 2.5]}
+                                rotation={[0, -Math.PI / 6, 0]}
+                                scale={0.015}
+                                castShadow
                                 receiveShadow
                             />
                         </group>
@@ -731,6 +747,8 @@ export default function VerifiedPavilion({ onBack, user }) {
                                 roofColor="white"
                                 imageUrl={liftWallUrl}
                                 modelPath={ROAD_GRADER_PATH} // Replaced Crane with Road Grader
+                                useLOD={true}
+                                lodBasePath={ROAD_GRADER_LOD}
                                 productScale={0.5} // Increased scale to make it visible
                                 modelRotation={[0, Math.PI / 2, 0]} // Rotated 90 deg anticlockwise
                                 modelPosition={[0, 1, 0]} // Center and lift

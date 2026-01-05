@@ -1,6 +1,7 @@
 import React, { useRef } from 'react';
 import { useGLTF, Float, RoundedBox } from '@react-three/drei';
 import * as THREE from 'three';
+import { LODModel } from './LODModel'; // Import LOD wrapper
 
 // --- SUB-COMPONENTS ---
 
@@ -94,10 +95,24 @@ export default function ProductDisplay({
     floating = false,
     hidePedestal = false,
     heightOffset = 0,
+    useLOD = false,
+    lodBasePath = null,
     ...props
 }) {
     // Note: We no longer call useGLTF here to avoid conditional hook rules violations.
     // Instead we render GLTFModel only if we have a path.
+
+    const renderModel = () => {
+        if (useLOD && lodBasePath) {
+            const content = <LODModel basePath={lodBasePath} scale={[1, 1, 1]} />;
+            return floating ? (
+                <Float speed={2} rotationIntensity={0.5} floatIntensity={0.5}>
+                    {content}
+                </Float>
+            ) : content;
+        }
+        return modelPath && <GLTFModel path={modelPath} floating={floating} />;
+    };
 
     return (
         <group position={position} rotation={rotation} {...props}>
@@ -106,7 +121,6 @@ export default function ProductDisplay({
 
             {/* The Product on Top - Scaled Independently */}
             <group position={[0, (hidePedestal ? 0.5 : 2.55) + (heightOffset || 0), 0]} scale={scale}>
-                {/* Hit Box for easier clicking - Invisible but catches raycasts */}
                 {/* Hit Box for easier clicking - Must be visible to catch raycasts, but fully transparent */}
                 <mesh>
                     <cylinderGeometry args={[1.5, 1.5, 4, 16]} />
@@ -121,7 +135,7 @@ export default function ProductDisplay({
                 ) : props.isMicrowave ? (
                     <Microwave scale={0.8} />
                 ) : (
-                    modelPath && <GLTFModel path={modelPath} floating={floating} />
+                    renderModel()
                 )}
             </group>
         </group>

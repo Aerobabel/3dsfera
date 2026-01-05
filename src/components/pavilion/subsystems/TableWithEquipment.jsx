@@ -1,29 +1,22 @@
 import React from 'react';
 import { Gltf } from '@react-three/drei';
+import { LODModel } from '../LODModel';
 
 export function TableWithEquipment({ position = [0, 0, 0], rotation = [0, 0, 0], scale = 1, castShadow = true }) {
-    // Original absolute positions in the group were:
-    // Table: [2.5, 0.3, 1.0]
-    // Ball Valve: [2.2, -1.0, 1.2] -> diff: [-0.3, -1.3, 0.2]
-    // Water Pipe: [2.8, 2.7, 0.8] -> diff: [0.3, 2.4, -0.2]
-    // Pneumatic: [2.2, 2.0, 1.2] -> diff: [-0.3, 1.7, 0.2]
-    // Scale was 2.8 for table.
+    // LOD Base Paths
+    const TABLE_LOD = '/objects/optimized_lods/industrial_table';
+    const BALL_VALVE_LOD = '/objects/optimized_lods/ball_valve';
+    const WATER_VALVE_LOD = '/objects/optimized_lods/water_pipe_valve';
+    const VALVE_LOD = '/objects/optimized_lods/valve';
 
-    // We will base everything on the Table's position being [0,0,0] inside this component
-    // and let the parent control the actual position via the prop.
-    // However, the assets need their paths.
-
-    const INDUSTRIAL_TABLE_PATH = '/objects/industrial_table.glb';
-    const BALL_VALVE_PATH = '/objects/ball_valve.glb';
-    const WATER_PIPE_VALVE_PATH = '/objects/water_pipe_valve.glb';
+    // Non-optimized assets
     const PNEUMATIC_PATH = '/objects/optimized/Pneumatic.glb';
-    const VALVE_PATH = '/objects/valve.glb';
 
     return (
         <group position={position} rotation={rotation} scale={scale}>
-            {/* Industrial Table */}
-            <Gltf
-                src={INDUSTRIAL_TABLE_PATH}
+            {/* Industrial Table - LOD Enabled */}
+            <LODModel
+                basePath={TABLE_LOD}
                 position={[0, 0, 0]}
                 rotation={[0, 0, 0]}
                 scale={2.8}
@@ -31,9 +24,9 @@ export function TableWithEquipment({ position = [0, 0, 0], rotation = [0, 0, 0],
                 receiveShadow
             />
 
-            {/* Detailed Valves on Table */}
-            <Gltf
-                src={BALL_VALVE_PATH}
+            {/* Detailed Valves on Table - LOD Enabled */}
+            <LODModel
+                basePath={BALL_VALVE_LOD}
                 position={[-0.3, -1.3, 0.2]}
                 rotation={[0, Math.PI / 4, 0]}
                 scale={0.01}
@@ -41,8 +34,8 @@ export function TableWithEquipment({ position = [0, 0, 0], rotation = [0, 0, 0],
                 receiveShadow
             />
 
-            <Gltf
-                src={WATER_PIPE_VALVE_PATH}
+            <LODModel
+                basePath={WATER_VALVE_LOD}
                 position={[0.3, 2.4, -0.2]}
                 rotation={[0, -Math.PI / 4, 0]}
                 scale={0.01}
@@ -50,7 +43,7 @@ export function TableWithEquipment({ position = [0, 0, 0], rotation = [0, 0, 0],
                 receiveShadow
             />
 
-            {/* Pneumatic */}
+            {/* Pneumatic - Kept as Gltf (not in optimization list) */}
             <Gltf
                 src={PNEUMATIC_PATH}
                 position={[-0.3, 1.7, 0.2]}
@@ -59,9 +52,9 @@ export function TableWithEquipment({ position = [0, 0, 0], rotation = [0, 0, 0],
                 castShadow={castShadow}
             />
 
-            {/* High-Temp Valve */}
-            <Gltf
-                src={VALVE_PATH}
+            {/* High-Temp Valve - LOD Enabled */}
+            <LODModel
+                basePath={VALVE_LOD}
                 position={[0.5, 0.55, 1.0]}
                 rotation={[-Math.PI / 2, 0, 0]}
                 scale={0.15}
