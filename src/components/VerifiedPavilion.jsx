@@ -86,16 +86,25 @@ const INDUSTRIAL_TANK_PATH = '/objects/industrial_storage_tank.glb';
 // -----------------------------------------------------------------------------
 // KEYBOARD NAVIGATION (WASD / Arrows)
 // -----------------------------------------------------------------------------
-function KeyboardNavigation({ controlsRef, speed = 0.4, isActive }) {
+// Physics Constants
+const WALL_X = 55;
+const WALL_Z_BACK = -55;
+const WALL_Z_FRONT = 45;
+
+// -----------------------------------------------------------------------------
+// KEYBOARD NAVIGATION (WASD / Arrows)
+// -----------------------------------------------------------------------------
+function KeyboardNavigation({ controlsRef, isActive }) {
     const { camera } = useThree();
     const keys = useRef({});
 
-    // Optimization: Pool reusable vectors to prevent GC stutter
+    // Reuse vectors to avoid GC
     const vectors = useMemo(() => ({
         forward: new THREE.Vector3(),
         right: new THREE.Vector3(),
         velocity: new THREE.Vector3(),
-        dummy: new THREE.Vector3()
+        dummy: new THREE.Vector3(),
+        nextPos: new THREE.Vector3()
     }), []);
 
     useEffect(() => {
@@ -109,98 +118,64 @@ function KeyboardNavigation({ controlsRef, speed = 0.4, isActive }) {
         };
     }, []);
 
-    // Physics Constants
-    const WALL_X = 55;
-    const WALL_Z_BACK = -55;
-    const WALL_Z_FRONT = 45;
+    useFrame((state, delta) => {
+        if (!isActive || !controlsRef.current) return;
 
-    function KeyboardNavigation({ controlsRef, isActive }) {
-        const { camera } = useThree();
-        const keys = useRef({});
+        const { forward, right, velocity, dummy, nextPos } = vectors;
 
-        // Reuse vectors to avoid GC
-        const vectors = useMemo(() => ({
-            forward: new THREE.Vector3(),
-            right: new THREE.Vector3(),
-            velocity: new THREE.Vector3(),
-            dummy: new THREE.Vector3(),
-            nextPos: new THREE.Vector3()
-        }), []);
+        // 1. Calculate Basis Vectors (Strictly Horizontal)
+        camera.getWorldDirection(forward);
+        forward.y = 0; // HARD LOCK: Never fly
+        forward.normalize();
 
-        useEffect(() => {
-            const onDown = (e) => keys.current[e.code] = true;
-            const onUp = (e) => keys.current[e.code] = false;
-            window.addEventListener('keydown', onDown);
-            window.addEventListener('keyup', onUp);
-            return () => {
-                window.removeEventListener('keydown', onDown);
-                window.removeEventListener('keyup', onUp);
-            };
-        }, []);
+        right.crossVectors(forward, camera.up).normalize(); // Standard right vector
 
-        useFrame((state, delta) => {
-            if (!isActive || !controlsRef.current) return;
+        // 2. Input Handling
+        const safeDelta = Math.min(delta, 0.1);
+        const baseSpeed = 15.0;
+        const moveSpeed = baseSpeed * safeDelta * (keys.current['ShiftLeft'] ? 2.5 : 1);
 
-            const { forward, right, velocity, dummy, nextPos } = vectors;
+        velocity.set(0, 0, 0);
+        if (keys.current['KeyW'] || keys.current['ArrowUp']) velocity.add(forward);
+        if (keys.current['KeyS'] || keys.current['ArrowDown']) velocity.sub(forward);
+        if (keys.current['KeyA'] || keys.current['ArrowLeft']) velocity.sub(right);
+        if (keys.current['KeyD'] || keys.current['ArrowRight']) velocity.add(right);
 
-            // 1. Calculate Basis Vectors (Strictly Horizontal)
-            camera.getWorldDirection(forward);
-            forward.y = 0; // HARD LOCK: Never fly
-            forward.normalize();
+        if (velocity.lengthSq() > 0) {
+            velocity.normalize().multiplyScalar(moveSpeed);
 
-            right.crossVectors(forward, camera.up).normalize(); // Standard right vector
+            // 3. Proactive Collision Detection
+            // Predict where we WOULD be
+            nextPos.copy(camera.position).add(velocity);
 
-            // 2. Input Handling
-            const safeDelta = Math.min(delta, 0.1);
-            const baseSpeed = 15.0;
-            const moveSpeed = baseSpeed * safeDelta * (keys.current['ShiftLeft'] ? 2.5 : 1);
-
-            velocity.set(0, 0, 0);
-            if (keys.current['KeyW'] || keys.current['ArrowUp']) velocity.add(forward);
-            if (keys.current['KeyS'] || keys.current['ArrowDown']) velocity.sub(forward);
-            if (keys.current['KeyA'] || keys.current['ArrowLeft']) velocity.sub(right);
-            if (keys.current['KeyD'] || keys.current['ArrowRight']) velocity.add(right);
-
-            if (velocity.lengthSq() > 0) {
-                velocity.normalize().multiplyScalar(moveSpeed);
-
-                // 3. Proactive Collision Detection
-                // Predict where we WOULD be
-                nextPos.copy(camera.position).add(velocity);
-
-                // Check Walls (X-Axis)
-                if (nextPos.x < -WALL_X || nextPos.x > WALL_X) {
-                    velocity.x = 0; // Slide along wall
-                }
-
-                // Check Walls (Z-Axis)
-                if (nextPos.z < WALL_Z_BACK || nextPos.z > WALL_Z_FRONT) {
-                    velocity.z = 0; // Slide along wall
-                }
-
-                // 4. Apply Validated Move
-                camera.position.add(velocity);
-
-                // 5. Update Target (Look Ahead)
-                // Maintain a healthy pivot distance
-                const currentTargetDist = camera.position.distanceTo(controlsRef.current.target);
-                const targetDist = Math.max(2.0, Math.min(currentTargetDist, 10.0)); // Clamp distance 2m-10m
-
-                dummy.copy(camera.position).addScaledVector(camera.getWorldDirection(new THREE.Vector3()), targetDist);
-
-                // LERP target for smoothness
-                controlsRef.current.target.lerp(dummy, 0.1);
+            // Check Walls (X-Axis)
+            if (nextPos.x < -WALL_X || nextPos.x > WALL_X) {
+                velocity.x = 0; // Slide along wall
             }
-        });
 
-        return null;
-    }
+            // Check Walls (Z-Axis)
+            if (nextPos.z < WALL_Z_BACK || nextPos.z > WALL_Z_FRONT) {
+                velocity.z = 0; // Slide along wall
+            }
+
+            // 4. Apply Validated Move
+            camera.position.add(velocity);
+
+            // 5. Update Target (Look Ahead)
+            // Maintain a healthy pivot distance
+            const currentTargetDist = camera.position.distanceTo(controlsRef.current.target);
+            const targetDist = Math.max(2.0, Math.min(currentTargetDist, 10.0)); // Clamp distance 2m-10m
+
+            dummy.copy(camera.position).addScaledVector(camera.getWorldDirection(new THREE.Vector3()), targetDist);
+
+            // LERP target for smoothness
+            controlsRef.current.target.lerp(dummy, 0.1);
+        }
+    });
 
     return null;
 }
 
-
-// Logic to constrain camera target within bounds
 // Logic to constrain camera target within bounds
 function CameraBoundaries({ controlsRef, minX, maxX, minZ, maxZ, isActive }) {
     const { camera } = useThree();
@@ -1040,6 +1015,7 @@ export default function VerifiedPavilion({ onBack, user }) {
                             // Removed target prop to prevent conflict with CameraSmoother
                             enablePan={!inspectMode}
                             enableZoom={true}
+                            enableKeys={false} // Disable default arrow keys to prevent conflict with WASD
 
                             // RESTRICTED CAMERA LIMITS
                             minDistance={inspectMode ? 0.5 : 0.1} // 0.1 allows "FPS" pivot logic
