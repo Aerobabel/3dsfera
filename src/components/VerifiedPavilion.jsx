@@ -227,6 +227,8 @@ export default function VerifiedPavilion({ onBack, user }) {
     const [isTransitioning, setTransitioning] = useState(false);
     const [savedCameraState, setSavedCameraState] = useState(null); // Save cam before inspect
     const [captureReq, setCaptureReq] = useState(false); // Trigger for camera capture
+    const [triggerRestore, setTriggerRestore] = useState(false); // New: Trigger restore
+    const [isRestoring, setIsRestoring] = useState(false); // New: Restore in progress
     const [pendingData, setPendingData] = useState(null); // Data waiting for capture
     const [orbitTarget, setOrbitTarget] = useState(null); // New: Target for Orbit Controls
     const [cameraPosition, setCameraPosition] = useState(null); // New: Smoother Target Cam Pos
@@ -314,18 +316,38 @@ export default function VerifiedPavilion({ onBack, user }) {
         // 1. Request Capture first. Don't move yet.
         setPendingData({ data, position });
         setCaptureReq(true);
+        // Reset restore states just in case
+        setTriggerRestore(false);
+        setIsRestoring(false);
     }, []);
 
     const closeInspectMode = () => {
+        setIsOpen(false);
+        // FIX: Don't setInspectMode(false) immediately. Trigger restore first.
         if (savedCameraState) {
-            setTransitioning(true);
+            console.log("Triggering Camera Restore...");
+            setTriggerRestore(true);
+            setIsRestoring(true);
+            // DO NOT setInspectMode(false) yet. Wait for onRestoreComplete.
+        } else {
+            // Fallback if no state saved (shouldn't happen)
+            setInspectMode(false);
+            setSelectedObject(null);
+            setOrbitTarget(null);
+            setCameraPosition(null);
         }
-        setInspectMode(false);
+    };
+
+    const handleRestoreComplete = useCallback(() => {
+        console.log("Camera Restore Complete. Disabling Inspect Mode.");
+        setTriggerRestore(false);
+        setIsRestoring(false);
+        setInspectMode(false); // NOW it is safe to switch controls bounds
         setSelectedObject(null);
         setOrbitTarget(null);
         setCameraPosition(null);
-        setIsOpen(false);
-    };
+        setSavedCameraState(null);
+    }, []);
 
     const closeOverlayOnly = () => {
         setIsOpen(false);
