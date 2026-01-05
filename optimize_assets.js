@@ -1,7 +1,11 @@
+import fs from 'fs';
+import path from 'path';
+import { execSync } from 'child_process';
+import { fileURLToPath } from 'url';
 
-const fs = require('fs');
-const path = require('path');
-const { execSync } = require('child_process');
+// ESM equivalent of __dirname
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // Configuration
 const SOURCE_DIR = './public/objects';
@@ -44,18 +48,21 @@ ASSETS_TO_OPTIMIZE.forEach(filename => {
     const outLow = path.join(OUTPUT_DIR, `${basename}_low.glb`);
 
     try {
-        // 1. HIGH: Draco Compression ONLY (No Simplification) - Preserves 100% detail
-        console.log(`   - Generating High LOD (Draco only)...`);
-        execSync(`npx @gltf-transform/cli draco "${inputPath}" "${outHigh}" --method edgebreaker`, { stdio: 'inherit' });
+        // 1. HIGH: Resize to 1024 + Draco
+        console.log(`   - Generating High LOD (Resize 1024 + Draco)...`);
+        execSync(`npx @gltf-transform/cli resize "${inputPath}" "${outHigh}" --width 1024 --height 1024`, { stdio: 'inherit' });
+        execSync(`npx @gltf-transform/cli draco "${outHigh}" "${outHigh}" --method edgebreaker`, { stdio: 'inherit' });
 
-        // 2. MEDIUM: 50% Simplification + Draco
-        console.log(`   - Generating Medium LOD (50% simplify)...`);
-        execSync(`npx @gltf-transform/cli simplify "${inputPath}" "${outMed}" --ratio 0.5 --error 0.001`, { stdio: 'inherit' });
+        // 2. MEDIUM: Resize 512 + 50% Simplify + Draco
+        console.log(`   - Generating Medium LOD (Resize 512 + 50% simplify)...`);
+        execSync(`npx @gltf-transform/cli resize "${inputPath}" "${outMed}" --width 512 --height 512`, { stdio: 'inherit' });
+        execSync(`npx @gltf-transform/cli simplify "${outMed}" "${outMed}" --ratio 0.5 --error 0.001`, { stdio: 'inherit' });
         execSync(`npx @gltf-transform/cli draco "${outMed}" "${outMed}" --method edgebreaker`, { stdio: 'inherit' });
 
-        // 3. LOW: 10% Simplification + Draco
-        console.log(`   - Generating Low LOD (10% simplify)...`);
-        execSync(`npx @gltf-transform/cli simplify "${inputPath}" "${outLow}" --ratio 0.1 --error 0.01`, { stdio: 'inherit' });
+        // 3. LOW: Resize 256 + 10% Simplify + Draco
+        console.log(`   - Generating Low LOD (Resize 256 + 10% simplify)...`);
+        execSync(`npx @gltf-transform/cli resize "${inputPath}" "${outLow}" --width 256 --height 256`, { stdio: 'inherit' });
+        execSync(`npx @gltf-transform/cli simplify "${outLow}" "${outLow}" --ratio 0.1 --error 0.01`, { stdio: 'inherit' });
         execSync(`npx @gltf-transform/cli draco "${outLow}" "${outLow}" --method edgebreaker`, { stdio: 'inherit' });
 
         console.log(`   ✅ Done.`);
