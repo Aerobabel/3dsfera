@@ -63,7 +63,7 @@ export function PavilionArchitecture() {
             </mesh>
 
             <UltimateFloor />
-            <IndustrialCeilingDetailsFixed height={14} width={150} depth={150} />
+            <IndustrialCeilingDetailsFixed height={14} width={150} depth={250} />
             <CeilingLights />
             <NeonCeiling />
 
@@ -76,8 +76,8 @@ export function PavilionArchitecture() {
                 <pointLight intensity={4} distance={300} decay={2} color="cyan" />
             </group>
 
-            {/* Deep Back Wall (Blocking the void at Z = -90) */}
-            <group position={[0, 20, -90]}>
+            {/* Deep Back Wall (Blocking the void at Z = -120) */}
+            <group position={[0, 20, -120]}>
                 <mesh>
                     <planeGeometry args={[300, 120]} />
                     <meshStandardMaterial color="#080808" />
@@ -127,11 +127,11 @@ export function PavilionArchitecture() {
                 ))}
             </group>
             {/* BACK WALL */}
-            <group position={[0, 0, 48]}>
-                {Array.from({ length: 8 }).map((_, i) => (
+            <group position={[0, 0, 55]}>
+                {Array.from({ length: 10 }).map((_, i) => (
                     <RealisticWall
                         key={`bw-${i}`}
-                        position={[(i - 3.5) * 15, 0, 0]}
+                        position={[(i - 4.5) * 15, 0, 0]}
                         rotation={[0, Math.PI, 0]}
                         width={15}
                     />

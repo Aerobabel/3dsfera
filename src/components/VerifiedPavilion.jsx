@@ -89,7 +89,7 @@ const INDUSTRIAL_TANK_PATH = '/objects/industrial_storage_tank.glb';
 // Physics Constants
 const WALL_X = 55;
 const WALL_Z_BACK = -55;
-const WALL_Z_FRONT = 45;
+const WALL_Z_FRONT = 50;
 
 // -----------------------------------------------------------------------------
 // KEYBOARD NAVIGATION (WASD / Arrows)
@@ -225,7 +225,7 @@ export default function VerifiedPavilion({ onBack, user }) {
     const [selectedObject, setSelectedObject] = useState(null);
     const [inspectMode, setInspectMode] = useState(false); // New: Inspect Mode State
     const [isTransitioning, setTransitioning] = useState(false);
-    const [savedCameraState, setSavedCameraState] = useState(null); // Save cam before inspect
+    const savedCameraState = useRef(null); // Ref for reliable state access
     const [captureReq, setCaptureReq] = useState(false); // Trigger for camera capture
     const [pendingData, setPendingData] = useState(null); // Data waiting for capture
     const [orbitTarget, setOrbitTarget] = useState(null); // New: Target for Orbit Controls
@@ -265,11 +265,17 @@ export default function VerifiedPavilion({ onBack, user }) {
         });
     }, [progress, active]);
 
-    // Force Camera to Look Straight Ahead on Load (Fixes "looking at floor")
+    // Force Camera to Look Straight Ahead on Load
     useEffect(() => {
         if (controlsRef.current) {
-            // Look at a point at eye-level, far into the room
-            controlsRef.current.target.set(0, 1.7, 0);
+            const camera = controlsRef.current.object;
+
+            // CRITICAL: Explicitly set Position AND Target to ensure correct orientation.
+            // If camera defaults to 0, looking at 39 makes it face backwards.
+            // We must force it to 40 first.
+            camera.position.set(0, 1.7, 40);
+            controlsRef.current.target.set(0, 1.7, 39);
+
             controlsRef.current.update();
         }
     }, [sceneReady]);
@@ -301,7 +307,16 @@ export default function VerifiedPavilion({ onBack, user }) {
 
 
     const handleObjectClick = useCallback((data, position) => {
-        // Direct transition - no camera capture needed
+        // CAPTURE STATE: Only if we are coming from "Walking Mode" (savedCameraState.current is null)
+        // This ensures that if we jump A -> B, we still return to the original walking spot.
+        if (controlsRef.current && !savedCameraState.current) {
+            savedCameraState.current = {
+                position: controlsRef.current.object.position.clone(),
+                target: controlsRef.current.target.clone()
+            };
+        }
+
+        // Search for "Camera"
         SoundManager.playClick();
         setSelectedObject(data);
 
@@ -311,46 +326,58 @@ export default function VerifiedPavilion({ onBack, user }) {
             const viewOffset = [position[0], position[1] + 2.5, position[2] + 8.0];
             setCameraPosition(viewOffset);
         }
-    }, []);
+    }, []); // No dependencies needed for ref
 
     const closeInspectMode = () => {
-        // Step 1: Clear all state immediately
-        setSavedCameraState(null);
-        setTransitioning(false);
-        setCaptureReq(false);
-
-        // Step 2: INTELLIGENT EXIT - Position camera between object and room center
-        if (orbitTarget && controlsRef.current) {
-            const [targetX, targetY, targetZ] = orbitTarget;
-
-            // Room center / safe area
-            const roomCenterX = 0;
-            const roomCenterZ = 20; // Mid-point of the room
-
-            // Calculate direction from object toward room center
-            const dirX = roomCenterX - targetX;
-            const dirZ = roomCenterZ - targetZ;
-            const distance = Math.sqrt(dirX * dirX + dirZ * dirZ);
-
-            // Normalize and scale to 10m away from object
-            const exitDistance = 10;
-            const exitX = targetX + (dirX / distance) * exitDistance;
-            const exitY = 1.7; // Eye level
-            const exitZ = targetZ + (dirZ / distance) * exitDistance;
-
-            // Set camera position and target
+        // STRICT RESTORE: Go back to the exact saved position
+        if (savedCameraState.current && controlsRef.current) {
             const camera = controlsRef.current.object;
-            camera.position.set(exitX, exitY, exitZ);
-            controlsRef.current.target.set(targetX, targetY, targetZ);
+
+            // 1. Restore Position & Target
+            camera.position.copy(savedCameraState.current.position);
+            controlsRef.current.target.copy(savedCameraState.current.target);
+
+            // 2. Ensure we are not "in the floor" (Safety)
+            if (camera.position.y < 1.6) camera.position.y = 1.7;
+
             controlsRef.current.update();
+        } else {
+            // Fallback if no saved state: Move back 5 meters and reset target
+            // This handles cases where state wasn't captured correctly
+            if (controlsRef.current) {
+                const camera = controlsRef.current.object;
+                const currentDir = new THREE.Vector3();
+                camera.getWorldDirection(currentDir);
+
+                // Back up 5m
+                camera.position.sub(currentDir.clone().multiplyScalar(5));
+                camera.position.y = 1.7;
+
+                // CRITICAL FIX: Set target 1m in front, horizontally.
+                // We IGNORE the Y component of currentDir to ensure we look straight ahead (level with ground).
+                const horizontalDir = currentDir.clone();
+                horizontalDir.y = 0;
+                horizontalDir.normalize();
+
+                const newTarget = camera.position.clone().add(horizontalDir.multiplyScalar(1.0));
+
+                controlsRef.current.target.copy(newTarget);
+                controlsRef.current.update();
+            }
         }
 
-        // Step 3: Clear inspect mode state
+        // Clear State
         setInspectMode(false);
         setSelectedObject(null);
         setOrbitTarget(null);
         setCameraPosition(null);
         setIsOpen(false);
+
+        // Clear saved state so we can capture a new walking position next time
+        savedCameraState.current = null;
+
+        setTransitioning(false);
+        setCaptureReq(false);
     };
 
     const closeOverlayOnly = () => {
@@ -429,7 +456,7 @@ export default function VerifiedPavilion({ onBack, user }) {
 
             <Canvas
                 shadows
-                camera={{ position: [0, 1.7, 65], fov: 60 }}
+                camera={{ position: [0, 1.7, 40], fov: 60 }}
                 dpr={dpr}
                 gl={{
                     antialias: false,
