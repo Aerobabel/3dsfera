@@ -1,7 +1,7 @@
 import React from 'react';
 import { Gltf } from '@react-three/drei';
 
-export function TableWithEquipment({ position = [0, 0, 0], rotation = [0, 0, 0], scale = 1 }) {
+export function TableWithEquipment({ position = [0, 0, 0], rotation = [0, 0, 0], scale = 1, castShadow = true }) {
     // Original absolute positions in the group were:
     // Table: [2.5, 0.3, 1.0]
     // Ball Valve: [2.2, -1.0, 1.2] -> diff: [-0.3, -1.3, 0.2]
@@ -27,7 +27,7 @@ export function TableWithEquipment({ position = [0, 0, 0], rotation = [0, 0, 0],
                 position={[0, 0, 0]}
                 rotation={[0, 0, 0]}
                 scale={2.8}
-                castShadow
+                castShadow={castShadow}
                 receiveShadow
             />
 
@@ -37,7 +37,7 @@ export function TableWithEquipment({ position = [0, 0, 0], rotation = [0, 0, 0],
                 position={[-0.3, -1.3, 0.2]}
                 rotation={[0, Math.PI / 4, 0]}
                 scale={0.01}
-                castShadow
+                castShadow={castShadow}
                 receiveShadow
             />
 
@@ -46,7 +46,7 @@ export function TableWithEquipment({ position = [0, 0, 0], rotation = [0, 0, 0],
                 position={[0.3, 2.4, -0.2]}
                 rotation={[0, -Math.PI / 4, 0]}
                 scale={0.01}
-                castShadow
+                castShadow={castShadow}
                 receiveShadow
             />
 
@@ -56,7 +56,7 @@ export function TableWithEquipment({ position = [0, 0, 0], rotation = [0, 0, 0],
                 position={[-0.3, 1.7, 0.2]}
                 rotation={[0, Math.PI / 2, Math.PI / 2]}
                 scale={0.9}
-                castShadow
+                castShadow={castShadow}
             />
 
             {/* High-Temp Valve */}
@@ -65,7 +65,7 @@ export function TableWithEquipment({ position = [0, 0, 0], rotation = [0, 0, 0],
                 position={[0.5, 0.55, 1.0]}
                 rotation={[-Math.PI / 2, 0, 0]}
                 scale={0.15}
-                castShadow
+                castShadow={castShadow}
                 receiveShadow
             />
         </group>

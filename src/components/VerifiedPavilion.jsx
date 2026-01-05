@@ -625,7 +625,6 @@ export default function VerifiedPavilion({ onBack, user }) {
                                 position={[-5, 0.85, 1.5]} // Raised to 0.85
                                 rotation={[0, Math.PI / 3, Math.PI / 2]}
                                 scale={0.7}
-                                castShadow
                                 receiveShadow
                             />
 
@@ -635,7 +634,6 @@ export default function VerifiedPavilion({ onBack, user }) {
                                 position={[-3.0, 0.85, 0.5]} // Moved inside from [-4.5, -2.5]
                                 rotation={[0, -Math.PI / 4, 0]}
                                 scale={0.6}
-                                castShadow
                                 receiveShadow
                             />
 
@@ -645,7 +643,6 @@ export default function VerifiedPavilion({ onBack, user }) {
                                 position={[0, 0.85, 3.5]} // Safe height
                                 rotation={[0, Math.PI / 2, 0]}
                                 scale={0.7}
-                                castShadow
                                 receiveShadow
                             />
 
@@ -655,7 +652,6 @@ export default function VerifiedPavilion({ onBack, user }) {
                                 position={[2.0, 0.85, -0.5]} // Moved inside from [3.5, -1.0]
                                 rotation={[0, -Math.PI / 6, 0]}
                                 scale={0.7}
-                                castShadow
                                 receiveShadow
                             />
 
@@ -669,7 +665,6 @@ export default function VerifiedPavilion({ onBack, user }) {
                                 position={[3.0, 3.0, 1.5]}
                                 rotation={[0.0, 0.0, 0.0]}
                                 scale={0.1}
-                                castShadow
                                 receiveShadow
                             />
 
@@ -678,7 +673,6 @@ export default function VerifiedPavilion({ onBack, user }) {
                                 position={[-4.6, 3.0, 4.1]}
                                 rotation={[0.0, 0.0, 0.0]}
                                 scale={0.3}
-                                castShadow
                                 receiveShadow
                             />
 
@@ -687,20 +681,19 @@ export default function VerifiedPavilion({ onBack, user }) {
                                 position={[2.3, 3.3, -2.7]}
                                 rotation={[0.0, 4.8, 0.0]}
                                 scale={0.1}
-                                castShadow
                                 receiveShadow
                             />
 
                             {/* --- NEW ASSETS REPLACING BOXES (Triplicated) --- */}
 
                             {/* Original Position */}
-                            <TableWithEquipment position={[2.5, 0.7, 1.0]} rotation={[0, 0.0, 0]} />
+                            <TableWithEquipment position={[2.5, 0.7, 1.0]} rotation={[0, 0.0, 0]} castShadow={false} />
 
                             {/* Second Copy */}
-                            <TableWithEquipment position={[-4.0, 0.7, 4.0]} rotation={[0, 1.3, 0]} />
+                            <TableWithEquipment position={[-4.0, 0.7, 4.0]} rotation={[0, 1.3, 0]} castShadow={false} />
 
                             {/* Third Copy */}
-                            <TableWithEquipment position={[1.7, 0.7, -3.0]} rotation={[0, 2.4, 0]} />
+                            <TableWithEquipment position={[1.7, 0.7, -3.0]} rotation={[0, 2.4, 0]} castShadow={false} />
 
                             {/* Shipment Box Replacements */}
                             {/* Stack 1 */}
@@ -709,7 +702,6 @@ export default function VerifiedPavilion({ onBack, user }) {
                                 position={[-4.0, 1.7, 0.0]}
                                 rotation={[0, 0.2, 0]}
                                 scale={2.8}
-                                castShadow
                                 receiveShadow
                             />
                             <Gltf
@@ -717,7 +709,6 @@ export default function VerifiedPavilion({ onBack, user }) {
                                 position={[-4.0, 1.0, 0.0]}
                                 rotation={[0, -0.4, 0]}
                                 scale={2.8}
-                                castShadow
                                 receiveShadow
                             />
                             {/* Stack 2 */}
@@ -726,7 +717,6 @@ export default function VerifiedPavilion({ onBack, user }) {
                                 position={[-1.5, 1.3, 3.5]}
                                 rotation={[0, 0.8, 0]}
                                 scale={2.8}
-                                castShadow
                                 receiveShadow
                             />
                         </group>

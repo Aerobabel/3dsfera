@@ -436,23 +436,19 @@ export function UltimateFloor() {
                 <meshStandardMaterial color="#909090" roughness={0.5} metalness={0.5} />
             </mesh>
 
-            {/* COMPONENT 2: The Reflections */}
+            {/* COMPONENT 2: The Reflections - OPTIMIZED FOR FPS */}
             <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.005, 0]}>
                 <planeGeometry args={[120, 120]} />
-                <MeshReflectorMaterial
-                    resolution={256} // Optimized from 512
-                    mirror={0.5}
-                    mixBlur={5} // Reduced blur quality
-                    mixStrength={1.5}
-                    depthScale={1}
-                    minDepthThreshold={0.4}
-                    maxDepthThreshold={1.4}
-                    color="#A0A0A0"
-                    metalness={0.6}
-                    roughness={0.4}
-                    distortion={0} // Disabled distortion for perf
-                    distortionMap={null}
-                    blur={[300, 100]} // Keep blur but low res
+                {/* 
+                    Optimized "Polished Concrete" Material
+                    - No Double Rendering (Huge FPS Boost)
+                    - Uses Environment Map for "Static" Reflections
+                */}
+                <meshStandardMaterial
+                    color="#b0b0b0"
+                    roughness={0.2}
+                    metalness={0.8}
+                    envMapIntensity={1.2}
                 />
             </mesh>
 
