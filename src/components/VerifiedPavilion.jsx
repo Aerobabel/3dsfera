@@ -56,9 +56,9 @@ const PNEUMATIC_PATH = '/objects/optimized/Pneumatic.glb';
 const CRANE_PATH = '/objects/optimized/mobile_crane.glb';
 const CRANE_MACHINE_PATH = '/objects/optimized_lods/crane_machine_med.glb'; // 4.9MB (Safe) vs 14MB (Crash)
 const ROAD_GRADER_PATH = '/objects/optimized_lods/road_grader_med.glb'; // 2.9MB vs 15MB
-const VALVE_PATH = '/objects/optimized_lods/valve_high.glb'; // ~1.5MB
-const VALVE1_PATH = '/objects/optimized_lods/valve1_high.glb'; // ~2.4MB
-const VALVE2_PATH = '/objects/optimized_lods/valve2_high.glb'; // ~5MB
+const VALVE_PATH = '/objects/optimized_lods/valve_med.glb'; // 0.7MB (Ultra Safe)
+const VALVE1_PATH = '/objects/optimized_lods/valve1_med.glb'; // 1.3MB
+const VALVE2_PATH = '/objects/optimized_lods/valve2_med.glb'; // 2.7MB vs 5MB (High caused crash)
 
 // LOD Constants
 const ROAD_GRADER_LOD = '/objects/optimized_lods/road_grader';
