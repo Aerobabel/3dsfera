@@ -423,7 +423,9 @@ export default function ShowroomView({ pavilionData, onBack, user }) {
                                             <div className="max-h-32 overflow-y-auto space-y-2 custom-scrollbar pr-2">
                                                 {cart.map(item => (
                                                     <div key={item.id} className="flex justify-between items-center bg-white/5 p-2 rounded">
-                                                        <span className="text-sm text-white">{item.title}</span>
+                                                        <span className="text-sm text-white">
+                                                            {t(`pavilion_content.products.${item.id}.title`, { defaultValue: item.title })}
+                                                        </span>
                                                         <button onClick={() => removeFromCart(item.id)} className="text-red-400 hover:text-red-300 text-xs">{t('pavilion_ui.showroom.remove', 'Remove')}</button>
                                                     </div>
                                                 ))}
