@@ -299,31 +299,18 @@ export default function VerifiedPavilion({ onBack, user }) {
 
     // --- HANDLERS ---
 
-    const handleCameraCaptured = useCallback((capturedState) => {
-        // 2. Camera is saved. Now transition.
-        // FIX: Only save if we don't already have a saved state (i.e. we are coming from walking mode)
-        setSavedCameraState(prev => prev || capturedState);
-        setCaptureReq(false);
-
-        if (pendingData) {
-            const { data, position } = pendingData;
-            SoundManager.playClick();
-            setSelectedObject(data);
-
-            if (position) {
-                setInspectMode(true);
-                setOrbitTarget(position);
-                const viewOffset = [position[0], position[1] + 2.5, position[2] + 8.0];
-                setCameraPosition(viewOffset);
-            }
-        }
-        setPendingData(null);
-    }, [pendingData]);
 
     const handleObjectClick = useCallback((data, position) => {
-        // 1. Request Capture first. Don't move yet.
-        setPendingData({ data, position });
-        setCaptureReq(true);
+        // Direct transition - no camera capture needed
+        SoundManager.playClick();
+        setSelectedObject(data);
+
+        if (position) {
+            setInspectMode(true);
+            setOrbitTarget(position);
+            const viewOffset = [position[0], position[1] + 2.5, position[2] + 8.0];
+            setCameraPosition(viewOffset);
+        }
     }, []);
 
     const closeInspectMode = () => {
@@ -1077,16 +1064,19 @@ export default function VerifiedPavilion({ onBack, user }) {
                         {/* <Preload all /> REMOVED: Blocking startup */}
                     </Suspense>
 
-                    <CameraManager
+
+                    {/* CameraManager REMOVED - Now using direct smart positioning in closeInspectMode */}
+                    {/* <CameraManager
                         inspectMode={inspectMode}
                         captureReq={captureReq}
                         onCapture={handleCameraCaptured}
                         savedState={savedCameraState}
                         onRestoreComplete={() => {
                             setTransitioning(false);
-                            setSavedCameraState(null); // Clear saved state so next inspection captures fresh position
+                            setSavedCameraState(null);
                         }}
-                    />
+                    /> */}
+
 
                     {/* POST PROCESSING - OPTIMIZED */}
                     <EffectComposer disableNormalPass>
