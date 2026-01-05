@@ -181,9 +181,11 @@ function CameraBoundaries({ controlsRef, minX, maxX, minZ, maxZ, isActive }) {
         const target = controlsRef.current.target;
 
         // 1. Hard Clamp Camera Position (Fail-safe)
-        // If physics failed or user panned via mouse, enforce walls
-        camera.position.x = THREE.MathUtils.clamp(camera.position.x, -WALL_X, WALL_X);
-        camera.position.z = THREE.MathUtils.clamp(camera.position.z, WALL_Z_BACK, WALL_Z_FRONT);
+        // BUFFER ADDED: We allow the camera to go slightly beyond the walking wall (by 2m)
+        // This prevents the "Can't turn around" bug where rotation arcs are cancelled by strict clamping.
+        const BUFFER = 2.0;
+        camera.position.x = THREE.MathUtils.clamp(camera.position.x, -(WALL_X + BUFFER), (WALL_X + BUFFER));
+        camera.position.z = THREE.MathUtils.clamp(camera.position.z, (WALL_Z_BACK - BUFFER), (WALL_Z_FRONT + BUFFER));
         camera.position.y = THREE.MathUtils.clamp(camera.position.y, 1.6, 4.0); // Strict eye level
 
         // 2. Clamp Target (Look point)
