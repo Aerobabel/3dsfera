@@ -916,13 +916,38 @@ export default function VerifiedPavilion({ onBack, user }) {
             {/* Intro / Welcome Screen */}
             {/* Intro / Welcome Screen */}
             {showWelcome && (
-                <div className="absolute inset-0 z-[60] flex items-center justify-center bg-black/90 backdrop-blur-xl animate-fadeOut delay-[3000ms]"
-                    style={{ animationFillMode: 'forwards', pointerEvents: 'none' }}>
-                    <div className="text-center">
-                        <div className="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-200 via-blue-300 to-indigo-400 tracking-tight drop-shadow-[0_0_12px_rgba(56,189,248,0.45)] font-[Orbitron] mb-2">
+                <div className="absolute inset-0 z-[60] flex flex-col items-center justify-center bg-black/90 backdrop-blur-xl animate-fadeIn">
+                    <div className="text-center mb-12">
+                        <div className="text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-200 via-blue-300 to-indigo-400 tracking-tight drop-shadow-[0_0_25px_rgba(56,189,248,0.6)] font-[Orbitron] mb-4">
                             3DSFERA
                         </div>
-                        <div className="text-sm text-cyan-200/60 tracking-[0.3em] uppercase">Verified Supplier Pavilion</div>
+                        <div className="text-sm text-cyan-200/60 tracking-[0.5em] uppercase font-bold">Verified Supplier Pavilion</div>
+                    </div>
+
+                    <button
+                        onClick={() => {
+                            SoundManager.playClick();
+                            setShowWelcome(false);
+                        }}
+                        onMouseEnter={() => SoundManager.playHover()}
+                        className="group relative px-12 py-4 bg-transparent overflow-hidden rounded-none border border-cyan-500/30 hover:border-cyan-400 transition-all duration-300"
+                    >
+                        <div className="absolute inset-0 bg-cyan-500/10 group-hover:bg-cyan-500/20 transition-all duration-300" />
+                        <div className="absolute inset-0 opacity-0 group-hover:opacity-100 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-cyan-400/20 to-transparent transition-opacity duration-500" />
+
+                        <span className="relative z-10 font-mono text-sm font-bold tracking-[0.2em] text-cyan-300 group-hover:text-white transition-colors duration-300 flex items-center gap-3">
+                            <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" />
+                            {t('verified_pavilion.ui.enter', 'ENTER PAVILION')}
+                            <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" />
+                        </span>
+
+                        {/* Corner Accents */}
+                        <div className="absolute top-0 left-0 w-2 h-2 border-t border-l border-cyan-400 opacity-50 group-hover:opacity-100 transition-opacity" />
+                        <div className="absolute bottom-0 right-0 w-2 h-2 border-b border-r border-cyan-400 opacity-50 group-hover:opacity-100 transition-opacity" />
+                    </button>
+
+                    <div className="mt-8 text-xs text-white/20 font-mono tracking-widest">
+                        EST. 2024 • NEURAL LINK ACTIVE
                     </div>
                 </div>
             )}
