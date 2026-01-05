@@ -1012,6 +1012,10 @@ export default function VerifiedPavilion({ onBack, user }) {
                             enableZoom={inspectMode} // Disable zoom while walking to keep pivot close
                             enableKeys={false} // Disable default arrow keys to prevent conflict with WASD
 
+                            // INITIAL TARGET: Fixes VSOD
+                            // Must be 1m in front of camera [0, 2.5, 45] to satisfy maxDistance={1.0}
+                            target={[0, 2.5, 44]}
+
                             // RESTRICTED CAMERA LIMITS
                             minDistance={inspectMode ? 0.5 : 0.1} // 0.1 allows "FPS" pivot logic
                             maxDistance={inspectMode ? 20 : 1.0} // <--- Tight pivot (1m) for FPS feel while walking
