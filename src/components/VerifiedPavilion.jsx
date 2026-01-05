@@ -242,7 +242,7 @@ export default function VerifiedPavilion({ onBack, user }) {
     const [minHoldDone, setMinHoldDone] = useState(false);
     const [sceneReady, setSceneReady] = useState(false);
     const [showLoader, setShowLoader] = useState(true);
-    const [showWelcome, setShowWelcome] = useState(true); // New Welcome State
+    // Removed showWelcome state
 
     // Tank Controls don't need pointer lock state for navigation
     const cameraRef = useRef();
@@ -937,17 +937,8 @@ export default function VerifiedPavilion({ onBack, user }) {
             )}
 
             {/* Intro / Welcome Screen */}
-            {showWelcome && (
-                <div className="absolute inset-0 z-[60] flex items-center justify-center bg-black/90 backdrop-blur-xl animate-fadeOut delay-[3000ms]"
-                    style={{ animationFillMode: 'forwards', pointerEvents: 'none' }}>
-                    <div className="text-center">
-                        <div className="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-200 via-blue-300 to-indigo-400 tracking-tight drop-shadow-[0_0_12px_rgba(56,189,248,0.45)] font-[Orbitron] mb-2">
-                            3DSFERA
-                        </div>
-                        <div className="text-sm text-cyan-200/60 tracking-[0.3em] uppercase">Verified Supplier Pavilion</div>
-                    </div>
-                </div>
-            )}
+            {/* Intro / Welcome Screen - REMOVED */}
+
 
             {/* Inspect Card (Right Side) */}
             <InspectionCard
