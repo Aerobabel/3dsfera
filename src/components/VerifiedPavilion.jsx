@@ -265,6 +265,15 @@ export default function VerifiedPavilion({ onBack, user }) {
         });
     }, [progress, active]);
 
+    // Force Camera to Look Straight Ahead on Load (Fixes "looking at floor")
+    useEffect(() => {
+        if (controlsRef.current) {
+            // Look at a point at eye-level, far into the room
+            controlsRef.current.target.set(0, 1.7, 0);
+            controlsRef.current.update();
+        }
+    }, [sceneReady]);
+
     // Init Audio
     useEffect(() => {
         const handleInteraction = () => {
@@ -292,7 +301,8 @@ export default function VerifiedPavilion({ onBack, user }) {
 
     const handleCameraCaptured = useCallback((capturedState) => {
         // 2. Camera is saved. Now transition.
-        setSavedCameraState(capturedState);
+        // FIX: Only save if we don't already have a saved state (i.e. we are coming from walking mode)
+        setSavedCameraState(prev => prev || capturedState);
         setCaptureReq(false);
 
         if (pendingData) {
@@ -403,7 +413,7 @@ export default function VerifiedPavilion({ onBack, user }) {
 
             <Canvas
                 shadows
-                camera={{ position: [0, 1.7, 45], fov: 60 }}
+                camera={{ position: [0, 1.7, 65], fov: 60 }}
                 dpr={dpr}
                 gl={{
                     antialias: false,

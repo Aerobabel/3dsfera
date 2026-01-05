@@ -24,16 +24,24 @@ export function CameraManager({ inspectMode, captureReq, onCapture, savedState, 
         if (!inspectMode && savedState && !captureReq) {
             isRestoring.current = true;
 
-            // Safety: Force finish after 1.5s if getting stuck
+            // --- EMERGENCY RESTORE: Absolute Simplicity ---
+            // 1. Force Height (Eye Level)
+            const restorePos = savedState.position.clone();
+            restorePos.y = Math.max(restorePos.y, 1.7);
+
+            // 2. Direct Restore - No offsets, no calculations
+            // Just put the user back where they were.
+
+            // Safety: Force finish
             const timer = setTimeout(() => {
                 if (isRestoring.current) {
-                    camera.position.copy(savedState.position);
+                    camera.position.copy(restorePos);
                     camera.quaternion.copy(savedState.quaternion);
                     if (controls) controls.target.copy(savedState.target);
                     isRestoring.current = false;
                     if (onRestoreComplete) onRestoreComplete();
                 }
-            }, 1500);
+            }, 1000); // Faster restoration
             return () => clearTimeout(timer);
         }
     }, [inspectMode, savedState, captureReq, camera, controls, onRestoreComplete]);
@@ -42,17 +50,20 @@ export function CameraManager({ inspectMode, captureReq, onCapture, savedState, 
     useFrame((state, delta) => {
         if (isRestoring.current && savedState) {
             // Exponential Damping
-            const lambda = 6; // Reduced slightly for less "snap"
+            const lambda = 8; // Snappier
             const t = 1 - Math.exp(-lambda * delta);
 
-            camera.position.lerp(savedState.position, t);
+            // Re-calculate target (locally)
+            const restorePos = savedState.position.clone();
+            restorePos.y = Math.max(restorePos.y, 1.7);
 
-            // Prevent going underground (The "Underground" bug)
+            camera.position.lerp(restorePos, t);
+
+            // Prevent going underground
             if (camera.position.y < 0.5) camera.position.y = 0.5;
 
             // REMOVED: quaternion.slerp
             // OrbitControls dictates rotation based on (Position - Target).
-            // Manually gathering quaternion causes "spinning" conflicts.
 
             if (controls) {
                 controls.target.lerp(savedState.target, t);
