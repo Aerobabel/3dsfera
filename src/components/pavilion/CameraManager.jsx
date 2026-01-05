@@ -50,8 +50,9 @@ export function CameraManager({ inspectMode, captureReq, onCapture, savedState, 
             // Prevent going underground (The "Underground" bug)
             if (camera.position.y < 0.5) camera.position.y = 0.5;
 
-            // Ensure smooth rotation
-            camera.quaternion.slerp(savedState.quaternion, t);
+            // REMOVED: quaternion.slerp
+            // OrbitControls dictates rotation based on (Position - Target).
+            // Manually gathering quaternion causes "spinning" conflicts.
 
             if (controls) {
                 controls.target.lerp(savedState.target, t);

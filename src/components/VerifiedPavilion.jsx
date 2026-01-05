@@ -184,7 +184,7 @@ function CameraBoundaries({ controlsRef, minX, maxX, minZ, maxZ, isActive }) {
         // If physics failed or user panned via mouse, enforce walls
         camera.position.x = THREE.MathUtils.clamp(camera.position.x, -WALL_X, WALL_X);
         camera.position.z = THREE.MathUtils.clamp(camera.position.z, WALL_Z_BACK, WALL_Z_FRONT);
-        camera.position.y = THREE.MathUtils.clamp(camera.position.y, 1.5, 4.0); // Strict eye level
+        camera.position.y = THREE.MathUtils.clamp(camera.position.y, 1.6, 4.0); // Strict eye level
 
         // 2. Clamp Target (Look point)
         // Keep the pivot inside the room so we don't look into the void
@@ -403,7 +403,7 @@ export default function VerifiedPavilion({ onBack, user }) {
 
             <Canvas
                 shadows
-                camera={{ position: [0, 2.5, 45], fov: 60 }}
+                camera={{ position: [0, 1.7, 45], fov: 60 }}
                 dpr={dpr}
                 gl={{
                     antialias: false,
