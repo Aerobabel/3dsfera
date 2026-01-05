@@ -161,15 +161,9 @@ function KeyboardNavigation({ controlsRef, isActive }) {
             // 4. Apply Validated Move
             camera.position.add(velocity);
 
-            // 5. Update Target (Look Ahead)
-            // Maintain a healthy pivot distance
-            const currentTargetDist = camera.position.distanceTo(controlsRef.current.target);
-            const targetDist = Math.max(2.0, Math.min(currentTargetDist, 10.0)); // Clamp distance 2m-10m
-
-            dummy.copy(camera.position).addScaledVector(camera.getWorldDirection(new THREE.Vector3()), targetDist);
-
-            // LERP target for smoothness
-            controlsRef.current.target.lerp(dummy, 0.1);
+            // 5. Sync Target (Strict 1:1 Movement)
+            // Fixes "downward rotation" / "spinning" by keeping relative angle frozen
+            controlsRef.current.target.add(velocity);
         }
     });
 
