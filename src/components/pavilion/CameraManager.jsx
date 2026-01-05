@@ -24,16 +24,21 @@ export function CameraManager({ inspectMode, captureReq, onCapture, savedState, 
         if (!inspectMode && savedState && !captureReq) {
             isRestoring.current = true;
 
+            // FIX: Recalculate target to be exactly 1m in front of camera
+            // to satisfy OrbitControls maxDistance={1.0} constraint
+            const forward = new THREE.Vector3(0, 0, -1).applyQuaternion(savedState.quaternion);
+            const safeTarget = savedState.position.clone().add(forward.multiplyScalar(0.99)); // 0.99m to be safe
+
             // Safety: Force finish after 1.5s if getting stuck
             const timer = setTimeout(() => {
                 if (isRestoring.current) {
                     camera.position.copy(savedState.position);
                     camera.quaternion.copy(savedState.quaternion);
-                    if (controls) controls.target.copy(savedState.target);
+                    if (controls) controls.target.copy(safeTarget);
                     isRestoring.current = false;
                     if (onRestoreComplete) onRestoreComplete();
                 }
-            }, 1500);
+            }, 1000); // Faster timeout
             return () => clearTimeout(timer);
         }
     }, [inspectMode, savedState, captureReq, camera, controls, onRestoreComplete]);
@@ -42,7 +47,7 @@ export function CameraManager({ inspectMode, captureReq, onCapture, savedState, 
     useFrame((state, delta) => {
         if (isRestoring.current && savedState) {
             // Exponential Damping
-            const lambda = 6; // Reduced slightly for less "snap"
+            const lambda = 8; // Snappier restore
             const t = 1 - Math.exp(-lambda * delta);
 
             camera.position.lerp(savedState.position, t);
@@ -54,17 +59,26 @@ export function CameraManager({ inspectMode, captureReq, onCapture, savedState, 
             camera.quaternion.slerp(savedState.quaternion, t);
 
             if (controls) {
-                controls.target.lerp(savedState.target, t);
+                // Synthesize target on the fly to match current rotation
+                // This ensures perfectly straight interpolation of the view
+                const forward = new THREE.Vector3(0, 0, -1).applyQuaternion(camera.quaternion);
+                const currentSafeTarget = camera.position.clone().add(forward.multiplyScalar(0.99));
+                controls.target.copy(currentSafeTarget);
             }
 
             // Distance Check
             const posDist = camera.position.distanceTo(savedState.position);
             const rotDist = camera.quaternion.angleTo(savedState.quaternion);
 
-            if (posDist < 0.2 && rotDist < 0.1) {
+            if (posDist < 0.1 && rotDist < 0.05) {
                 camera.position.copy(savedState.position);
                 camera.quaternion.copy(savedState.quaternion);
-                if (controls) controls.target.copy(savedState.target);
+
+                // Final Set
+                const forward = new THREE.Vector3(0, 0, -1).applyQuaternion(savedState.quaternion);
+                const finalTarget = savedState.position.clone().add(forward.multiplyScalar(0.99));
+                if (controls) controls.target.copy(finalTarget);
+
                 isRestoring.current = false;
                 if (onRestoreComplete) onRestoreComplete();
             }
