@@ -327,14 +327,30 @@ export default function VerifiedPavilion({ onBack, user }) {
     }, []);
 
     const closeInspectMode = () => {
-        if (savedCameraState) {
-            setTransitioning(true);
+        // SMART EXIT: Instead of restoring old position (which might be inside object),
+        // calculate a safe viewing position based on where we were inspecting
+        if (orbitTarget && controlsRef.current) {
+            const [targetX, targetY, targetZ] = orbitTarget;
+
+            // Position camera 8 meters back and slightly to the side for good viewing angle
+            const exitX = targetX + 5; // Offset to side
+            const exitY = 1.7; // Eye level
+            const exitZ = targetZ + 6; // Back from object
+
+            // Directly set camera position and target
+            const camera = controlsRef.current.object;
+            camera.position.set(exitX, exitY, exitZ);
+            controlsRef.current.target.set(targetX, targetY, targetZ);
+            controlsRef.current.update();
         }
+
         setInspectMode(false);
         setSelectedObject(null);
         setOrbitTarget(null);
         setCameraPosition(null);
         setIsOpen(false);
+        setSavedCameraState(null); // Clear saved state
+        setTransitioning(false);
     };
 
     const closeOverlayOnly = () => {
