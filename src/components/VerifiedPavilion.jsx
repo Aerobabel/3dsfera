@@ -109,66 +109,92 @@ function KeyboardNavigation({ controlsRef, speed = 0.4, isActive }) {
         };
     }, []);
 
-    useFrame((state, delta) => {
-        if (!isActive || !controlsRef.current) return;
+    // Physics Constants
+    const WALL_X = 55;
+    const WALL_Z_BACK = -55;
+    const WALL_Z_FRONT = 45;
 
-        const { forward, right, velocity, dummy } = vectors;
+    function KeyboardNavigation({ controlsRef, isActive }) {
+        const { camera } = useThree();
+        const keys = useRef({});
 
-        // Calculate move direction based on camera angle
-        // Reuse 'forward' vector
-        forward.set(0, 0, -1).applyQuaternion(camera.quaternion);
-        forward.y = 0; // flatten
-        forward.normalize();
+        // Reuse vectors to avoid GC
+        const vectors = useMemo(() => ({
+            forward: new THREE.Vector3(),
+            right: new THREE.Vector3(),
+            velocity: new THREE.Vector3(),
+            dummy: new THREE.Vector3(),
+            nextPos: new THREE.Vector3()
+        }), []);
 
-        // Reuse 'right' vector
-        right.set(1, 0, 0).applyQuaternion(camera.quaternion);
-        right.y = 0; // flatten
-        right.normalize();
+        useEffect(() => {
+            const onDown = (e) => keys.current[e.code] = true;
+            const onUp = (e) => keys.current[e.code] = false;
+            window.addEventListener('keydown', onDown);
+            window.addEventListener('keyup', onUp);
+            return () => {
+                window.removeEventListener('keydown', onDown);
+                window.removeEventListener('keyup', onUp);
+            };
+        }, []);
 
-        // Speed relative to delta time (seconds)
-        // Fix: Clamp delta to prevent "teleporting" if frame hangs
-        // If fps drops below 10 (delta > 0.1), we treat it as 0.1s max movement
-        const safeDelta = Math.min(delta, 0.1);
-        const baseSpeed = 15.0;
-        const moveSpeed = baseSpeed * safeDelta * (keys.current['ShiftLeft'] ? 2.5 : 1);
+        useFrame((state, delta) => {
+            if (!isActive || !controlsRef.current) return;
 
-        // Reset velocity
-        velocity.set(0, 0, 0);
+            const { forward, right, velocity, dummy, nextPos } = vectors;
 
-        if (keys.current['KeyW'] || keys.current['ArrowUp']) velocity.add(forward);
-        if (keys.current['KeyS'] || keys.current['ArrowDown']) velocity.sub(forward);
-        if (keys.current['KeyA'] || keys.current['ArrowLeft']) velocity.sub(right);
-        if (keys.current['KeyD'] || keys.current['ArrowRight']) velocity.add(right);
+            // 1. Calculate Basis Vectors (Strictly Horizontal)
+            camera.getWorldDirection(forward);
+            forward.y = 0; // HARD LOCK: Never fly
+            forward.normalize();
 
-        if (velocity.lengthSq() > 0) {
-            velocity.normalize().multiplyScalar(moveSpeed);
+            right.crossVectors(forward, camera.up).normalize(); // Standard right vector
 
-            // Move Camera
-            camera.position.add(velocity);
+            // 2. Input Handling
+            const safeDelta = Math.min(delta, 0.1);
+            const baseSpeed = 15.0;
+            const moveSpeed = baseSpeed * safeDelta * (keys.current['ShiftLeft'] ? 2.5 : 1);
 
-            // Update Target to stay LOCKED in front of camera (FPS feel)
-            // Reuse 'dummy' vector for calculation
-            dummy.set(0, 0, -1).applyQuaternion(camera.quaternion).normalize().multiplyScalar(2);
-            controlsRef.current.target.copy(camera.position).add(dummy);
-        } else {
-            // Even when not moving, if we are in Walk Mode, ensure pivot is close for rotation
-            // But verify we don't accidentally look straight up/down
-            const dist = camera.position.distanceTo(controlsRef.current.target);
-            if (dist > 5 || dist < 1.5) { // Fix: Enforce comfortable pivot distance
-                // Force logical forward look
-                dummy.set(0, 0, -1).applyQuaternion(camera.quaternion).normalize().multiplyScalar(2.0);
+            velocity.set(0, 0, 0);
+            if (keys.current['KeyW'] || keys.current['ArrowUp']) velocity.add(forward);
+            if (keys.current['KeyS'] || keys.current['ArrowDown']) velocity.sub(forward);
+            if (keys.current['KeyA'] || keys.current['ArrowLeft']) velocity.sub(right);
+            if (keys.current['KeyD'] || keys.current['ArrowRight']) velocity.add(right);
 
-                // CRITICAL: Ground the target slightly to prevent looking at the ceiling indefinitely
-                // If the camera is pitched up, this helps gently bring it back to horizon when moving
+            if (velocity.lengthSq() > 0) {
+                velocity.normalize().multiplyScalar(moveSpeed);
 
-                // Force flattening of the look vector to prevent "taking off" like a plane
-                dummy.y = 0;
-                dummy.normalize().multiplyScalar(2.0);
+                // 3. Proactive Collision Detection
+                // Predict where we WOULD be
+                nextPos.copy(camera.position).add(velocity);
 
-                controlsRef.current.target.copy(camera.position).add(dummy);
+                // Check Walls (X-Axis)
+                if (nextPos.x < -WALL_X || nextPos.x > WALL_X) {
+                    velocity.x = 0; // Slide along wall
+                }
+
+                // Check Walls (Z-Axis)
+                if (nextPos.z < WALL_Z_BACK || nextPos.z > WALL_Z_FRONT) {
+                    velocity.z = 0; // Slide along wall
+                }
+
+                // 4. Apply Validated Move
+                camera.position.add(velocity);
+
+                // 5. Update Target (Look Ahead)
+                // Maintain a healthy pivot distance
+                const currentTargetDist = camera.position.distanceTo(controlsRef.current.target);
+                const targetDist = Math.max(2.0, Math.min(currentTargetDist, 10.0)); // Clamp distance 2m-10m
+
+                dummy.copy(camera.position).addScaledVector(camera.getWorldDirection(new THREE.Vector3()), targetDist);
+
+                // LERP target for smoothness
+                controlsRef.current.target.lerp(dummy, 0.1);
             }
-        }
-    });
+        });
+
+        return null;
+    }
 
     return null;
 }
@@ -179,50 +205,20 @@ function KeyboardNavigation({ controlsRef, speed = 0.4, isActive }) {
 function CameraBoundaries({ controlsRef, minX, maxX, minZ, maxZ, isActive }) {
     const { camera } = useThree();
 
-    // Priority 1 ensures this runs AFTER OrbitControls
+    // Priority 1 ensures this runs AFTER orbit controls updates
     useFrame(() => {
         if (!isActive || !controlsRef.current) return;
 
         const target = controlsRef.current.target;
 
-        // WALL_X: Inner limit of side walls
-        const WALL_X = 55;
-        // WALL_Z_BACK: Void wall
-        const WALL_Z_BACK = -55;
-        // WALL_Z_FRONT: Entrance
-        const WALL_Z_FRONT = 45;
+        // 1. Hard Clamp Camera Position (Fail-safe)
+        // If physics failed or user panned via mouse, enforce walls
+        camera.position.x = THREE.MathUtils.clamp(camera.position.x, -WALL_X, WALL_X);
+        camera.position.z = THREE.MathUtils.clamp(camera.position.z, WALL_Z_BACK, WALL_Z_FRONT);
+        camera.position.y = THREE.MathUtils.clamp(camera.position.y, 1.5, 4.0); // Strict eye level
 
-        // 1. Calculate Clamped Position
-        const clampedX = THREE.MathUtils.clamp(camera.position.x, -WALL_X, WALL_X);
-        const clampedZ = THREE.MathUtils.clamp(camera.position.z, WALL_Z_BACK, WALL_Z_FRONT);
-
-        // Fix: Force Y to stay at eye level (2.5) +/- margin. NEVER let it "climb".
-        // If it was climbing, it's because OrbitControls pushes it up when compressed.
-        const clampedY = THREE.MathUtils.clamp(camera.position.y, 1.0, 5.0);
-
-        // 2. Apply Clamp
-        if (camera.position.x !== clampedX || camera.position.z !== clampedZ || camera.position.y !== clampedY) {
-
-            // Calculate how much we were pushed back
-            const deltaX = clampedX - camera.position.x;
-            const deltaZ = clampedZ - camera.position.z;
-
-            // Apply position fix
-            camera.position.x = clampedX;
-            camera.position.z = clampedZ;
-            camera.position.y = clampedY;
-
-            // CRITICAL FIX: Move the Target WITH the camera. 
-            // If we don't, the camera stops but the target keeps moving, causing the camera to "spin" or look up/down wildly.
-            target.x += deltaX;
-            target.z += deltaZ;
-
-            // BUG FIX: Do NOT apply Y delta to target if we hit the floor/ceiling.
-            // This prevents "flying perpetually" if you look up and hold S.
-            // We only want to slide X/Z (walls), not Y (height).
-        }
-
-        // 3. Double Check Target Bounds (Prevent looking too far out)
+        // 2. Clamp Target (Look point)
+        // Keep the pivot inside the room so we don't look into the void
         target.x = THREE.MathUtils.clamp(target.x, minX, maxX);
         target.z = THREE.MathUtils.clamp(target.z, minZ, maxZ);
 
