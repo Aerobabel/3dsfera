@@ -152,9 +152,14 @@ function KeyboardNavigation({ controlsRef, speed = 0.4, isActive }) {
             controlsRef.current.target.copy(camera.position).add(dummy);
         } else {
             // Even when not moving, if we are in Walk Mode, ensure pivot is close for rotation
+            // But verify we don't accidentally look straight up/down
             const dist = camera.position.distanceTo(controlsRef.current.target);
-            if (dist > 5) {
-                dummy.set(0, 0, -1).applyQuaternion(camera.quaternion).normalize().multiplyScalar(2);
+            if (dist > 5 || dist < 1.5) { // Fix: Enforce comfortable pivot distance
+                // Force logical forward look
+                dummy.set(0, 0, -1).applyQuaternion(camera.quaternion).normalize().multiplyScalar(2.0);
+
+                // CRITICAL: Ground the target slightly to prevent looking at the ceiling indefinitely
+                // If the camera is pitched up, this helps gently bring it back to horizon when moving
                 controlsRef.current.target.copy(camera.position).add(dummy);
             }
         }
@@ -165,48 +170,53 @@ function KeyboardNavigation({ controlsRef, speed = 0.4, isActive }) {
 
 
 // Logic to constrain camera target within bounds
+// Logic to constrain camera target within bounds
 function CameraBoundaries({ controlsRef, minX, maxX, minZ, maxZ, isActive }) {
     const { camera } = useThree();
 
-    // Priority 1 ensures this runs AFTER OrbitControls (which typically runs at 0)
-    // This prevents the "fighting" jitter where Controls moves it out -> We move it back -> Render
+    // Priority 1 ensures this runs AFTER OrbitControls
     useFrame(() => {
         if (!isActive || !controlsRef.current) return;
 
         const target = controlsRef.current.target;
 
-        // 1. Clamp Target (Pivot point)
-        // Keep the look-at point well inside the room
-        target.x = THREE.MathUtils.clamp(target.x, minX, maxX);
-        target.z = THREE.MathUtils.clamp(target.z, minZ, maxZ);
-
-        // 2. Clamp Camera Position (The eye)
-        // Hard limits based on the actual geometry to prevent clipping
-
-        // WALL_X: 55 is the inner limit of the side walls (at +/- 58)
+        // WALL_X: Inner limit of side walls
         const WALL_X = 55;
-
-        // WALL_Z_BACK: The new fog/void wall is at -60. We stop at -55.
+        // WALL_Z_BACK: Void wall
         const WALL_Z_BACK = -55;
-
-        // WALL_Z_FRONT: Entrance area
+        // WALL_Z_FRONT: Entrance
         const WALL_Z_FRONT = 45;
 
-        // Check if out of bounds
+        // 1. Calculate Clamped Position
         const clampedX = THREE.MathUtils.clamp(camera.position.x, -WALL_X, WALL_X);
         const clampedZ = THREE.MathUtils.clamp(camera.position.z, WALL_Z_BACK, WALL_Z_FRONT);
 
-        // Fix: Also clamp Y (Height) to prevent "climbing" the wall physics
-        const WALL_Y_MAX = 5.0; // Don't fly tto high
-        const WALL_Y_MIN = 1.0; // Don't sink floor
-        const clampedY = THREE.MathUtils.clamp(camera.position.y, WALL_Y_MIN, WALL_Y_MAX);
+        // Fix: Force Y to stay at eye level (2.5) +/- margin. NEVER let it "climb".
+        // If it was climbing, it's because OrbitControls pushes it up when compressed.
+        const clampedY = THREE.MathUtils.clamp(camera.position.y, 1.0, 5.0);
 
-        // If we needed to clamp, manually apply and update controls to prevent drift
+        // 2. Apply Clamp
         if (camera.position.x !== clampedX || camera.position.z !== clampedZ || camera.position.y !== clampedY) {
+
+            // Calculate how much we were pushed back
+            const deltaX = clampedX - camera.position.x;
+            const deltaZ = clampedZ - camera.position.z;
+
+            // Apply position fix
             camera.position.x = clampedX;
             camera.position.z = clampedZ;
             camera.position.y = clampedY;
+
+            // CRITICAL FIX: Move the Target WITH the camera. 
+            // If we don't, the camera stops but the target keeps moving, causing the camera to "spin" or look up/down wildly.
+            target.x += deltaX;
+            target.z += deltaZ;
         }
+
+        // 3. Double Check Target Bounds (Prevent looking too far out)
+        target.x = THREE.MathUtils.clamp(target.x, minX, maxX);
+        target.z = THREE.MathUtils.clamp(target.z, minZ, maxZ);
+
     }, 1);
 
     return null;
