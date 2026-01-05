@@ -227,8 +227,6 @@ export default function VerifiedPavilion({ onBack, user }) {
     const [isTransitioning, setTransitioning] = useState(false);
     const [savedCameraState, setSavedCameraState] = useState(null); // Save cam before inspect
     const [captureReq, setCaptureReq] = useState(false); // Trigger for camera capture
-    const [triggerRestore, setTriggerRestore] = useState(false); // New: Trigger restore
-    const [isRestoring, setIsRestoring] = useState(false); // New: Restore in progress
     const [pendingData, setPendingData] = useState(null); // Data waiting for capture
     const [orbitTarget, setOrbitTarget] = useState(null); // New: Target for Orbit Controls
     const [cameraPosition, setCameraPosition] = useState(null); // New: Smoother Target Cam Pos
@@ -242,7 +240,7 @@ export default function VerifiedPavilion({ onBack, user }) {
     const [minHoldDone, setMinHoldDone] = useState(false);
     const [sceneReady, setSceneReady] = useState(false);
     const [showLoader, setShowLoader] = useState(true);
-    const [showWelcome, setShowWelcome] = useState(true); // Restored Welcome State
+    const [showWelcome, setShowWelcome] = useState(true); // New Welcome State
 
     // Tank Controls don't need pointer lock state for navigation
     const cameraRef = useRef();
@@ -316,38 +314,18 @@ export default function VerifiedPavilion({ onBack, user }) {
         // 1. Request Capture first. Don't move yet.
         setPendingData({ data, position });
         setCaptureReq(true);
-        // Reset restore states just in case
-        setTriggerRestore(false);
-        setIsRestoring(false);
     }, []);
 
     const closeInspectMode = () => {
-        setIsOpen(false);
-        // FIX: Don't setInspectMode(false) immediately. Trigger restore first.
         if (savedCameraState) {
-            console.log("Triggering Camera Restore...");
-            setTriggerRestore(true);
-            setIsRestoring(true);
-            // DO NOT setInspectMode(false) yet. Wait for onRestoreComplete.
-        } else {
-            // Fallback if no state saved (shouldn't happen)
-            setInspectMode(false);
-            setSelectedObject(null);
-            setOrbitTarget(null);
-            setCameraPosition(null);
+            setTransitioning(true);
         }
-    };
-
-    const handleRestoreComplete = useCallback(() => {
-        console.log("Camera Restore Complete. Disabling Inspect Mode.");
-        setTriggerRestore(false);
-        setIsRestoring(false);
-        setInspectMode(false); // NOW it is safe to switch controls bounds
+        setInspectMode(false);
         setSelectedObject(null);
         setOrbitTarget(null);
         setCameraPosition(null);
-        setSavedCameraState(null);
-    }, []);
+        setIsOpen(false);
+    };
 
     const closeOverlayOnly = () => {
         setIsOpen(false);
@@ -382,7 +360,7 @@ export default function VerifiedPavilion({ onBack, user }) {
         <div id="game-container" className="w-full h-screen bg-black relative select-none overflow-hidden">
             {/* ...Header... */}
 
-            {/* Header / HUD - Cleaned up "Weird UI" */}
+            {/* Header / HUD */}
             <div className="absolute top-0 left-0 w-full p-6 z-10 flex justify-between items-start pointer-events-none">
                 <div className="pointer-events-auto">
                     <button
@@ -394,10 +372,33 @@ export default function VerifiedPavilion({ onBack, user }) {
                         {t('pavilion_ui.back')}
                     </button>
                 </div>
+
+                <div className="pointer-events-auto flex gap-4">
+                    <div className="text-right px-5 py-4 bg-gradient-to-br from-[#0a192f]/70 via-[#0c223d]/60 to-[#0a1020]/70 backdrop-blur-xl border border-cyan-400/15 rounded-2xl shadow-[0_20px_60px_rgba(0,0,0,0.55)] animate-fadeIn">
+                        <div className="flex items-center justify-end gap-2">
+                            <div className="w-2 h-2 rounded-full bg-cyan-300 shadow-[0_0_12px_rgba(34,211,238,0.9)]" />
+                            <span className="text-[11px] tracking-[0.25em] text-cyan-200/80 uppercase">{t('verified_pavilion.ui.live_link', 'LIVE LINK')}</span>
+                        </div>
+                        <div className="mt-2 text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-200 via-blue-300 to-indigo-400 tracking-tight drop-shadow-[0_0_12px_rgba(56,189,248,0.45)] font-[Orbitron]">
+                            3DSFERA
+                        </div>
+                        <div className="text-[11px] text-slate-200/80 tracking-[0.18em] font-semibold mt-1">
+                            Verified Supplier Pavilion
+                        </div>
+                    </div>
+                </div>
             </div>
 
-            {/* Navigation hint removed per user feedback ("weird UI") */}
-
+            {/* Navigation hint (bottom-left) */}
+            <div className="absolute bottom-10 left-10 z-10 pointer-events-none">
+                <div className="bg-black/70 border border-white/20 rounded-xl px-6 py-5 text-sm text-white/90 backdrop-blur-md shadow-2xl max-w-sm space-y-2">
+                    <div className="text-xs uppercase tracking-[0.25em] text-cyan-300 font-bold mb-2 border-b border-white/10 pb-2">{t('verified_pavilion.ui_nav.nav_title')}</div>
+                    <div className="flex items-center gap-3"><span className="font-mono text-cyan-400 font-bold">LMB</span> {t('verified_pavilion.ui_nav.nav_orbit', 'Rotate')}</div>
+                    <div className="flex items-center gap-3"><span className="font-mono text-cyan-400 font-bold">RMB</span> {t('verified_pavilion.ui_nav.nav_pan', 'Pan')}</div>
+                    <div className="flex items-center gap-3"><span className="font-mono text-cyan-400 font-bold">Scroll</span> {t('verified_pavilion.ui_nav.nav_zoom', 'Zoom')}</div>
+                    {/* <div className="text-xs opacity-60 mt-1">{t('verified_pavilion.ui_nav.nav_inspect')}</div> */}
+                </div>
+            </div>
 
 
             <Canvas
@@ -798,184 +799,433 @@ export default function VerifiedPavilion({ onBack, user }) {
                             />
                         </group>
 
+                        {/* 5. Rear Right Corner: LOGISTICS */}
+                        <KioskUnit
+                            position={[21, 0, -38]}
+                            rotation={[0, -Math.PI / 6, 0]}
+                            title={t('pavilion_content.pavilions.logistics.name', "VELOCITY LOGISTICS")}
+                            glowColor="#00ff55"
+                            interactable={false}
+                            roofColor="white"
+                            videoUrl={null}
+                            imageUrl={kioskLogisticsUrl} // Inserted Logistics Screen
+                            modelPath={PNEUMATIC_PATH}
+                            productScale={1.2}
+                            modelPosition={[0, 0.8, 0]}
+                            hideSideModels={true}
+                            heightOffset={1} // Fix floating (was -0.95)
+                            onClick={(e) => {
+                                const target = [21, 1.5, -38]; // True Kiosk Product Center
+                                if (inspectMode && orbitTarget && orbitTarget[0] === target[0] && orbitTarget[2] === target[2]) return;
+                                e.stopPropagation();
+                                SoundManager.playClick();
+                                setSelectedObject(PAVILIONS['logistics']); // Correct Data Key
+                                setInspectMode(true);
+                                setOrbitTarget(target);
+                                setCameraPosition([17, 3.5, -32]); // -4, +2, +6 offset roughly
+                            }}
+                            onProductClick={(e) => {
+                                e.stopPropagation();
+                                const target = [21, 1.5, -38];
+                                if (inspectMode && orbitTarget && orbitTarget[0] === target[0] && orbitTarget[2] === target[2]) return;
+                                SoundManager.playClick();
+                                setSelectedObject(PAVILIONS['logistics']); // Correct Data Key
+                                setInspectMode(true);
+                                setOrbitTarget(target);
+                                setCameraPosition([17, 3.5, -32]);
+                            }}
+                        />
 
-                        {/* 5. Rear Right: LOGISTICS (DHL / FedEx Style) */}
-                        <group position={[25, 0, -38]} rotation={[0, -Math.PI / 4, 0]}>
+
+                        {/* --- WAREHOUSE STRUCTURE (Partitions & Dividers) --- */}
+                        {/* Left Side Lane Dividers */}
+
+
+                        {/* --- EXTRA KIOSKS (Filling Sides & Far Back as requested) --- */}
+
+                        {/* 6. Front Left: SECURITY */}
+                        <Suspense fallback={<group />}>
+                            <KioskUnit
+                                position={[-25, 0, 20]}
+                                rotation={[0, Math.PI / 2, 0]}
+                                title={t('pavilion_content.pavilions.security.name', "AEGIS SECURITY")}
+                                glowColor="#e63946"
+                                hideSideModels={false} // Restored side models
+                                videoUrl={null}
+                                imageUrl={kioskSecurityUrl}
+                                modelPath={CAMERA_PATH}
+                                sideModelPath={DRONE_PATH}
+                                productScale={2.0} // Reduced to 2.0 (Double the 'very small' 1.0) to fix hitbox
+                                sideModelScale={0.035} // Reduced by 30% from 0.05
+                                onClick={(e) => {
+                                    const target = [-25, 1, 20]; // Center
+                                    if (inspectMode && orbitTarget && orbitTarget[0] === target[0] && orbitTarget[2] === target[2]) return;
+                                    e.stopPropagation();
+                                    SoundManager.playClick();
+                                    SoundManager.playClick();
+                                    setSelectedObject(PAVILIONS['security']);
+                                    setInspectMode(true);
+                                    setOrbitTarget(target);
+                                    setCameraPosition([-18, 2, 20]);
+                                }}
+                                onSideClick={(e, side) => {
+                                    e.stopPropagation();
+                                    SoundManager.playClick();
+                                    setSelectedObject(PAVILIONS['security']);
+                                    setInspectMode(true);
+
+                                    // Calculate side positions based on rotation (PI/2)
+                                    // Left Global: [-23, 0.5, 25], Right Global: [-23, 0.5, 15]
+                                    const target = side === 'left' ? [-23, 0.5, 25] : [-23, 0.5, 15];
+                                    const camPos = side === 'left' ? [-16, 2, 25] : [-16, 2, 15];
+
+                                    setOrbitTarget(target);
+                                    setCameraPosition(camPos);
+                                }}
+                            />
+                        </Suspense>
+
+                        {/* 7. Front Right: RESEARCH */}
+                        <KioskUnit
+                            position={[25, 0, 20]}
+                            rotation={[0, -Math.PI / 2, 0]}
+                            title="GENESIS BIO-LABS"
+                            glowColor="#7209b7"
+                            videoUrl={null}
+                            imageUrl={kioskResearchUrl}
+                            // Default to hologram for now if no model
+                            onClick={() => SoundManager.playClick()}
+                        />
+
+                        {/* 8. Deep Back Center: DATA (Small, $500) */}
+                        <group position={[0, 0, -50]} rotation={[0, 0, 0]} scale={0.6}>
                             <KioskUnit
                                 position={[0, 0, 0]}
                                 rotation={[0, 0, 0]}
-                                title={t('pavilion_content.pavilions.logistics.name', "GLOBAL LOGISTICS")}
-                                glowColor="#ffcc00"
-                                roofColor="white"
-                                imageUrl={kioskLogisticsUrl}
-                                modelPath={BOX_PACKAGE_PATH}
-                                productScale={2.5}
+                                title={t('pavilion_content.pavilions.empty_small.price_label', "BUY FOR $500")}
+                                glowColor="#4361ee"
+                                interactable={false} // Disabled per request
                                 hideSideModels={true}
-                                heightOffset={1} // Place on pedestal
-                                interactable={false}
+                                modelPath={PAVILIONS['data'].products[0].modelPath}
+                                productScale={PAVILIONS['data'].products[0].scale}
+                                modelPosition={[0, 0.5, 0]}
+                                imageUrl={kioskDataUrl}
+                                onClick={(e) => {
+                                    // e.stopPropagation();
+                                    // Restricted Entry
+                                }}
                             />
                         </group>
 
-                        <ambientLight intensity={0.5} color="#cceeff" />
+                        {/* 9. Deep Back Right: MANUFACTURING */}
+                        <KioskUnit
+                            position={[34, 0, -22]}
+                            rotation={[0, -Math.PI / 4, 0]}
+                            title="SYNTHETIC MINDS"
+                            glowColor="#fb8500"
+                            videoUrl={null}
+                            hideSideModels={true}
+                            imageUrl={kioskManufacturingUrl}
 
-                        {/* --- CAMERA CONTROLS --- */}
-                        {/* 
-                            1. OrbitControls handles Pan/Zoom/Rotate
-                            2. KeyboardNavigation handles WASD movement (modifies controls.target + camera via physics)
-                            3. CameraBoundaries clamps values to stay in map
-                        */}
+                            onClick={() => SoundManager.playClick()}
+                        />
+
+                        {/* 10. Deep Back Left: AI SYSTEMS */}
+                        <KioskUnit
+                            position={[-34, 0, -22]}
+                            rotation={[0, Math.PI / 4, 0]}
+                            hideSideModels={true}
+                            modelPath={PNEUMATIC_PATH} // Restored model (Pneumatic)
+                            productScale={1.5}
+                            modelPosition={[0, 0.5, 0]}
+                            modelRotation={[0, Math.PI, 0]}
+                            imageUrl={kioskAiUrl}
+                            onClick={(e) => {
+                                const position = [-25, 0, -20];
+                                if (inspectMode && orbitTarget && orbitTarget[0] === position[0] && orbitTarget[2] === position[2]) return;
+                                e.stopPropagation();
+                                SoundManager.playClick();
+                                SoundManager.playClick();
+                                setSelectedObject(PAVILIONS['ai_systems']);
+                                setInspectMode(true);
+                                setOrbitTarget([-30, 2, -25]); // Centered on flying drone
+                                setCameraPosition([position[0] + 5, position[1] + 2, position[2] + 5]);
+                            }}
+                        />
+
+                        {/* --- ENTRANCE AREA (Behind Camera Z > 15) --- */}
+
+                        {/* 11. Entrance Left: QUANTUM */}
+                        <KioskUnit
+                            position={[-12, 0, 32]}
+                            rotation={[0, Math.PI, 0]} // Facing forward
+                            title="QUANTUM"
+                            glowColor="#4cc9f0"
+                            videoUrl={null}
+                            imageUrl={kioskQuantumUrl}
+
+                            onClick={() => SoundManager.playClick()}
+                        />
+
+                        {/* 12. Entrance Right: BIOTECH */}
+                        <KioskUnit
+                            position={[12, 0, 32]}
+                            rotation={[0, Math.PI, 0]} // Facing forward
+                            title="BIOTECH"
+                            glowColor="#2a9d8f"
+                            hideSideModels={true}
+                            modelPath={PAVILIONS['biotech'].products[0].modelPath}
+                            productScale={PAVILIONS['biotech'].products[0].scale}
+                            modelPosition={[0, 0.5, 0]}
+                            imageUrl={kioskBiotechUrl}
+                            onClick={(e) => {
+                                const position = [12, 0, 27];
+                                if (inspectMode && orbitTarget && orbitTarget[0] === position[0] && orbitTarget[2] === position[2]) return;
+                                e.stopPropagation();
+                                SoundManager.playClick();
+                                SoundManager.playClick();
+                                setSelectedObject(PAVILIONS['biotech']);
+                                setInspectMode(true);
+                                setOrbitTarget([12, 1, 32]); // Centered on microscope
+                                setCameraPosition([position[0], position[1] + 2, position[2] - 4]);
+                            }}
+                        />
+
+                        {/* Start Wall to enclose the lobby */}
+
+
+                        {/* --- WALL DETAILS (Adding depth to side walls) --- */}
+                        {/* --- WALL DETAILS (Specific Extras removed, handled by RealisticWall) --- */}
+
+                        {/* --- REALISTIC LIGHTING (Synthetic) --- */}
+                        {/* Generates an environment map locally on GPU - No network fetch required (Fixes crash) */}
+                        {/* --- REALISTIC LIGHTING (Synthetic) --- */}
+                        {/* Generates an environment map locally on GPU - No network fetch required (Fixes crash) */}
+
+
+
+
                         <OrbitControls
                             ref={controlsRef}
-                            makeDefault
+                            // Removed target prop to prevent conflict with CameraSmoother
+                            enablePan={!inspectMode}
+                            enableZoom={inspectMode} // Disable zoom while walking to keep pivot close
+                            enableKeys={false} // Disable default arrow keys to prevent conflict with WASD
+
+                            // RESTRICTED CAMERA LIMITS
+                            minDistance={inspectMode ? 0.5 : 0.1} // 0.1 allows "FPS" pivot logic
+                            maxDistance={inspectMode ? 20 : 1.0} // <--- Tight pivot (1m) for FPS feel while walking
+                            minPolarAngle={inspectMode ? Math.PI / 3 : 0.1} // Prevent looking straight up
+                            maxPolarAngle={Math.PI / 2 - 0.05} // Ground level limit
+
                             enableDamping={true}
                             dampingFactor={0.1}
-                            rotateSpeed={0.5}
-                            zoomSpeed={0.8}
-                            // FIX: Relax constraint during transition/restore (prevent snap)
-                            maxDistance={inspectMode || isRestoring ? 30 : 1.0}
-                            minDistance={0.5}
-                            target={orbitTarget || [0, 2.5, 44]} // Default target in front of start
-                            maxPolarAngle={Math.PI / 1.8} // Prevent looking too far up
-                            enablePan={true}
-                            screenSpacePanning={true}
-                            enableKeys={false} // Disable Arrow Keys (Conflict with WASD)
-                            listenToKeyEvents={null}
+                            makeDefault
                         />
 
-                        {/* Logic Components */}
-                        <CameraSmoother
-                            position={cameraPosition}
-                            ref={cameraRef}
-                            inspectMode={inspectMode}
-                            controlsRef={controlsRef}
-                        />
-
-                        <CameraManager
-                            inspectMode={inspectMode}
-                            captureReq={captureReq}
-                            triggerRestore={triggerRestore} // New Prop
-                            onCapture={handleCameraCaptured}
-                            savedState={savedCameraState}
-                            onRestoreComplete={handleRestoreComplete} // New Prop
-                        />
-
+                        {/* Enable WASD / Arrow Navigation */}
                         <KeyboardNavigation
                             controlsRef={controlsRef}
-                            isActive={!inspectMode && !isRestoring} // Disable WASD during restore
+                            isActive={!inspectMode} // Only walk when not inspecting a specific product
+                            speed={0.4}
                         />
 
+
+                        {/* Prevent navigation out of bounds */}
                         <CameraBoundaries
                             controlsRef={controlsRef}
-                            isActive={!inspectMode && !isRestoring}
+                            minX={-50} maxX={50}
+                            minZ={-55} maxZ={40}
+                            isActive={!inspectMode}
                         />
 
-                    </Suspense>
-                </PerformanceMonitor>
+                        <CameraSmoother
+                            controlsRef={controlsRef}
+                            targetPosition={orbitTarget}
+                            cameraPosition={cameraPosition}
+                            isActive={inspectMode}
+                        />
 
-                <EffectComposer disableNormalPass>
-                    {/* <Bloom luminanceThreshold={1.2} mipmapBlur intensity={1.5} radius={0.6} /> */}
-                    <Bloom
-                        luminanceThreshold={1.5} // Try 1.5 instead of 2.0 to catch just the neons
-                        intensity={0.4}          // Lower intensity so it's not blinding
-                        mipmapBlur={true}        // Softness
-                        radius={0.8}             // Spread
+
+
+                        {/* <Preload all /> REMOVED: Blocking startup */}
+                    </Suspense>
+
+                    <CameraManager
+                        inspectMode={inspectMode}
+                        captureReq={captureReq}
+                        onCapture={handleCameraCaptured}
+                        savedState={savedCameraState}
+                        onRestoreComplete={() => setTransitioning(false)}
                     />
-                    <Noise opacity={0.03} />
-                    <Vignette eskil={false} offset={0.1} darkness={0.4} />
-                    {/* <DepthOfField
-                        focusDistance={0.02} // Focus 20m away (adjust based on camera pos)
-                        focalLength={0.05} // Camera lens length
-                        bokehScale={2} // Blur intensity
-                    /> */}
-                </EffectComposer>
+
+                    {/* POST PROCESSING - OPTIMIZED */}
+                    <EffectComposer disableNormalPass>
+                        <Bloom
+                            luminanceThreshold={1}
+                            mipmapBlur
+                            intensity={0.5} // Reduced from 1.5
+                            radius={0.4}
+                        />
+                        {/* Noise disabled for performance on Retina screens */}
+                        {/* <Noise opacity={inspectMode ? 0 : 0.02} /> */}
+                        {/* Vignette removed for clarity + perf */}
+                        {/* <Vignette eskil={false} offset={0.1} darkness={0.5} /> */}
+
+                    </EffectComposer>
+                </PerformanceMonitor>
             </Canvas>
 
-            {/* --- UI OVERLAYS --- */}
 
-            {/* Info Overlay (Left Side) */}
-            <InfographicOverlay
-                isOpen={isOpen && !!selectedObject} // Only separate overlay if needed
-                onClose={() => setIsOpen(false)}
-                data={selectedObject}
-                onRequestPrice={openFullOverlay}
-                onViewShowroom={openShowroom}
-            />
-
-            {/* Full Showroom View (Lazy Loaded) */}
-            {isShowroomOpen && showroomData && (
-                <div className="absolute inset-0 z-50 bg-black animate-fadeIn">
-                    <Suspense fallback={<div className="text-white center">Loading Showroom...</div>}>
-                        <ShowroomView
-                            pavilion={showroomData}
-                            onClose={() => setIsShowroomOpen(false)}
-                        />
-                    </Suspense>
-                </div>
+            {/* OVERLAYS */}
+            {isOpen && !isShowroomOpen && (
+                <InfographicOverlay
+                    data={selectedObject}
+                    isOpen={isOpen}
+                    onClose={closeOverlayOnly} // Close overlay but keep inspect mode
+                    realPavilionId={pavilionId}
+                    user={user}
+                    startMode="info"
+                    onEnterRoom={() => {
+                        openShowroom(selectedObject);
+                    }}
+                />
             )}
 
-            {/* Intro / Welcome Screen */}
-            {/* Intro / Welcome Screen */}
-            {showWelcome && (
-                <div className="absolute inset-0 z-[60] flex flex-col items-center justify-center bg-black/90 backdrop-blur-xl animate-fadeIn">
-                    <div className="text-center mb-12">
-                        <div className="text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-200 via-blue-300 to-indigo-400 tracking-tight drop-shadow-[0_0_25px_rgba(56,189,248,0.6)] font-[Orbitron] mb-4">
-                            3DSFERA
-                        </div>
-                        <div className="text-sm text-cyan-200/60 tracking-[0.5em] uppercase font-bold">Verified Supplier Pavilion</div>
-                    </div>
-
+            {/* Exit Inspect Button (visible when not in overlay) */}
+            {inspectMode && !isOpen && (
+                <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20 pointer-events-auto animate-fadeIn">
                     <button
-                        onClick={() => {
-                            SoundManager.playClick();
-                            setShowWelcome(false);
-                        }}
-                        onMouseEnter={() => SoundManager.playHover()}
-                        className="group relative px-12 py-4 bg-transparent overflow-hidden rounded-none border border-cyan-500/30 hover:border-cyan-400 transition-all duration-300"
+                        onClick={closeInspectMode}
+                        className="px-6 py-2 bg-black/60 border border-white/20 rounded-full text-white text-xs tracking-widest hover:bg-white/10 transition backdrop-blur-md"
                     >
-                        <div className="absolute inset-0 bg-cyan-500/10 group-hover:bg-cyan-500/20 transition-all duration-300" />
-                        <div className="absolute inset-0 opacity-0 group-hover:opacity-100 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-cyan-400/20 to-transparent transition-opacity duration-500" />
-
-                        <span className="relative z-10 font-mono text-sm font-bold tracking-[0.2em] text-cyan-300 group-hover:text-white transition-colors duration-300 flex items-center gap-3">
-                            <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" />
-                            {t('verified_pavilion.ui.enter', 'ENTER PAVILION')}
-                            <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" />
-                        </span>
-
-                        {/* Corner Accents */}
-                        <div className="absolute top-0 left-0 w-2 h-2 border-t border-l border-cyan-400 opacity-50 group-hover:opacity-100 transition-opacity" />
-                        <div className="absolute bottom-0 right-0 w-2 h-2 border-b border-r border-cyan-400 opacity-50 group-hover:opacity-100 transition-opacity" />
+                        {t('verified_pavilion.loader.exit_inspection')}
                     </button>
-
-                    <div className="mt-8 text-xs text-white/20 font-mono tracking-widest">
-                        EST. 2024 • NEURAL LINK ACTIVE
-                    </div>
+                    <p className="text-center text-[10px] text-white/40 mt-2 uppercase tracking-widest">
+                        {t('verified_pavilion.ui_nav.nav_hint')}
+                    </p>
                 </div>
             )}
 
-            {/* Inspect Card (Right Side) */}
+            {showLoader && (
+                <div className="absolute inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-md text-white">
+                    <div className="relative w-full max-w-lg px-8 py-10 border border-cyan-400/20 rounded-3xl bg-white/5 shadow-[0_20px_80px_rgba(0,0,0,0.65)]">
+                        <div className="flex items-center justify-between text-xs uppercase tracking-[0.3em] text-cyan-200/80 mb-4">
+                            <span>{t('verified_pavilion.loader.title')}</span>
+                            <span>{Math.round(visualProgress)}%</span>
+                        </div>
+                        <div className="w-full h-2 rounded-full bg-white/10 overflow-hidden">
+                            <div
+                                className="h-full bg-gradient-to-r from-cyan-400 via-blue-400 to-indigo-500 transition-all duration-200"
+                                style={{ width: `${Math.min(Math.max(visualProgress, 5), 100)}%` }}
+                            />
+                        </div>
+                        <div className="mt-6 text-sm text-slate-200/80 space-y-2">
+                            <div className="flex items-center gap-2">
+                                <span className="w-2 h-2 rounded-full bg-cyan-300 animate-pulse" />
+                                <span>{t('verified_pavilion.loader.asset')}</span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                                <span className="w-2 h-2 rounded-full bg-cyan-300 animate-pulse" />
+                                <span>{t('verified_pavilion.loader.chat')}</span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                                <span className="w-2 h-2 rounded-full bg-cyan-300 animate-pulse" />
+                                <span>{t('verified_pavilion.loader.standby', { state: active ? t('verified_pavilion.loader.state_streaming') : t('verified_pavilion.loader.state_priming') })}</span>
+                            </div>
+                        </div>
+
+                        <div className="mt-8 border border-white/10 rounded-2xl p-4 bg-black/30">
+                            <div className="text-[10px] uppercase tracking-[0.3em] text-cyan-200 mb-2">{t('verified_pavilion.loader.controls')}</div>
+                            <div className="grid grid-cols-2 gap-2 text-xs text-slate-100">
+                                <div className="flex items-center gap-2">
+                                    <span className="px-2 py-1 rounded bg-white/10 border border-white/10">W / Up</span>
+                                    <span>{t('verified_pavilion.loader.forward')}</span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                    <span className="px-2 py-1 rounded bg-white/10 border border-white/10">S / Down</span>
+                                    <span>{t('verified_pavilion.loader.backward')}</span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                    <span className="px-2 py-1 rounded bg-white/10 border border-white/10">A / Left</span>
+                                    <span>{t('verified_pavilion.loader.orbit_left')}</span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                    <span className="px-2 py-1 rounded bg-white/10 border border-white/10">D / Right</span>
+                                    <span>{t('verified_pavilion.loader.orbit_right')}</span>
+                                </div>
+                                <div className="col-span-2 text-slate-300 text-xs mt-1">{t('verified_pavilion.loader.inspect_hint')}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+            {/* Showroom Overlay - Renders ON TOP of Canvas so scene doesn't unmount */}
+            {isShowroomOpen && (
+                <div className="absolute inset-0 z-50 bg-black animate-in fade-in duration-300">
+                    <ShowroomView
+                        pavilionData={showroomData}
+                        onBack={() => {
+                            setIsShowroomOpen(false);
+                            closeInspectMode();
+                        }}
+                        user={user}
+                    />
+                </div>
+            )}
+
+            {/* 2D HUD Inspection Card (Fixed Positioning) */}
             <InspectionCard
-                visible={inspectMode && selectedObject && !isShowroomOpen}
-                data={selectedObject}
-                onClose={closeInspectMode} // Calls our updated logic
-                onMoreInfo={() => setIsOpen(true)}
-                onRequestPrice={openFullOverlay}
+                visible={inspectMode && selectedObject && !isOpen && !isShowroomOpen}
+                pavilionName={selectedObject?.name}
+                title={selectedObject?.title}
+                description={selectedObject?.description}
+                stats={selectedObject?.stats}
+                onDetailsClick={openFullOverlay}
+                productId={selectedObject?.title ? selectedObject?.id : undefined}
+                pavilionId={selectedObject?.id ? selectedObject?.id : undefined}
             />
 
-            {/* Loading Screen */}
-            {showLoader && (
-                <div className="absolute inset-0 z-[100] flex flex-col items-center justify-center bg-black">
-                    <div className="w-16 h-16 border-4 border-cyan-500/30 border-t-cyan-400 rounded-full animate-spin mb-4 shadow-[0_0_20px_rgba(34,211,238,0.4)]" />
-                    <div className="text-cyan-400 font-mono text-xs tracking-widest animate-pulse">INITIALIZING NEURAL LINK...</div>
+            {/* WELCOME OVERLAY */}
+            {showWelcome && !showLoader && (
+                <div className="absolute inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center animate-in fade-in duration-700">
+                    <div className="bg-[#0a0a0a] border border-white/10 p-12 max-w-2xl text-center rounded-3xl shadow-[0_0_100px_rgba(0,0,0,0.8)] relative overflow-hidden">
+                        {/* Decorative background glow */}
+                        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-1/2 bg-cyan-500/10 blur-[100px] pointer-events-none" />
 
-                    {/* Progress Bar */}
-                    <div className="mt-8 w-64 h-1 bg-white/10 rounded-full overflow-hidden">
-                        <div
-                            className="h-full bg-cyan-400 shadow-[0_0_10px_#22d3ee] transition-all duration-300 ease-out"
-                            style={{ width: `${visualProgress}%` }}
-                        />
+                        <div className="relative z-10 flex flex-col items-center gap-6">
+                            <div className="w-16 h-16 rounded-full bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center mb-2 shadow-[0_0_30px_rgba(34,211,238,0.2)]">
+                                <div className="w-2 h-2 rounded-full bg-cyan-400 shadow-[0_0_10px_#22d3ee] animate-pulse" />
+                            </div>
+
+                            <h1 className="text-4xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-b from-white to-slate-400 font-[Orbitron] tracking-tight">
+                                {t('verified_pavilion.welcome.title')}
+                            </h1>
+
+                            <p className="text-lg text-slate-400 font-light leading-relaxed max-w-lg">
+                                {t('verified_pavilion.welcome.subtitle')}
+                            </p>
+
+                            <div className="h-px w-24 bg-gradient-to-r from-transparent via-white/20 to-transparent my-4" />
+
+                            <button
+                                onClick={() => {
+                                    SoundManager.playClick();
+                                    setShowWelcome(false);
+                                }}
+                                className="group relative px-10 py-4 bg-white text-black font-bold uppercase tracking-[0.2em] text-sm overflow-hidden transition-all hover:scale-105 hover:shadow-[0_0_40px_rgba(255,255,255,0.3)]"
+                            >
+                                <span className="relative z-10">{t('verified_pavilion.welcome.btn_enter')}</span>
+                                <div className="absolute inset-0 bg-cyan-400 mix-blend-overlay opacity-0 group-hover:opacity-100 transition-opacity" />
+                            </button>
+
+                            <p className="text-[10px] text-slate-600 uppercase tracking-widest mt-4">
+                                {t('verified_pavilion.welcome.controls_hint')}
+                            </p>
+                        </div>
                     </div>
                 </div>
             )}
-        </div>
+        </div >
     );
 }
