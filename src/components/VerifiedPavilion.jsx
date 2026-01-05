@@ -51,14 +51,14 @@ import liftWallUrl from '../assets/images/liftwall.png';
 
 import { LODModel } from './pavilion/LODModel';
 
-const TURBO_ENGINE_PATH = '/objects/turbo_schaft_engine_ivchenko_al-20.glb';
+const TURBO_ENGINE_PATH = '/objects/turbo_schaft_engine_ivchenko_al-20.glb'; // Need to optimize this one next
 const PNEUMATIC_PATH = '/objects/optimized/Pneumatic.glb';
 const CRANE_PATH = '/objects/optimized/mobile_crane.glb';
-const CRANE_MACHINE_PATH = '/objects/optimized/crane_machine.glb';
-const ROAD_GRADER_PATH = '/objects/optimized/road_grader.glb';
-const VALVE_PATH = '/objects/valve.glb';
-const VALVE1_PATH = '/objects/valve1.glb';
-const VALVE2_PATH = '/objects/valve2.glb';
+const CRANE_MACHINE_PATH = '/objects/optimized_lods/crane_machine_med.glb'; // 4.9MB (Safe) vs 14MB (Crash)
+const ROAD_GRADER_PATH = '/objects/optimized_lods/road_grader_med.glb'; // 2.9MB vs 15MB
+const VALVE_PATH = '/objects/optimized_lods/valve_high.glb'; // ~1.5MB
+const VALVE1_PATH = '/objects/optimized_lods/valve1_high.glb'; // ~2.4MB
+const VALVE2_PATH = '/objects/optimized_lods/valve2_high.glb'; // ~5MB
 
 // LOD Constants
 const ROAD_GRADER_LOD = '/objects/optimized_lods/road_grader';

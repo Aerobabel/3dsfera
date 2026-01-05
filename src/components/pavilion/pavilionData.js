@@ -17,12 +17,12 @@ import valveSingleUrl from '../../assets/images/valve_single.png';
 import valveFluorineUrl from '../../assets/images/valve_fluorine.png';
 
 const TURBO_ENGINE_PATH = '/objects/turbo_schaft_engine_ivchenko_al-20.glb';
-const PNEUMATIC_PATH = '/objects/Pneumatic.glb';
-const CRANE_MACHINE_PATH = '/objects/optimized/crane_machine.glb';
-const ROAD_GRADER_PATH = '/objects/optimized/road_grader.glb';
-const VALVE_PATH = '/objects/valve.glb';
-const VALVE1_PATH = '/objects/valve1.glb';
-const VALVE2_PATH = '/objects/valve2.glb';
+const PNEUMATIC_PATH = '/objects/optimized/Pneumatic.glb';
+const CRANE_MACHINE_PATH = '/objects/optimized_lods/crane_machine_med.glb'; // 4.9MB
+const ROAD_GRADER_PATH = '/objects/optimized_lods/road_grader_med.glb'; // 2.9MB
+const VALVE_PATH = '/objects/optimized_lods/valve_high.glb';
+const VALVE1_PATH = '/objects/optimized_lods/valve1_high.glb';
+const VALVE2_PATH = '/objects/optimized_lods/valve2_high.glb';
 const CAMERA_PATH = '/objects/optimized/camera.glb';
 const DRONE_PATH = '/objects/drone.glb';
 const MICROSCOPE_PATH = '/objects/optimized/microscope.glb';
