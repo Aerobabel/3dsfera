@@ -80,6 +80,14 @@ function KeyboardNavigation({ controlsRef, speed = 0.4, isActive }) {
     const { camera } = useThree();
     const keys = useRef({});
 
+    // Optimization: Pool reusable vectors to prevent GC stutter
+    const vectors = useMemo(() => ({
+        forward: new THREE.Vector3(),
+        right: new THREE.Vector3(),
+        velocity: new THREE.Vector3(),
+        dummy: new THREE.Vector3()
+    }), []);
+
     useEffect(() => {
         const onDown = (e) => keys.current[e.code] = true;
         const onUp = (e) => keys.current[e.code] = false;
@@ -94,24 +102,28 @@ function KeyboardNavigation({ controlsRef, speed = 0.4, isActive }) {
     useFrame((state, delta) => {
         if (!isActive || !controlsRef.current) return;
 
+        const { forward, right, velocity, dummy } = vectors;
+
         // Calculate move direction based on camera angle
-        // We only want to move on X and Z (floor plane)
-        const forward = new THREE.Vector3(0, 0, -1);
-        forward.applyQuaternion(camera.quaternion);
+        // Reuse 'forward' vector
+        forward.set(0, 0, -1).applyQuaternion(camera.quaternion);
         forward.y = 0; // flatten
         forward.normalize();
 
-        const right = new THREE.Vector3(1, 0, 0);
-        right.applyQuaternion(camera.quaternion);
+        // Reuse 'right' vector
+        right.set(1, 0, 0).applyQuaternion(camera.quaternion);
         right.y = 0; // flatten
         right.normalize();
 
         // Speed relative to delta time (seconds)
-        // Base speed was 0.4 per frame. 60fps -> 24 units/sec.
-        // Let's set target speed to ~20 units/sec
+        // Fix: Clamp delta to prevent "teleporting" if frame hangs
+        // If fps drops below 10 (delta > 0.1), we treat it as 0.1s max movement
+        const safeDelta = Math.min(delta, 0.1);
         const baseSpeed = 15.0;
-        const moveSpeed = baseSpeed * delta * (keys.current['ShiftLeft'] ? 2.5 : 1);
-        const velocity = new THREE.Vector3();
+        const moveSpeed = baseSpeed * safeDelta * (keys.current['ShiftLeft'] ? 2.5 : 1);
+
+        // Reset velocity
+        velocity.set(0, 0, 0);
 
         if (keys.current['KeyW'] || keys.current['ArrowUp']) velocity.add(forward);
         if (keys.current['KeyS'] || keys.current['ArrowDown']) velocity.sub(forward);
@@ -125,15 +137,15 @@ function KeyboardNavigation({ controlsRef, speed = 0.4, isActive }) {
             camera.position.add(velocity);
 
             // Update Target to stay LOCKED in front of camera (FPS feel)
-            // This prevents "swinging" by keeping the pivot close
-            const newForward = new THREE.Vector3(0, 0, -1).applyQuaternion(camera.quaternion).normalize();
-            controlsRef.current.target.copy(camera.position).add(newForward.multiplyScalar(2)); // Pivot 2m in front
+            // Reuse 'dummy' vector for calculation
+            dummy.set(0, 0, -1).applyQuaternion(camera.quaternion).normalize().multiplyScalar(2);
+            controlsRef.current.target.copy(camera.position).add(dummy);
         } else {
             // Even when not moving, if we are in Walk Mode, ensure pivot is close for rotation
             const dist = camera.position.distanceTo(controlsRef.current.target);
             if (dist > 5) {
-                const newForward = new THREE.Vector3(0, 0, -1).applyQuaternion(camera.quaternion).normalize();
-                controlsRef.current.target.copy(camera.position).add(newForward.multiplyScalar(2));
+                dummy.set(0, 0, -1).applyQuaternion(camera.quaternion).normalize().multiplyScalar(2);
+                controlsRef.current.target.copy(camera.position).add(dummy);
             }
         }
     });
