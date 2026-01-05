@@ -24,21 +24,30 @@ export function CameraManager({ inspectMode, captureReq, onCapture, savedState, 
         if (!inspectMode && savedState && !captureReq) {
             isRestoring.current = true;
 
-            // FIX: Recalculate target to be exactly 1m in front of camera
+            // FIX: "Step Back" Logic
+            // Move camera 1.5m backwards from saved position to give breathing room
+            // We calculate this ONCE here for the timeout fallback
+            const backVector = new THREE.Vector3(0, 0, 1).applyQuaternion(savedState.quaternion);
+            const steppedBackPos = savedState.position.clone().add(backVector.multiplyScalar(1.5));
+
+            // Floor clamp to prevent going under the map
+            if (steppedBackPos.y < 1.7) steppedBackPos.y = 1.7;
+
+            // FIX: Recalculate target to be exactly 1m in front of NEW camera position
             // to satisfy OrbitControls maxDistance={1.0} constraint
             const forward = new THREE.Vector3(0, 0, -1).applyQuaternion(savedState.quaternion);
-            const safeTarget = savedState.position.clone().add(forward.multiplyScalar(0.99)); // 0.99m to be safe
+            const safeTarget = steppedBackPos.clone().add(forward.multiplyScalar(0.99));
 
             // Safety: Force finish after 1.5s if getting stuck
             const timer = setTimeout(() => {
                 if (isRestoring.current) {
-                    camera.position.copy(savedState.position);
+                    camera.position.copy(steppedBackPos);
                     camera.quaternion.copy(savedState.quaternion);
                     if (controls) controls.target.copy(safeTarget);
                     isRestoring.current = false;
                     if (onRestoreComplete) onRestoreComplete();
                 }
-            }, 1000); // Faster timeout
+            }, 1000);
             return () => clearTimeout(timer);
         }
     }, [inspectMode, savedState, captureReq, camera, controls, onRestoreComplete]);
@@ -46,14 +55,17 @@ export function CameraManager({ inspectMode, captureReq, onCapture, savedState, 
     // 3. Smooth Restore Animation
     useFrame((state, delta) => {
         if (isRestoring.current && savedState) {
+
+            // Calculate Goal Position (Stepped Back)
+            const backVector = new THREE.Vector3(0, 0, 1).applyQuaternion(savedState.quaternion);
+            const goalPos = savedState.position.clone().add(backVector.multiplyScalar(1.5));
+            if (goalPos.y < 1.7) goalPos.y = 1.7;
+
             // Exponential Damping
             const lambda = 8; // Snappier restore
             const t = 1 - Math.exp(-lambda * delta);
 
-            camera.position.lerp(savedState.position, t);
-
-            // Prevent going underground (The "Underground" bug)
-            if (camera.position.y < 0.5) camera.position.y = 0.5;
+            camera.position.lerp(goalPos, t);
 
             // Ensure smooth rotation
             camera.quaternion.slerp(savedState.quaternion, t);
@@ -67,16 +79,18 @@ export function CameraManager({ inspectMode, captureReq, onCapture, savedState, 
             }
 
             // Distance Check
-            const posDist = camera.position.distanceTo(savedState.position);
+            const posDist = camera.position.distanceTo(goalPos);
             const rotDist = camera.quaternion.angleTo(savedState.quaternion);
 
             if (posDist < 0.1 && rotDist < 0.05) {
-                camera.position.copy(savedState.position);
+                camera.position.copy(goalPos);
                 camera.quaternion.copy(savedState.quaternion);
 
                 // Final Set
+                // Re-calculate one last time to be precise
                 const forward = new THREE.Vector3(0, 0, -1).applyQuaternion(savedState.quaternion);
-                const finalTarget = savedState.position.clone().add(forward.multiplyScalar(0.99));
+                const finalTarget = goalPos.clone().add(forward.multiplyScalar(0.99));
+
                 if (controls) controls.target.copy(finalTarget);
 
                 isRestoring.current = false;
