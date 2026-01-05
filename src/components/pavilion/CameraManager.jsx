@@ -24,21 +24,34 @@ export function CameraManager({ inspectMode, captureReq, onCapture, savedState, 
         if (!inspectMode && savedState && !captureReq) {
             isRestoring.current = true;
 
-            // FIX: "Step Back" Logic
-            // Move camera 1.5m backwards from saved position to give breathing room
-            // We calculate this ONCE here for the timeout fallback
-            const backVector = new THREE.Vector3(0, 0, 1).applyQuaternion(savedState.quaternion);
-            const steppedBackPos = savedState.position.clone().add(backVector.multiplyScalar(1.5));
+            // FIX: "Step Back" Logic - Refined V2
+            // Previous 1.5m was too aggressive and pushed user into walls behind.
+            // New logic: 0.5m setback, strictly horizontal, maintaining safe height.
 
-            // Floor clamp to prevent going under the map
-            if (steppedBackPos.y < 1.7) steppedBackPos.y = 1.7;
+            // 1. Calculate Horizontal Back Vector
+            const forward = new THREE.Vector3(0, 0, -1).applyQuaternion(savedState.quaternion);
+            forward.y = 0; // Flatten
+            forward.normalize();
+            const backVector = forward.negate();
+
+            // 2. Calculate New Position (Conservative 0.5m step back)
+            const steppedBackPos = savedState.position.clone().add(backVector.multiplyScalar(0.5));
+
+            // 3. Robust Height Safety
+            // Don't force 1.7m if they were crouching. Just ensure they aren't underground.
+            // But if they were flying high, keep them high.
+            // Use savedState Y, but clamp min to 1.6m (standing eye level) 
+            // ONLY if they were already near that height, to avoid snapping up from a crouch.
+            // Actually, safer to just clamp min 0.5m (floor) to avoid bugs.
+            if (steppedBackPos.y < 0.5) steppedBackPos.y = 0.5;
 
             // FIX: Recalculate target to be exactly 1m in front of NEW camera position
             // to satisfy OrbitControls maxDistance={1.0} constraint
-            const forward = new THREE.Vector3(0, 0, -1).applyQuaternion(savedState.quaternion);
-            const safeTarget = steppedBackPos.clone().add(forward.multiplyScalar(0.99));
+            // We use the same 'forward' direction as the saved state rotation
+            const viewDir = new THREE.Vector3(0, 0, -1).applyQuaternion(savedState.quaternion);
+            const safeTarget = steppedBackPos.clone().add(viewDir.multiplyScalar(0.99));
 
-            // Safety: Force finish after 1.5s if getting stuck
+            // Safety: Force finish after 1.0s
             const timer = setTimeout(() => {
                 if (isRestoring.current) {
                     camera.position.copy(steppedBackPos);
@@ -56,13 +69,16 @@ export function CameraManager({ inspectMode, captureReq, onCapture, savedState, 
     useFrame((state, delta) => {
         if (isRestoring.current && savedState) {
 
-            // Calculate Goal Position (Stepped Back)
-            const backVector = new THREE.Vector3(0, 0, 1).applyQuaternion(savedState.quaternion);
-            const goalPos = savedState.position.clone().add(backVector.multiplyScalar(1.5));
-            if (goalPos.y < 1.7) goalPos.y = 1.7;
+            // Re-calculate Goal Position (Conservative V2)
+            const forward = new THREE.Vector3(0, 0, -1).applyQuaternion(savedState.quaternion);
+            forward.y = 0;
+            forward.normalize();
+            const backVector = forward.negate();
+            const goalPos = savedState.position.clone().add(backVector.multiplyScalar(0.5));
+            if (goalPos.y < 0.5) goalPos.y = 0.5;
 
             // Exponential Damping
-            const lambda = 8; // Snappier restore
+            const lambda = 8;
             const t = 1 - Math.exp(-lambda * delta);
 
             camera.position.lerp(goalPos, t);
@@ -72,9 +88,8 @@ export function CameraManager({ inspectMode, captureReq, onCapture, savedState, 
 
             if (controls) {
                 // Synthesize target on the fly to match current rotation
-                // This ensures perfectly straight interpolation of the view
-                const forward = new THREE.Vector3(0, 0, -1).applyQuaternion(camera.quaternion);
-                const currentSafeTarget = camera.position.clone().add(forward.multiplyScalar(0.99));
+                const currentForward = new THREE.Vector3(0, 0, -1).applyQuaternion(camera.quaternion);
+                const currentSafeTarget = camera.position.clone().add(currentForward.multiplyScalar(0.99));
                 controls.target.copy(currentSafeTarget);
             }
 
@@ -87,9 +102,8 @@ export function CameraManager({ inspectMode, captureReq, onCapture, savedState, 
                 camera.quaternion.copy(savedState.quaternion);
 
                 // Final Set
-                // Re-calculate one last time to be precise
-                const forward = new THREE.Vector3(0, 0, -1).applyQuaternion(savedState.quaternion);
-                const finalTarget = goalPos.clone().add(forward.multiplyScalar(0.99));
+                const finalForward = new THREE.Vector3(0, 0, -1).applyQuaternion(savedState.quaternion);
+                const finalTarget = goalPos.clone().add(finalForward.multiplyScalar(0.99));
 
                 if (controls) controls.target.copy(finalTarget);
 
