@@ -20,7 +20,12 @@ const ASSETS_TO_OPTIMIZE = [
     'industrial_table.glb',
     // Heavy Machinery
     'optimized/road_grader.glb', // Already optimized but can be LOD'd further
-    'optimized/crane_machine.glb'
+    'optimized/crane_machine.glb',
+    // New Industrial Assets
+    'industrial_stamp.glb',
+    'industrial_robot.glb',
+    'industrial_storage_tank.glb',
+    'industrial_unit.glb'
 ];
 
 // Ensure output directory exists

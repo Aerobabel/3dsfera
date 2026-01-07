@@ -78,9 +78,9 @@ const INDUSTRIAL_TABLE_PATH = '/objects/industrial_table.glb';
 const BALL_VALVE_PATH = '/objects/ball_valve.glb';
 const WATER_PIPE_VALVE_PATH = '/objects/water_pipe_valve.glb';
 
-const INDUSTRIAL_ROBOT_PATH = '/objects/industrial_robot.glb';
-const INDUSTRIAL_STAMP_PATH = '/objects/industrial_stamp.glb';
-const INDUSTRIAL_TANK_PATH = '/objects/industrial_storage_tank.glb';
+const INDUSTRIAL_ROBOT_LOD = '/objects/optimized_lods/industrial_robot';
+const INDUSTRIAL_STAMP_LOD = '/objects/optimized_lods/industrial_stamp';
+const INDUSTRIAL_TANK_LOD = '/objects/optimized_lods/industrial_storage_tank';
 
 
 // Logic to constrain camera target within bounds
@@ -833,24 +833,24 @@ export default function VerifiedPavilion({ onBack, user }) {
                             {/* Hardcoded Industrial Assets (Pipes Removed) */}
                             {/* <Gltf src={INDUSTRIAL_PIPES_PATH} position={[-5, 7, 0]} rotation={[0, 0, 0]} scale={0} castShadow receiveShadow /> REMOVED */}
 
-                            <Gltf
-                                src={INDUSTRIAL_ROBOT_PATH}
+                            <LODModel
+                                basePath={INDUSTRIAL_ROBOT_LOD}
                                 position={[3.0, 3.0, 1.5]}
                                 rotation={[0.0, 0.0, 0.0]}
                                 scale={0.1}
                                 receiveShadow
                             />
 
-                            <Gltf
-                                src={INDUSTRIAL_STAMP_PATH}
+                            <LODModel
+                                basePath={INDUSTRIAL_STAMP_LOD}
                                 position={[-4.6, 3.0, 4.1]}
                                 rotation={[0.0, 0.0, 0.0]}
                                 scale={0.3}
                                 receiveShadow
                             />
 
-                            <Gltf
-                                src={INDUSTRIAL_TANK_PATH}
+                            <LODModel
+                                basePath={INDUSTRIAL_TANK_LOD}
                                 position={[2.3, 3.3, -2.7]}
                                 rotation={[0.0, 4.8, 0.0]}
                                 scale={0.1}
