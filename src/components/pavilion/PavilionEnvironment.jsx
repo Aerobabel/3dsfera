@@ -286,7 +286,7 @@ export function FloorArrows() {
     // The glowing path arrows on the floor
     const count = 8;
     return (
-        <group position={[0, 0.02, 15]} rotation={[-Math.PI / 2, 0, 0]}>
+        <group position={[0, 0.12, 15]} rotation={[-Math.PI / 2, 0, 0]}>
             {Array.from({ length: count }).map((_, i) => (
                 <group key={i} position={[0, i * 6, 0]}>
                     {/* Left Line */}
@@ -437,7 +437,7 @@ export function UltimateFloor() {
             </mesh>
 
             {/* COMPONENT 2: The Reflections - OPTIMIZED FOR FPS */}
-            <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.005, 0]}>
+            <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.0, 0]}>
                 <planeGeometry args={[120, 120]} />
                 {/* 
                     Optimized "Polished Concrete" Material
@@ -454,7 +454,7 @@ export function UltimateFloor() {
 
             {/* Grid Overlay - "Architectural White" Style */}
             <Grid
-                position={[0, 0.05, 0]}
+                position={[0, 0.08, 0]}
                 args={[120, 120]}
                 cellSize={2}
                 cellThickness={1}

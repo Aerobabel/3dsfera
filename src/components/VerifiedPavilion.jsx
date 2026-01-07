@@ -1,7 +1,8 @@
 ﻿import React, { Suspense, useRef, useEffect, useState, useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
-import { Preload, useGLTF, useProgress, PerformanceMonitor, Gltf, useTexture, Text } from '@react-three/drei';
+import { Preload, useGLTF, useProgress, PerformanceMonitor, Gltf, useTexture, Text, PerspectiveCamera, OrbitControls } from '@react-three/drei';
+
 import * as THREE from 'three';
 import { EffectComposer, Bloom, Vignette, Noise, DepthOfField } from '@react-three/postprocessing';
 import { supabase } from '../lib/supabaseClient';
@@ -14,7 +15,7 @@ import KioskUnit from './pavilion/KioskUnit';
 import ShowroomView from './pavilion/ShowroomView';
 import InfographicOverlay from './pavilion/InfographicOverlay';
 import { PAVILIONS } from './pavilion/pavilionData';
-import { OrbitControls } from '@react-three/drei';
+
 import { CameraSmoother, InspectionCard } from './pavilion/PavilionInteraction';
 
 
@@ -273,6 +274,22 @@ function ShipmentBox({ position, rotation, size, textureUrl }) {
 // useGLTF.preload(VALVE2_PATH);
 // useGLTF.preload(PNEUMATIC_PATH);
 
+// Helper Component: Glass Barrier
+const GlassBarrier = ({ position = [0, 0, 0], rotation = [0, 0, 0], width = 4, height = 3 }) => (
+    <mesh position={position} rotation={rotation}>
+        <boxGeometry args={[width, height, 0.1]} />
+        <meshPhysicalMaterial
+            color="#aaddff"
+            roughness={0.1}
+            metalness={0.1}
+            transmission={0.9} // Glass-like
+            opacity={0.3}
+            transparent
+            thickness={0.5} // Refraction
+        />
+    </mesh>
+);
+
 export default function VerifiedPavilion({ onBack, user }) {
     const { t } = useTranslation();
 
@@ -285,6 +302,7 @@ export default function VerifiedPavilion({ onBack, user }) {
     const [pendingData, setPendingData] = useState(null); // Data waiting for capture
     const [orbitTarget, setOrbitTarget] = useState(null); // New: Target for Orbit Controls
     const [cameraPosition, setCameraPosition] = useState(null); // New: Smoother Target Cam Pos
+
     const [isOpen, setIsOpen] = useState(false); // Pavilion info overlay state
     const controlsRef = useRef(); // Ref for OrbitControls
     const [pavilionId, setPavilionId] = useState(null);
@@ -644,7 +662,7 @@ export default function VerifiedPavilion({ onBack, user }) {
                             {/* 1. Main Platform Guide (Center) */}
                             <HologramGuide
                                 id="main"
-                                position={[0, 0.95, -4]} // Restored height to ensure visibility
+                                position={[0, 1.45, -4]} // Adjusted to 1.45
                                 rotation={[0, 0, 0]}
                                 scale={0.013}
                                 showUI={!isShowroomOpen}
@@ -655,7 +673,7 @@ export default function VerifiedPavilion({ onBack, user }) {
                             {/* 2. W&T Engineering (Left - Existing Position) */}
                             <HologramGuide
                                 id="aero"
-                                position={[-21, 0, -1]} // Clean floor level
+                                position={[-21, 0.75, -1]} // Adjusted to 0.75
                                 rotation={[0, Math.PI / 2, 0]}
                                 scale={0.013}
                                 showUI={!isShowroomOpen}
@@ -666,7 +684,7 @@ export default function VerifiedPavilion({ onBack, user }) {
                             {/* 3. Titan Heavy (Right) */}
                             <HologramGuide
                                 id="heavy"
-                                position={[21, 0, -1]} // Clean floor level
+                                position={[21, 0.75, -1]} // Adjusted to 0.75
                                 rotation={[0, -Math.PI / 2, 0]}
                                 scale={0.013}
                                 showUI={!isShowroomOpen}
@@ -677,7 +695,7 @@ export default function VerifiedPavilion({ onBack, user }) {
                             {/* 4. Genesis Bio (Back Left) */}
                             <HologramGuide
                                 id="bio"
-                                position={[-21, 0, -38]} // Clean floor level
+                                position={[-21, 0.75, -38]} // Adjusted to 0.75
                                 rotation={[0, Math.PI / 3, 0]}
                                 scale={0.013}
                                 showUI={!isShowroomOpen}
@@ -688,7 +706,7 @@ export default function VerifiedPavilion({ onBack, user }) {
                             {/* 5. Quantum (Back Center) */}
                             <HologramGuide
                                 id="quantum"
-                                position={[0, 0, -50]} // Clean floor level
+                                position={[0, 0.75, -50]} // Adjusted to 0.75
                                 rotation={[0, 0, 0]}
                                 scale={0.013}
                                 showUI={!isShowroomOpen}
@@ -699,7 +717,7 @@ export default function VerifiedPavilion({ onBack, user }) {
                             {/* 6. Buy for $1500 (Entrance Right) */}
                             <HologramGuide
                                 id="buy1500"
-                                position={[25, 0.9, 20]} // Global height
+                                position={[24.5, 0.60, 20.5]} // Raised to 0.60, Moved Right (Z+) to 20.5 per user request
                                 rotation={[0, -Math.PI / 2, 0]}
                                 scale={0.013}
                                 showUI={!isShowroomOpen}
@@ -710,7 +728,7 @@ export default function VerifiedPavilion({ onBack, user }) {
                             {/* 7. Buy for $500 (Entrance Left) */}
                             <HologramGuide
                                 id="buy500"
-                                position={[-12, 0.9, 32]} // Global height
+                                position={[-12, 0.50, 32]} // Adjusted to 0.50
                                 rotation={[0, Math.PI, 0]}
                                 scale={0.013}
                                 showUI={!isShowroomOpen}
@@ -969,6 +987,8 @@ export default function VerifiedPavilion({ onBack, user }) {
                                     // Restricted Entry
                                 }}
                             />
+                            {/* Transparent Wall (Full Entrance) */}
+                            <GlassBarrier position={[0, 4, 4]} width={14} height={8} />
                         </group>
 
                         {/* 5. Rear Right Corner: LOGISTICS */}
@@ -1087,6 +1107,8 @@ export default function VerifiedPavilion({ onBack, user }) {
                                     // Restricted Entry
                                 }}
                             />
+                            {/* Transparent Wall (Full Entrance) */}
+                            <GlassBarrier position={[0, 4, 4]} width={14} height={8} />
                         </group>
 
                         {/* 9. Deep Back Right: MANUFACTURING */}
