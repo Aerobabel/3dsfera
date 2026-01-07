@@ -22,6 +22,7 @@ import ProductDisplay from './pavilion/ProductDisplay';
 import { ConveyorBelt } from './pavilion/subsystems/ConveyorBelt';
 import { FactoryPartition } from './pavilion/subsystems/FactoryPartition';
 import { TableWithEquipment } from './pavilion/subsystems/TableWithEquipment';
+// Force HMR update
 
 
 import WalkingMan from './pavilion/WalkingMan';
@@ -158,6 +159,17 @@ function KeyboardNavigation({ controlsRef, isActive }) {
                 velocity.z = 0; // Slide along wall
             }
 
+            // 3b. Central Pavilion Collision (3DSFERA Info Desk)
+            // Prevent walking into the main desk/actor
+            // Desk is at [0, 0, -5], Actor at [0, 0.95, -4]
+            // We block a box area in front of it to prevent phasing through.
+            // Box: X[-3.5, 3.5], Z[-8.0, -2.5]
+            if (Math.abs(nextPos.x) < 3.5 && nextPos.z < -2.5 && nextPos.z > -8.0) {
+                // Push Back (Simple Z constraint usually enough here as we approach from front)
+                if (velocity.z < 0) velocity.z = 0;
+                if (Math.abs(velocity.x) > 0) velocity.x = 0; // Stop X movement too to be safe/solid
+            }
+
             // 4. Apply Validated Move
             camera.position.add(velocity);
 
@@ -184,11 +196,52 @@ function CameraBoundaries({ controlsRef, minX, maxX, minZ, maxZ, isActive }) {
         // BUFFER ADDED: We allow the camera to go slightly beyond the walking wall (by 2m)
         // This prevents the "Can't turn around" bug where rotation arcs are cancelled by strict clamping.
         const BUFFER = 2.0;
+
+        // --- GLOBAL BOUNDARIES ---
         camera.position.x = THREE.MathUtils.clamp(camera.position.x, -(WALL_X + BUFFER), (WALL_X + BUFFER));
         camera.position.z = THREE.MathUtils.clamp(camera.position.z, (WALL_Z_BACK - BUFFER), (WALL_Z_FRONT + BUFFER));
-        camera.position.y = THREE.MathUtils.clamp(camera.position.y, 1.6, 4.0); // Strict eye level
+        camera.position.y = THREE.MathUtils.clamp(camera.position.y, 0.5, 5.0); // Relaxed camera (allows dipping for look-up)
 
-        // 2. Clamp Target (Look point)
+        // --- CENTRAL PAVILION EXCLUSION ZONE (The "No Fly" Box) ---
+        // Prevents entering the black room structure (Z[-10, 0], X[-8, 8])
+        // Box: X[-9.5, 9.5], Z[-12, 2.5] -- Tightened to minimize invisible wall feel
+        const zoneMinX = -9.5;
+        const zoneMaxX = 9.5;
+        const zoneMinZ = -12;
+        const zoneMaxZ = 2.5;
+
+        if (camera.position.x > zoneMinX && camera.position.x < zoneMaxX &&
+            camera.position.z > zoneMinZ && camera.position.z < zoneMaxZ) {
+
+            // Calculate distances to boundaries
+            const dxMin = camera.position.x - zoneMinX;
+            const dxMax = zoneMaxX - camera.position.x;
+            const dzMin = camera.position.z - zoneMinZ;
+            const dzMax = zoneMaxZ - camera.position.z;
+
+            // Find nearest edge
+            const min = Math.min(dxMin, dxMax, dzMin, dzMax);
+
+            const oldPos = camera.position.clone();
+
+            if (min === dxMin) camera.position.x = zoneMinX;
+            else if (min === dxMax) camera.position.x = zoneMaxX;
+            else if (min === dzMin) camera.position.z = zoneMinZ;
+            else camera.position.z = zoneMaxZ;
+
+            // Sync the target to prevent "Camera Jump/Twist"
+            const diff = camera.position.clone().sub(oldPos);
+            target.add(diff);
+
+            // Force update to prevent frame lag/glitch
+            controlsRef.current.update();
+        }
+
+        // 2. Clamp Target (Look point) - FORCE HEAD HEIGHT
+        // This ensures the "Pivot" is always at eye level (1.7m), so we feel tall.
+        if (isActive) {
+            target.y = 1.7;
+        }
         // Keep the pivot inside the room so we don't look into the void
         // REMOVED: Clamping target causes "Spin" when camera keeps moving but target stops.
         // target.x = THREE.MathUtils.clamp(target.x, minX, maxX);
@@ -236,6 +289,7 @@ export default function VerifiedPavilion({ onBack, user }) {
     const controlsRef = useRef(); // Ref for OrbitControls
     const [pavilionId, setPavilionId] = useState(null);
     const [isShowroomOpen, setIsShowroomOpen] = useState(false);
+    const [activeActorId, setActiveActorId] = useState('aero'); // Default active actor
     const [showroomData, setShowroomData] = useState(null);
     const { progress, active } = useProgress();
     const [visualProgress, setVisualProgress] = useState(0); // Smooth progress
@@ -582,19 +636,86 @@ export default function VerifiedPavilion({ onBack, user }) {
                         {/* --- ANIMATED CHARACTERS --- */}
                         {/* Character 1: Wandering the main left aisle */}
                         {/* Character 1: Wandering the main left aisle (SAFE ZONE: Left of Conveyor) */}
-                        {/* Character 1: Far Left Lane (Relocated: Behind Kiosks to avoid partitions entirely) */}
-                        {/* Character 1: Wandering the main left aisle */}
-                        {/* Character 1: Wandering the main left aisle */}
-                        {/* WalkingMan REMOVED to restore stability */}
 
-                        {/* Standing on the central platform greeting users */}
-                        {/* Standing at W&T Engineering greeting users */}
+                        {/* --- ANIMATED CHARACTERS --- */}
+                        {/* Multi-Actor Possession System */}
+                        {/* Only one actor is ACTIVE (connected to AI) at a time. Others are passive dummies. */}
                         <Suspense fallback={null}>
+                            {/* 1. Main Platform Guide (Center) */}
                             <HologramGuide
+                                id="main"
+                                position={[0, 0.95, -4]} // Raised from 0.7
+                                rotation={[0, 0, 0]}
+                                scale={0.013}
+                                showUI={!isShowroomOpen}
+                                isActive={activeActorId === 'main'}
+                                onActivate={() => setActiveActorId('main')}
+                            />
+
+                            {/* 2. W&T Engineering (Left - Existing Position) */}
+                            <HologramGuide
+                                id="aero"
                                 position={[-21, 0.9, -1]}
                                 rotation={[0, Math.PI / 2, 0]}
                                 scale={0.013}
                                 showUI={!isShowroomOpen}
+                                isActive={activeActorId === 'aero'}
+                                onActivate={() => setActiveActorId('aero')}
+                            />
+
+                            {/* 3. Titan Heavy (Right) */}
+                            <HologramGuide
+                                id="heavy"
+                                position={[21, 0.9, -1]}
+                                rotation={[0, -Math.PI / 2, 0]}
+                                scale={0.013}
+                                showUI={!isShowroomOpen}
+                                isActive={activeActorId === 'heavy'}
+                                onActivate={() => setActiveActorId('heavy')}
+                            />
+
+                            {/* 4. Genesis Bio (Back Left) */}
+                            <HologramGuide
+                                id="bio"
+                                position={[-21, 0.9, -38]}
+                                rotation={[0, Math.PI / 3, 0]}
+                                scale={0.013}
+                                showUI={!isShowroomOpen}
+                                isActive={activeActorId === 'bio'}
+                                onActivate={() => setActiveActorId('bio')}
+                            />
+
+                            {/* 5. Quantum (Back Center) */}
+                            <HologramGuide
+                                id="quantum"
+                                position={[0, 0.9, -50]}
+                                rotation={[0, 0, 0]}
+                                scale={0.013}
+                                showUI={!isShowroomOpen}
+                                isActive={activeActorId === 'quantum'}
+                                onActivate={() => setActiveActorId('quantum')}
+                            />
+
+                            {/* 6. Buy for $1500 (Entrance Right) */}
+                            <HologramGuide
+                                id="buy1500"
+                                position={[25, 0.9, 20]}
+                                rotation={[0, -Math.PI / 2, 0]}
+                                scale={0.013}
+                                showUI={!isShowroomOpen}
+                                isActive={activeActorId === 'buy1500'}
+                                onActivate={() => setActiveActorId('buy1500')}
+                            />
+
+                            {/* 7. Buy for $500 (Entrance Left) */}
+                            <HologramGuide
+                                id="buy500"
+                                position={[-12, 0.05, 32]} // Lowered from 0.9 to fix floating
+                                rotation={[0, Math.PI, 0]}
+                                scale={0.013}
+                                showUI={!isShowroomOpen}
+                                isActive={activeActorId === 'buy500'}
+                                onActivate={() => setActiveActorId('buy500')}
                             />
                         </Suspense>
 
@@ -828,7 +949,7 @@ export default function VerifiedPavilion({ onBack, user }) {
 
 
                         {/* 4. Rear Left Corner: ENERGY (Medium, $1500) */}
-                        <group position={[-21, 0, -38]} rotation={[0, Math.PI / 6, 0]} scale={0.8}>
+                        <group position={[25, 0, 20]} rotation={[0, -Math.PI / 2, 0]} scale={0.8}>
                             <KioskUnit
                                 position={[0, 0, 0]}
                                 rotation={[0, 0, 0]}
@@ -942,8 +1063,8 @@ export default function VerifiedPavilion({ onBack, user }) {
 
                         {/* 7. Front Right: RESEARCH */}
                         <KioskUnit
-                            position={[25, 0, 20]}
-                            rotation={[0, -Math.PI / 2, 0]}
+                            position={[-21, 0, -38]}
+                            rotation={[0, Math.PI / 6, 0]}
                             title="GENESIS BIO-LABS"
                             glowColor="#7209b7"
                             videoUrl={null}
@@ -953,7 +1074,7 @@ export default function VerifiedPavilion({ onBack, user }) {
                         />
 
                         {/* 8. Deep Back Center: DATA (Small, $500) */}
-                        <group position={[0, 0, -50]} rotation={[0, 0, 0]} scale={0.6}>
+                        <group position={[-12, 0, 32]} rotation={[0, Math.PI, 0]} scale={0.6}>
                             <KioskUnit
                                 position={[0, 0, 0]}
                                 rotation={[0, 0, 0]}
@@ -1012,8 +1133,8 @@ export default function VerifiedPavilion({ onBack, user }) {
 
                         {/* 11. Entrance Left: QUANTUM */}
                         <KioskUnit
-                            position={[-12, 0, 32]}
-                            rotation={[0, Math.PI, 0]} // Facing forward
+                            position={[0, 0, -50]}
+                            rotation={[0, 0, 0]} // Facing forward
                             title="QUANTUM"
                             glowColor="#4cc9f0"
                             videoUrl={null}
@@ -1056,6 +1177,13 @@ export default function VerifiedPavilion({ onBack, user }) {
                         {/* Generates an environment map locally on GPU - No network fetch required (Fixes crash) */}
                         {/* --- REALISTIC LIGHTING (Synthetic) --- */}
                         {/* Generates an environment map locally on GPU - No network fetch required (Fixes crash) */}
+                        {/* --- CREATIVE BILLBOARDS --- */}
+
+
+                        {/* --- REALISTIC LIGHTING (Synthetic) --- */}
+
+                        {/* --- REALISTIC LIGHTING (Synthetic) --- */}
+                        {/* Generates an environment map locally on GPU - No network fetch required (Fixes crash) */}
 
 
 
@@ -1069,9 +1197,9 @@ export default function VerifiedPavilion({ onBack, user }) {
 
                             // RESTRICTED CAMERA LIMITS
                             minDistance={inspectMode ? 0.5 : 0.1} // 0.1 allows "FPS" pivot logic
-                            maxDistance={inspectMode ? 20 : 1.0} // <--- Tight pivot (1m) for FPS feel while walking
+                            maxDistance={inspectMode ? 20 : 0.1} // <--- Tight pivot (0.1m) prevents height drop when looking up
                             minPolarAngle={inspectMode ? Math.PI / 3 : 0.1} // Prevent looking straight up
-                            maxPolarAngle={Math.PI / 2 - 0.05} // Ground level limit
+                            maxPolarAngle={Math.PI - 0.5} // Allow looking up significantly (approx 60 deg up)
 
                             enableDamping={true}
                             dampingFactor={0.1}

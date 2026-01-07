@@ -1,86 +1,91 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { useFBX, useTexture, Text, Html } from '@react-three/drei';
+import { useFBX, useTexture, Html } from '@react-three/drei';
 import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
 import { SkeletonUtils } from 'three-stdlib';
 import { ConvaiManager } from '../../lib/ConvaiManager';
 import { useTranslation } from 'react-i18next';
 
-// Verified paths on disk: public/objects/actor/Actor/party-f-0001/
+// Verified paths
 const HOLOGRAM_PATH = '/objects/actor/Actor/party-f-0001/party-f-0001.fbx';
 const TEXTURE_PATH = '/objects/actor/Actor/party-f-0001/Character_Pbr_Diffuse.png';
 const NORMAL_PATH = '/objects/actor/Actor/party-f-0001/Character_Pbr_Normal.jpg';
 
-export default function HologramGuide({ position = [0, 0, 0], rotation = [0, 0, 0], scale = 0.01, showUI = true }) {
+export default function HologramGuide({
+    position = [0, 0, 0],
+    rotation = [0, 0, 0],
+    scale = 0.01,
+    showUI = true,
+    isActive = false,
+    onActivate = () => { }
+}) {
     const { t } = useTranslation();
     const group = useRef();
     const [isListening, setIsListening] = useState(false);
-    const [hasError, setHasError] = useState(false); // New Error State
+    const [hasError, setHasError] = useState(false);
     const convaiManager = useRef(null);
-
     const [isTalking, setIsTalking] = useState(false);
-
-    // Viseme State
     const currentViseme = useRef(null);
 
-    // CC Character Viseme Mapping (Oculus to CC Morphs)
+    // CC Character Viseme Mapping
     const VISEME_MAP = {
-        0: 'sil',             // Sil
-        1: 'V_Explosive',     // PP (B, M, P) -> V_Explosive
-        2: 'V_Dental_Lip',    // FF (F, V) -> V_Dental_Lip
-        3: 'V_Dental_Lip',    // TH -> (Approx F/V or Tongue)
-        4: 'V_Lip_Open',      // DD (D, T) -> V_Lip_Open (Dental?)
-        5: 'V_Tight',         // kk (K, G) -> V_Tight
-        6: 'V_Affricate',     // CH (Ch, J) -> V_Affricate
-        7: 'V_Dental_Lip',    // SS (S, Z) -> V_Dental_Lip
-        8: 'V_Lip_Open',      // nn (N, L) -> V_Lip_Open
-        9: 'V_Tight',         // RR -> V_Tight
-        10: 'V_Open',         // aa (Ah) -> V_Open
-        11: 'V_Lip_Open',     // E (Eh, Ae) -> V_Lip_Open
-        12: 'V_Wide',         // ih (Ih, Iy) -> V_Wide
-        13: 'V_Tight-O',      // oh (Oh) -> V_Tight-O
-        14: 'V_Tight-O'       // ou (U, Oo) -> V_Tight-O
+        0: 'sil', 1: 'V_Explosive', 2: 'V_Dental_Lip', 3: 'V_Dental_Lip',
+        4: 'V_Lip_Open', 5: 'V_Tight', 6: 'V_Affricate', 7: 'V_Dental_Lip',
+        8: 'V_Lip_Open', 9: 'V_Tight', 10: 'V_Open', 11: 'V_Lip_Open',
+        12: 'V_Wide', 13: 'V_Tight-O', 14: 'V_Tight-O'
     };
 
-    // Init Convai
+    // --- CONVAI MANAGER LIFECYCLE ---
     useEffect(() => {
+        if (!isActive) {
+            if (convaiManager.current) {
+                convaiManager.current.reset();
+                convaiManager.current = null;
+            }
+            setIsListening(false);
+            setIsTalking(false);
+            return;
+        }
+
         const apiKey = import.meta.env.VITE_CONVAI_API_KEY;
         const charId = import.meta.env.VITE_CONVAI_CHARACTER_ID;
 
         if (apiKey && charId) {
             convaiManager.current = new ConvaiManager(apiKey, charId);
 
-            // Hook up Talking State
             convaiManager.current.setTalkingCallback((talking) => {
                 setIsTalking(talking);
-                if (!talking) currentViseme.current = null; // Reset silence
+                if (!talking) currentViseme.current = null;
             });
 
-            // Viseme Data
             convaiManager.current.setFaceDataCallback((faceData) => {
                 if (faceData && faceData.visor_visemes) {
                     const visemeID = faceData.visor_visemes.viseme;
                     const morphName = VISEME_MAP[visemeID];
-                    if (morphName) {
-                        currentViseme.current = { name: morphName, strength: 1.0 };
-                    }
+                    if (morphName) currentViseme.current = { name: morphName, strength: 1.0 };
                 }
             });
-
         } else {
-            console.warn("Convai Credentials Missing in .env");
+            console.warn("Convai Credentials Missing");
             setHasError(true);
         }
+
+        return () => {
+            if (convaiManager.current) {
+                convaiManager.current.reset();
+                convaiManager.current = null;
+            }
+        };
+    }, [isActive]);
+
+    // --- KEYBOARD LISTENERS ---
+    useEffect(() => {
+        if (!isActive) return;
 
         const handleKeyDown = (e) => {
             if (e.code === 'KeyT' && !e.repeat && convaiManager.current) {
                 setIsListening(true);
                 convaiManager.current.startListening();
-            }
-            // DEBUG: Press Y to send text "Hello"
-            if (e.code === 'KeyY' && !e.repeat && convaiManager.current) {
-                console.log("Debug: 'Y' pressed, sending 'Hello'...");
-                convaiManager.current.sendText("Hello");
             }
         };
 
@@ -93,217 +98,202 @@ export default function HologramGuide({ position = [0, 0, 0], rotation = [0, 0, 
 
         window.addEventListener('keydown', handleKeyDown);
         window.addEventListener('keyup', handleKeyUp);
-
         return () => {
             window.removeEventListener('keydown', handleKeyDown);
             window.removeEventListener('keyup', handleKeyUp);
-            if (convaiManager.current) convaiManager.current.reset();
         };
-    }, []);
+    }, [isActive]);
 
-    // Load Assets
+
+    // --- 3D LOADING & ANIMATION ---
     const sourceFbx = useFBX(HOLOGRAM_PATH);
     const textureMap = useTexture(TEXTURE_PATH);
     const normalMap = useTexture(NORMAL_PATH);
     textureMap.colorSpace = THREE.SRGBColorSpace;
 
+    // NOTE: Native Animations removed. Using manual rotation.
+
     const fbx = useMemo(() => {
         const clone = SkeletonUtils.clone(sourceFbx);
-
-        // --- BONE FINDER ---
-        const bones = {
-            spine: null,
-            neck: null,
-            leftArm: null,
-            rightArm: null,
-        };
+        const bones = { spine: null, neck: null, leftClav: null, rightClav: null, leftArm: null, rightArm: null, leftForeArm: null, rightForeArm: null };
 
         clone.traverse((child) => {
             if (child.isBone) {
                 const n = child.name;
-                // Spine
-                if (n === 'CC_Base_Spine01' || n === 'CC_Base_Spine02' || n.includes('Spine')) {
-                    if (!bones.spine) bones.spine = child;
+
+                // --- ROBUST REGEX MATCHING ---
+                if (/Spine/i.test(n)) { if (!bones.spine) bones.spine = child; }
+                if (/(Neck|Head)/i.test(n)) { if (!bones.neck) bones.neck = child; }
+
+                // Clavicles (Shoulders)
+                const isLeftClav = /(L_Clavicle|LeftShoulder|L_Collar)/i.test(n);
+                if (isLeftClav) bones.leftClav = child;
+
+                const isRightClav = /(R_Clavicle|RightShoulder|R_Collar)/i.test(n);
+                if (isRightClav) bones.rightClav = child;
+
+                // Upper Arms - Smart Selection
+                // 1. Match ANY upper arm like bone.
+                // 2. If it's a "Twist" bone, only take it if we haven't found a real one yet.
+                // 3. If it's a "Real" bone (no Twist), ALWAYS take it/overwrite.
+                const isLeftArmGeneric = /(L_UpperArm|LeftUpArm|LeftArm)/i.test(n) && !/Fore/i.test(n) && !/Shoulder/i.test(n) && !/Clavicle/i.test(n);
+                if (isLeftArmGeneric) {
+                    const isTwist = /Twist/i.test(n);
+                    if (!isTwist || !bones.leftArm) {
+                        bones.leftArm = child;
+                    }
                 }
-                // Head/Neck
-                if (n === 'CC_Base_NeckTwist01' || n === 'CC_Base_Head' || n.includes('Neck')) {
-                    if (!bones.neck) bones.neck = child;
+
+                const isRightArmGeneric = /(R_UpperArm|RightUpArm|RightArm)/i.test(n) && !/Fore/i.test(n) && !/Shoulder/i.test(n) && !/Clavicle/i.test(n);
+                if (isRightArmGeneric) {
+                    const isTwist = /Twist/i.test(n);
+                    if (!isTwist || !bones.rightArm) {
+                        bones.rightArm = child;
+                    }
                 }
-                // Arms
-                if (n === 'CC_Base_L_Upperarm' || n === 'mixamorig:LeftArm' || n === 'LeftArm') {
-                    bones.leftArm = child;
+
+                // Forearms (Elbows) - Same Logic
+                const isLeftForeArmGeneric = /(L_ForeAre|LeftForeArm|LeftLowArm|L_LowerArm)/i.test(n);
+                if (isLeftForeArmGeneric) {
+                    const isTwist = /Twist/i.test(n);
+                    if (!isTwist || !bones.leftForeArm) {
+                        bones.leftForeArm = child;
+                    }
                 }
-                if (n === 'CC_Base_R_Upperarm' || n === 'mixamorig:RightArm' || n === 'RightArm') {
-                    bones.rightArm = child;
+
+                const isRightForeArmGeneric = /(R_ForeArm|RightForeArm|RightLowArm|R_LowerArm)/i.test(n);
+                if (isRightForeArmGeneric) {
+                    const isTwist = /Twist/i.test(n);
+                    if (!isTwist || !bones.rightForeArm) {
+                        bones.rightForeArm = child;
+                    }
                 }
             }
         });
 
+        console.log("--- BONE DEBUG ---");
+        console.log("LeftClav:", bones.leftClav?.name);
+        console.log("RightClav:", bones.rightClav?.name);
+        console.log("LeftArm:", bones.leftArm?.name);
+        console.log("RightArm:", bones.rightArm?.name);
+        console.log("------------------");
+
         clone.userData.bones = bones;
 
-        // Material Surgery & Morph Target Check
         clone.traverse((child) => {
             if (child.isMesh) {
-                // Find Face Mesh for Lip Sync
                 if (child.morphTargetDictionary) {
                     clone.userData.morphMesh = child;
-                    const dict = child.morphTargetDictionary;
-                    if (dict['Mouth_Open'] !== undefined) clone.userData.mouthIndex = dict['Mouth_Open'];
-                    else if (dict['A25_Jaw_Open'] !== undefined) clone.userData.mouthIndex = dict['A25_Jaw_Open'];
-                    else if (dict['V_Open'] !== undefined) clone.userData.mouthIndex = dict['V_Open'];
                 }
-
-                const newMat = new THREE.MeshStandardMaterial({
-                    name: 'Safe_Skin',
+                child.material = new THREE.MeshStandardMaterial({
                     map: textureMap,
                     normalMap: normalMap,
-                    color: 0xffffff,
-                    metalness: 0.0,
                     roughness: 0.8,
+                    metalness: 0.0,
                     side: THREE.FrontSide,
                     emissive: 0x000000,
                     emissiveIntensity: 0,
                 });
-                if (child.material) child.material.dispose();
-                child.material = newMat;
                 child.castShadow = true;
                 child.receiveShadow = true;
             }
         });
 
-        // Feet Align
+        // Center Pivot
         const box = new THREE.Box3().setFromObject(clone);
-        clone.position.y += -box.min.y;
-
+        clone.position.y -= box.min.y;
         const center = new THREE.Vector3();
         box.getCenter(center);
         clone.position.x -= center.x;
         clone.position.z -= center.z;
 
         return clone;
-    }, [sourceFbx, textureMap, normalMap]); // Removed isListening dependency (handled in useFrame)
+    }, [sourceFbx, textureMap, normalMap]);
 
-    // Update material glow dynamically instead of re-memoizing
-    useFrame(() => {
+    useFrame((state) => {
+        // Glow effect
         if (fbx) {
-            fbx.traverse((child) => {
-                if (child.isMesh && child.material) {
-                    child.material.emissive.setHex(isListening ? 0x00aaff : 0x000000);
-                    child.material.emissiveIntensity = isListening ? 0.5 : 0;
+            fbx.traverse((c) => {
+                if (c.isMesh && c.material) {
+                    const isGlow = isListening || isTalking;
+                    const color = isListening ? 0x00aaff : (isTalking ? 0x222222 : 0x000000);
+                    c.material.emissive.setHex(color);
+                    c.material.emissiveIntensity = isListening ? 0.5 : (isTalking ? 0.2 : 0);
                 }
             });
         }
-    });
 
-    // PROCEDURAL ANIMATION LOOP
-    useFrame((state) => {
+        // Animation
         const t = state.clock.elapsedTime;
-        const { spine, neck, leftArm, rightArm } = fbx.userData.bones;
+        const { spine, neck, leftClav, rightClav, leftArm, rightArm, leftForeArm, rightForeArm } = fbx.userData.bones;
 
-        // Breathing
+        // 1. Procedural Breathing (Spine)
         if (spine) {
-            spine.rotation.x = (Math.sin(t * 2) * 0.03);
-            spine.rotation.y = (Math.cos(t * 1) * 0.03);
+            spine.rotation.x = Math.sin(t * 2) * 0.03;
+            spine.rotation.y = Math.cos(t * 1) * 0.03;
         }
 
-        // Subtle neck movement (Convai friendly)
-        if (neck) {
-            // Base idle movement
-            neck.rotation.x = -(Math.sin(t * 2) * 0.01);
+        // SYMMETRY RESTORATION
+        // Right Arm (User Approved)
+        // Clav: 0.82, 0.70, 1.94 | Arm: 0.29, 0.57, 0.21 | Fore: 0.18, -0.17, 0
 
-            // Interaction States
-            if (isListening) {
-                neck.rotation.x -= 0.2; // Look up
-            }
-        }
+        if (rightClav) rightClav.rotation.set(0.82, 0.70, 1.94);
+        if (rightArm) rightArm.rotation.set(0.29, 0.57, 0.21);
+        if (rightForeArm) rightForeArm.rotation.set(0.18, -0.17, 0);
 
-        // LIP SYNC ANIMATION (Real Visemes)
+        // Left Arm (Mirrored from Right)
+        // Negating Y and Z for symmetry to match the other side
+        if (leftClav) leftClav.rotation.set(0.82, -0.70, -1.94);
+        if (leftArm) leftArm.rotation.set(0.29, -0.57, -0.21);
+        if (leftForeArm) leftForeArm.rotation.set(0.18, 0.17, 0);
+
+        // Lip Sync
         const { morphMesh } = fbx.userData;
-
         if (morphMesh && morphMesh.morphTargetDictionary && morphMesh.morphTargetInfluences) {
-
-            // Lerp Speed
             const LERP_SPEED = 0.5;
 
-            // 1. If talking and we have a target viseme (Advanced Lip Sync)
             if (isTalking && currentViseme.current) {
                 const targetName = currentViseme.current.name;
                 const targetIndex = morphMesh.morphTargetDictionary[targetName];
-
-                // Iterate all mapped visemes to reset others and boost target
                 Object.values(VISEME_MAP).forEach(name => {
                     const idx = morphMesh.morphTargetDictionary[name];
                     if (idx !== undefined) {
-                        const targetValue = (idx === targetIndex) ? 1.0 : 0;
-                        morphMesh.morphTargetInfluences[idx] = THREE.MathUtils.lerp(
-                            morphMesh.morphTargetInfluences[idx],
-                            targetValue,
-                            LERP_SPEED
-                        );
+                        const val = (idx === targetIndex) ? 1.0 : 0;
+                        morphMesh.morphTargetInfluences[idx] = THREE.MathUtils.lerp(morphMesh.morphTargetInfluences[idx], val, LERP_SPEED);
                     }
                 });
-            }
-            // 2. Fallback: Talking but no Viseme data (Simple Sine Wave)
-            else if (isTalking) {
-                // Try to find a generic mouth open morph
+            } else if (isTalking) {
                 let mouthIdx = morphMesh.morphTargetDictionary['Mouth_Open'];
                 if (mouthIdx === undefined) mouthIdx = morphMesh.morphTargetDictionary['A25_Jaw_Open'];
-                if (mouthIdx === undefined) mouthIdx = morphMesh.morphTargetDictionary['V_Open'];
-
-                if (mouthIdx !== undefined) {
-                    // 15Hz Sine Wave
-                    const val = (Math.sin(t * 15) + 1) * 0.3;
-                    morphMesh.morphTargetInfluences[mouthIdx] = val;
-                }
-            }
-            // 3. Not Talking: Close Mouth
-            else {
+                if (mouthIdx !== undefined) morphMesh.morphTargetInfluences[mouthIdx] = (Math.sin(t * 15) + 1) * 0.3;
+            } else {
                 Object.values(VISEME_MAP).forEach(name => {
                     const idx = morphMesh.morphTargetDictionary[name];
-                    if (idx !== undefined) {
-                        morphMesh.morphTargetInfluences[idx] = THREE.MathUtils.lerp(
-                            morphMesh.morphTargetInfluences[idx],
-                            0,
-                            0.2
-                        );
-                    }
+                    if (idx !== undefined) morphMesh.morphTargetInfluences[idx] = THREE.MathUtils.lerp(morphMesh.morphTargetInfluences[idx], 0, 0.2);
                 });
-
-                // Also reset standard open just in case
-                let mouthIdx = morphMesh.morphTargetDictionary['Mouth_Open'];
-                if (mouthIdx === undefined) mouthIdx = morphMesh.morphTargetDictionary['A25_Jaw_Open'];
-                if (mouthIdx === undefined) mouthIdx = morphMesh.morphTargetDictionary['V_Open']; // Ensure we reset the fallback morph too
-
-                if (mouthIdx !== undefined) {
-                    morphMesh.morphTargetInfluences[mouthIdx] = THREE.MathUtils.lerp(
-                        morphMesh.morphTargetInfluences[mouthIdx], 0, 0.2
-                    );
-                }
+                let mouthIdx = morphMesh.morphTargetDictionary['Mouth_Open'] || morphMesh.morphTargetDictionary['A25_Jaw_Open'];
+                if (mouthIdx !== undefined) morphMesh.morphTargetInfluences[mouthIdx] = THREE.MathUtils.lerp(morphMesh.morphTargetInfluences[mouthIdx], 0, 0.2);
             }
-        }
-
-        // FORCE ARMS DOWN (A-Pose maintenance)
-        // Removed aggressive listening rotation to prevent mesh distortion
-        if (leftArm) {
-            leftArm.rotation.z = -1.4 + (Math.sin(t) * 0.02);
-            leftArm.rotation.x = 0.3;
-        }
-        if (rightArm) {
-            rightArm.rotation.z = 1.4 - (Math.sin(t) * 0.02);
-            rightArm.rotation.x = 0.3;
         }
     });
 
-    const toggleListening = (e) => {
+    // --- INTERACTION ---
+    const handleClick = (e) => {
         e.stopPropagation();
-        if (!convaiManager.current) return;
 
-        if (isListening) {
-            setIsListening(false);
-            convaiManager.current.stopListening();
-        } else {
-            setIsListening(true);
-            convaiManager.current.startListening();
+        if (!isActive) {
+            onActivate();
+            return;
+        }
+
+        if (convaiManager.current) {
+            if (isListening) {
+                setIsListening(false);
+                convaiManager.current.stopListening();
+            } else {
+                setIsListening(true);
+                convaiManager.current.startListening();
+            }
         }
     };
 
@@ -312,97 +302,66 @@ export default function HologramGuide({ position = [0, 0, 0], rotation = [0, 0, 
             ref={group}
             position={position}
             rotation={rotation}
-            dispose={null}
-            onClick={toggleListening}
+            onClick={handleClick}
             onPointerOver={() => document.body.style.cursor = 'pointer'}
             onPointerOut={() => document.body.style.cursor = 'auto'}
         >
             <primitive object={fbx} scale={scale} />
 
-            {/* Professional Interaction Tag - Fixed World Scale */}
+            {/* UI TAG */}
             {showUI && (
-                <Html
-                    position={[0, 1.85, 0]}
-                    center
-                    transform
-                    scale={0.25} // Fixed size: 0.25 meters (approx head size)
-                    style={{ pointerEvents: 'none' }} // Ensure click-through when hidden (though showUI handles removal)
-                >
-                    <div
-                        onClick={toggleListening}
-                        style={{
-                            cursor: 'pointer',
-                            display: 'flex',
-                            flexDirection: 'column',
-                            alignItems: 'center',
-                            gap: '2px',
-                            opacity: 0.9,
-                            transition: 'opacity 0.2s',
-                            pointerEvents: 'auto',
-                            transform: 'scale(0.5)' // Increases resolution
-                        }}
-                    >
-                        {/* Circle Button */}
+                <Html position={[0, 1.85, 0]} center transform scale={0.25} style={{ pointerEvents: 'none' }}>
+                    <div style={{
+                        cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', pointerEvents: 'auto',
+                        transform: 'scale(0.5)'
+                    }} onClick={handleClick}>
+
+                        {/* Main Button Circle */}
                         <div style={{
-                            width: '80px', // Visual size in the scaled down HTML
-                            height: '80px',
-                            borderRadius: '50%',
-                            background: hasError ? 'rgba(255, 0, 0, 0.6)' : (isListening ? 'rgba(0, 255, 128, 0.8)' : 'rgba(0, 0, 0, 0.6)'),
-                            backdropFilter: 'blur(8px)',
-                            border: hasError ? '2px solid #ff0000' : (isListening ? '4px solid #00ff80' : '2px solid rgba(255,255,255,0.2)'),
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
+                            width: '80px', height: '80px', borderRadius: '50%',
+                            background: isActive
+                                ? (isListening ? 'rgba(0, 255, 128, 0.8)' : 'rgba(0, 0, 0, 0.6)') // Active Colors
+                                : 'rgba(0, 200, 255, 0.6)', // Inactive Color (Blue)
+                            border: isActive
+                                ? (isListening ? '4px solid #00ff80' : '2px solid rgba(255,255,255,0.2)')
+                                : '2px solid rgba(0,255,255, 0.5)',
+                            display: 'flex', alignItems: 'center', justifyContent: 'center',
                             boxShadow: isListening ? '0 0 30px rgba(0, 255, 128, 0.5)' : '0 5px 15px rgba(0,0,0,0.3)',
-                            transition: 'all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
-                            animation: isListening ? 'pulse-ring 2s infinite' : 'none'
+                            animation: isListening ? 'pulse-ring 2s infinite' : (isActive ? 'none' : 'float 3s infinite ease-in-out')
                         }}>
-                            {/* Mic Icon SVG */}
-                            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke={isListening ? "#000" : "#fff"} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                                <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z" />
-                                <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
-                                <line x1="12" y1="19" x2="12" y2="23" />
-                                <line x1="8" y1="23" x2="16" y2="23" />
-                            </svg>
+                            {isActive ? (
+                                <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke={isListening ? "#000" : "#fff"} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                                    <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z" />
+                                    <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
+                                    <line x1="12" y1="19" x2="12" y2="23" />
+                                    <line x1="8" y1="23" x2="16" y2="23" />
+                                </svg>
+                            ) : (
+                                <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                                </svg>
+                            )}
                         </div>
 
                         <div style={{
-                            background: 'rgba(0,0,0,0.85)',
-                            padding: '4px 12px',
-                            borderRadius: '6px',
-                            color: 'white',
-                            fontSize: '20px', // High res text
-                            fontWeight: '600',
-                            marginTop: '6px',
-                            opacity: isListening ? 1 : 0,
-                            transform: isListening ? 'translateY(0)' : 'translateY(-10px)',
-                            transition: 'all 0.2s',
-                            pointerEvents: 'none',
-                            whiteSpace: 'nowrap'
+                            background: 'rgba(0,0,0,0.85)', padding: '4px 12px', borderRadius: '6px',
+                            color: 'white', fontSize: '20px', fontWeight: '600', marginTop: '6px',
+                            opacity: 1, transition: 'all 0.2s', whiteSpace: 'nowrap'
                         }}>
-                            {hasError ? t('hologram.no_api', "No API Key") : (isListening ? t('hologram.listening', "Listening") : t('hologram.chat', "Chat"))}
+                            {!isActive ? t('hologram.connect', "Connect") : (isListening ? t('hologram.listening', "Listening") : t('hologram.chat', "Chat"))}
                         </div>
 
-                        {/* Instruction Hint */}
                         <div style={{
-                            color: 'rgba(255,255,255,0.6)',
-                            fontSize: '14px',
-                            marginTop: '4px',
-                            fontWeight: '400',
-                            textTransform: 'uppercase',
-                            letterSpacing: '1px',
-                            pointerEvents: 'none'
+                            color: 'rgba(255,255,255,0.6)', fontSize: '14px', marginTop: '4px',
+                            fontWeight: '400', textTransform: 'uppercase', letterSpacing: '1px'
                         }}>
-                            {t('hologram.press_to_talk', "Press T to talk")}
+                            {!isActive ? t('hologram.click_to_talk', "Click to Talk") : t('hologram.press_to_talk', "Press T to talk")}
                         </div>
                     </div>
                     <style>{`
-                    @keyframes pulse-ring {
-                        0% { box-shadow: 0 0 0 0 rgba(0, 255, 128, 0.7); }
-                        70% { box-shadow: 0 0 0 20px rgba(0, 255, 128, 0); }
-                        100% { box-shadow: 0 0 0 0 rgba(0, 255, 128, 0); }
-                    }
-                `}</style>
+                        @keyframes pulse-ring { 0% { box-shadow: 0 0 0 0 rgba(0, 255, 128, 0.7); } 70% { box-shadow: 0 0 0 20px rgba(0, 255, 128, 0); } 100% { box-shadow: 0 0 0 0 rgba(0, 255, 128, 0); } }
+                        @keyframes float { 0% { transform: translateY(0px) scale(1); } 50% { transform: translateY(-5px) scale(1.05); } 100% { transform: translateY(0px) scale(1); } }
+                    `}</style>
                 </Html>
             )}
         </group>
