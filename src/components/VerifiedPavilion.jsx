@@ -644,7 +644,7 @@ export default function VerifiedPavilion({ onBack, user }) {
                             {/* 1. Main Platform Guide (Center) */}
                             <HologramGuide
                                 id="main"
-                                position={[0, 0.95, -4]} // Raised from 0.7
+                                position={[0, 0.2, -4]} // Grounded on pavilion base (0.2)
                                 rotation={[0, 0, 0]}
                                 scale={0.013}
                                 showUI={!isShowroomOpen}
@@ -654,8 +654,7 @@ export default function VerifiedPavilion({ onBack, user }) {
 
                             {/* 2. W&T Engineering (Left - Existing Position) */}
                             <HologramGuide
-                                id="aero"
-                                position={[-21, 0.9, -1]}
+                                position={[-21, 0, -1]} // Grounded on floor (0.0)
                                 rotation={[0, Math.PI / 2, 0]}
                                 scale={0.013}
                                 showUI={!isShowroomOpen}
@@ -666,7 +665,7 @@ export default function VerifiedPavilion({ onBack, user }) {
                             {/* 3. Titan Heavy (Right) */}
                             <HologramGuide
                                 id="heavy"
-                                position={[21, 0.9, -1]}
+                                position={[21, 0, -1]} // Grounded on floor (0.0)
                                 rotation={[0, -Math.PI / 2, 0]}
                                 scale={0.013}
                                 showUI={!isShowroomOpen}
@@ -677,7 +676,7 @@ export default function VerifiedPavilion({ onBack, user }) {
                             {/* 4. Genesis Bio (Back Left) */}
                             <HologramGuide
                                 id="bio"
-                                position={[-21, 0.9, -38]}
+                                position={[-21, 0, -38]} // Grounded on floor (0.0)
                                 rotation={[0, Math.PI / 3, 0]}
                                 scale={0.013}
                                 showUI={!isShowroomOpen}
@@ -688,7 +687,7 @@ export default function VerifiedPavilion({ onBack, user }) {
                             {/* 5. Quantum (Back Center) */}
                             <HologramGuide
                                 id="quantum"
-                                position={[0, 0.9, -50]}
+                                position={[0, 0, -50]} // Grounded on floor (0.0)
                                 rotation={[0, 0, 0]}
                                 scale={0.013}
                                 showUI={!isShowroomOpen}
@@ -699,7 +698,7 @@ export default function VerifiedPavilion({ onBack, user }) {
                             {/* 6. Buy for $1500 (Entrance Right) */}
                             <HologramGuide
                                 id="buy1500"
-                                position={[25, 0.9, 20]}
+                                position={[25, 0.48, 20]} // Grounded on Kiosk Floor (scale 0.8 * 0.6)
                                 rotation={[0, -Math.PI / 2, 0]}
                                 scale={0.013}
                                 showUI={!isShowroomOpen}
@@ -710,7 +709,7 @@ export default function VerifiedPavilion({ onBack, user }) {
                             {/* 7. Buy for $500 (Entrance Left) */}
                             <HologramGuide
                                 id="buy500"
-                                position={[-12, 0.85, 32]} // Raised to 0.85 to fix floor clipping
+                                position={[-12, 0.36, 32]} // Grounded on Kiosk Floor (scale 0.6 * 0.6)
                                 rotation={[0, Math.PI, 0]}
                                 scale={0.013}
                                 showUI={!isShowroomOpen}
