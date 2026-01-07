@@ -710,7 +710,7 @@ export default function VerifiedPavilion({ onBack, user }) {
                             {/* 7. Buy for $500 (Entrance Left) */}
                             <HologramGuide
                                 id="buy500"
-                                position={[-12, 0.05, 32]} // Lowered from 0.9 to fix floating
+                                position={[-12, 0.85, 32]} // Raised to 0.85 to fix floor clipping
                                 rotation={[0, Math.PI, 0]}
                                 scale={0.013}
                                 showUI={!isShowroomOpen}
