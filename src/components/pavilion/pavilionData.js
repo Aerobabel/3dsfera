@@ -25,7 +25,7 @@ const VALVE1_PATH = '/objects/optimized_lods/valve1_med.glb';
 const VALVE2_PATH = '/objects/optimized_lods/valve2_med.glb';
 const CAMERA_PATH = '/objects/optimized/camera.glb';
 const DRONE_PATH = '/objects/drone.glb';
-const MICROSCOPE_PATH = '/objects/optimized/microscope.glb';
+const MICROSCOPE_PATH = '/objects/optimized_lods/microscope_med.glb'; // Compressed to 4.3MB
 const SERVER_RACK_PATH = '/objects/network_server_rack.glb';
 
 export const PAVILIONS = {

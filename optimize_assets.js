@@ -25,7 +25,8 @@ const ASSETS_TO_OPTIMIZE = [
     'industrial_stamp.glb',
     'industrial_robot.glb',
     'industrial_storage_tank.glb',
-    'industrial_unit.glb'
+    'industrial_unit.glb',
+    'optimized/microscope.glb'
 ];
 
 // Ensure output directory exists
