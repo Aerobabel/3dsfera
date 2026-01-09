@@ -599,15 +599,15 @@ export default function VerifiedPavilion({ onBack, user }) {
                             onPointerOut={(e) => { e.stopPropagation(); document.body.style.cursor = 'auto'; }}
                         />
 
-                        {/* 3. Valve on Floor */}
+                        {/* 3. Valve on Floor (Moved Left of W&T) */}
                         <ProductDisplay
                             modelPath={VALVE_PATH}
-                            position={[-10, 0, 10]} // Ground level
+                            position={[-33, 0, 3]} // Adjusted: Further out to [-33, 3] to clear intersection
                             rotation={[0, Math.PI / 3, 0]}
-                            scale={0.15} // Reduced size by a lot
-                            heightOffset={-0.9} // Reduce distance to pedestal
+                            scale={0.15}
+                            heightOffset={-0.9}
                             onClick={(e) => {
-                                const position = [-10, 0, 10];
+                                const position = [-33, 0, 3];
                                 if (inspectMode && orbitTarget && orbitTarget[0] === position[0] && orbitTarget[2] === position[2]) return;
                                 e.stopPropagation();
                                 SoundManager.playClick();
@@ -623,14 +623,15 @@ export default function VerifiedPavilion({ onBack, user }) {
                         {/* --- FACTORY FLOOR EXPANSION --- */}
 
                         {/* Zone 1: Assembly Line (Left) */}
-                        <group position={[-10, 0, 8]} rotation={[0, 0.2, 0]}>
+                        {/* Zone 1: Assembly Line (Left) - REMOVED */}
+                        {/* <group position={[-10, 0, 8]} rotation={[0, 0.2, 0]}>
                             {/* Removed HazardZone */}
-                            <ConveyorBelt length={12} position={[0, 0, 0]} />
-                            <ConveyorBelt length={12} position={[3, 0, 0]} />
-                            {/* Partitions behind */}
-                            <FactoryPartition position={[-2, 0, -3]} rotation={[0, 0, 0]} width={6} />
+                        {/* <ConveyorBelt length={12} position={[0, 0, 0]} />
+                            <ConveyorBelt length={12} position={[3, 0, 0]} /> */}
+                        {/* Partitions behind */}
+                        {/* <FactoryPartition position={[-2, 0, -3]} rotation={[0, 0, 0]} width={6} />
                             <FactoryPartition position={[4, 0, -3]} rotation={[0, 0, 0]} width={6} />
-                        </group>
+                        </group> */}
 
                         {/* 3DSFERA foyer mat: place excavator on the yellow pad to the right-front of the central kiosk */}
 
@@ -638,7 +639,7 @@ export default function VerifiedPavilion({ onBack, user }) {
                         {/* Zone 3: Storage Area (Back Left) */}
                         <group position={[-20, 0, -10]}>
                             <FactoryPartition position={[0, 0, 0]} rotation={[0, 2.4, 0]} width={8} />
-                            <ConveyorBelt length={8} position={[3.7, 0, 0]} rotation={[0, -29.1, 0]} />
+                            {/* <ConveyorBelt length={8} position={[3.7, 0, 0]} rotation={[0, -29.1, 0]} /> */}
                         </group>
 
 
@@ -739,24 +740,8 @@ export default function VerifiedPavilion({ onBack, user }) {
 
                         {/* --- BOOTHS / KIOSKS (Default Cyberpunk) --- */}
 
-                        {/* --- CENTRAL PLATFORM (Staired Dais) --- */}
-                        <group position={[0, 0, 10]}>
-                            {/* Step 1 (Bottom) */}
-                            <mesh receiveShadow castShadow position={[0, 0.125, 0]}>
-                                <cylinderGeometry args={[7, 7.5, 0.25, 64]} />
-                                <meshStandardMaterial color="#e0e0e0" roughness={0.5} metalness={0.1} />
-                            </mesh>
-                            {/* Step 2 (Middle) */}
-                            <mesh receiveShadow castShadow position={[0, 0.375, 0]}>
-                                <cylinderGeometry args={[5, 5.5, 0.25, 64]} />
-                                <meshStandardMaterial color="#e0e0e0" roughness={0.5} metalness={0.1} />
-                            </mesh>
-                            {/* Step 3 (Top) */}
-                            <mesh receiveShadow castShadow position={[0, 0.625, 0]}>
-                                <cylinderGeometry args={[3, 3.5, 0.25, 64]} />
-                                <meshStandardMaterial color="#e0e0e0" roughness={0.5} metalness={0.1} />
-                            </mesh>
-                        </group>
+                        {/* --- CENTRAL PLATFORM (Staired Dais) - REMOVED --- */}
+                        {/* <group position={[0, 0, 10]}> ... </group> */}
 
                         {/* Center Hero Booth (3dsfera) */}
                         {/* Center Hero Booth (3dsfera) - Now Info Desk */}
