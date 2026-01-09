@@ -506,37 +506,39 @@ function KioskUnit({
                     </Text>
                 </group>
 
-                {/* 6. Content (Model or Hologram) - PROGRESSIVE LOADING (LOD) REMOVED */}
+                {/* 6. Content (Model or Hologram) - PROGRESSIVE LOADING (LOD) RESTORED */}
                 <group position={[0, 0, 0]}> {/* Lowered from 0.4 to 0 so pedestal sits on floor */}
-                    {modelPath || isTv || useEscavator ? (
-                        <ProductDisplay
-                            modelPath={modelPath}
-                            isTv={isTv}
-                            hidePedestal={hideMainPedestal}
-                            position={[0, 0, 0]}
-                            scale={0.8} // Scaled to fit in kiosk
-                            heightOffset={heightOffset}
-                            useEscavator={useEscavator}
-                            isRoboticArm={isRoboticArm}
-                        />
-                    ) : hasHologram ? (
-                        <group position={[0, 1, 0]}>
-                            <Hologram color={effectiveGlow} />
-                            <VolumetricBeam color={effectiveGlow} />
-                        </group>
-                    ) : null}
+                    <ProgressiveModelLoader threshold={35}>
+                        {modelPath || isTv || useEscavator ? (
+                            <ProductDisplay
+                                modelPath={modelPath}
+                                isTv={isTv}
+                                hidePedestal={hideMainPedestal}
+                                position={[0, 0, 0]}
+                                scale={0.8} // Scaled to fit in kiosk
+                                heightOffset={heightOffset}
+                                useEscavator={useEscavator}
+                                isRoboticArm={isRoboticArm}
+                            />
+                        ) : hasHologram ? (
+                            <group position={[0, 1, 0]}>
+                                <Hologram color={effectiveGlow} />
+                                <VolumetricBeam color={effectiveGlow} />
+                            </group>
+                        ) : null}
+                    </ProgressiveModelLoader>
                 </group>
 
                 {/* 7. Side Satellites (Optional - floating minis) */}
-                {modelPath && !hideSideModels && (
-                    <>
+                {(modelPath || sideModelPath) && !hideSideModels && (
+                    <ProgressiveModelLoader threshold={25}>
                         <group position={[4, 0, 1]}>
-                            <ProductDisplay modelPath={modelPath} scale={0.5} />
+                            <ProductDisplay modelPath={sideModelPath || modelPath} scale={sideModelScale || 0.5} />
                         </group>
                         <group position={[-4, 0, 1]}>
-                            <ProductDisplay modelPath={modelPath} scale={0.5} />
+                            <ProductDisplay modelPath={sideModelPath || modelPath} scale={sideModelScale || 0.5} />
                         </group>
-                    </>
+                    </ProgressiveModelLoader>
                 )}
 
             </group>

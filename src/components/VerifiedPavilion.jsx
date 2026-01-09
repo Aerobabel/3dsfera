@@ -1111,41 +1111,9 @@ export default function VerifiedPavilion({ onBack, user }) {
                             <GlassBarrier position={[0, 4, 4]} width={14} height={8} />
                         </group>
 
-                        {/* 9. Deep Back Right: MANUFACTURING */}
-                        <KioskUnit
-                            position={[34, 0, -22]}
-                            rotation={[0, -Math.PI / 4, 0]}
-                            title="SYNTHETIC MINDS"
-                            glowColor="#fb8500"
-                            videoUrl={null}
-                            hideSideModels={true}
-                            imageUrl={kioskManufacturingUrl}
 
-                            onClick={() => SoundManager.playClick()}
-                        />
 
-                        {/* 10. Deep Back Left: AI SYSTEMS */}
-                        <KioskUnit
-                            position={[-34, 0, -22]}
-                            rotation={[0, Math.PI / 4, 0]}
-                            hideSideModels={true}
-                            modelPath={PNEUMATIC_PATH} // Restored model (Pneumatic)
-                            productScale={1.5}
-                            modelPosition={[0, 0.5, 0]}
-                            modelRotation={[0, Math.PI, 0]}
-                            imageUrl={kioskAiUrl}
-                            onClick={(e) => {
-                                const position = [-25, 0, -20];
-                                if (inspectMode && orbitTarget && orbitTarget[0] === position[0] && orbitTarget[2] === position[2]) return;
-                                e.stopPropagation();
-                                SoundManager.playClick();
-                                SoundManager.playClick();
-                                setSelectedObject(PAVILIONS['ai_systems']);
-                                setInspectMode(true);
-                                setOrbitTarget([-30, 2, -25]); // Centered on flying drone
-                                setCameraPosition([position[0] + 5, position[1] + 2, position[2] + 5]);
-                            }}
-                        />
+
 
                         {/* --- ENTRANCE AREA (Behind Camera Z > 15) --- */}
 

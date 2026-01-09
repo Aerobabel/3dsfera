@@ -133,7 +133,7 @@ export function DetailedFloor() {
             </mesh>
             {/* Tech Grid Overlay - Fades out */}
             <Grid
-                position={[0, 0.01, 0]}
+                position={[0, 0.02, 0]}
                 args={[80, 80]}
                 sectionSize={4}
                 sectionThickness={1}
@@ -454,7 +454,7 @@ export function UltimateFloor() {
 
             {/* Grid Overlay - "Architectural White" Style */}
             <Grid
-                position={[0, 0.08, 0]}
+                position={[0, 0.15, 0]}
                 args={[120, 120]}
                 cellSize={2}
                 cellThickness={1}
@@ -462,8 +462,8 @@ export function UltimateFloor() {
                 sectionSize={10}
                 sectionThickness={1.5}
                 sectionColor="#d4d4d4" // Subtle grey (Removed Blue/Cyan)
-                fadeDistance={100} // Soft fade out at distance
-                infiniteGrid
+                fadeDistance={80} // Soft fade out at distance
+                infiniteGrid={false}
             />
         </group>
     )
