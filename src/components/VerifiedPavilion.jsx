@@ -56,11 +56,11 @@ import { LODModel } from './pavilion/LODModel';
 const TURBO_ENGINE_PATH = '/objects/turbo_schaft_engine_ivchenko_al-20.glb'; // Need to optimize this one next
 const PNEUMATIC_PATH = '/objects/optimized/Pneumatic.glb';
 const CRANE_PATH = '/objects/optimized/mobile_crane.glb';
-const CRANE_MACHINE_PATH = '/objects/optimized_lods/crane_machine_med.glb'; // 4.9MB (Safe) vs 14MB (Crash)
-const ROAD_GRADER_PATH = '/objects/optimized_lods/road_grader_med.glb'; // 2.9MB vs 15MB
-const VALVE_PATH = '/objects/optimized_lods/valve_med.glb'; // 0.7MB (Ultra Safe)
-const VALVE1_PATH = '/objects/optimized_lods/valve1_med.glb'; // 1.3MB
-const VALVE2_PATH = '/objects/optimized_lods/valve2_med.glb'; // 2.7MB vs 5MB (High caused crash)
+const CRANE_MACHINE_PATH = '/objects/optimized_lods/crane_machine_low.glb'; // Switched to LOW for speed
+const ROAD_GRADER_PATH = '/objects/optimized_lods/road_grader_low.glb'; // Switched to LOW
+const VALVE_PATH = '/objects/optimized_lods/valve_low.glb'; // Switched to LOW
+const VALVE1_PATH = '/objects/optimized_lods/valve1_low.glb'; // Switched to LOW
+const VALVE2_PATH = '/objects/optimized_lods/valve2_low.glb'; // Switched to LOW
 
 // LOD Constants
 const ROAD_GRADER_LOD = '/objects/optimized_lods/road_grader';
@@ -794,22 +794,7 @@ export default function VerifiedPavilion({ onBack, user }) {
                         {/* --- DECORATIONS: W&T Engineering (Filling empty space) --- */}
                         <group position={[-25, 0, -5]}>
                             {/* Valve 1: Lying on the floor to the left */}
-                            <Gltf
-                                src={VALVE1_PATH}
-                                position={[-5, 0.85, 1.5]} // Raised to 0.85
-                                rotation={[0, Math.PI / 3, Math.PI / 2]}
-                                scale={0.7}
-                                receiveShadow
-                            />
-
-                            {/* Valve 2: Upright nearby (Moved inside) */}
-                            <Gltf
-                                src={VALVE2_PATH}
-                                position={[-3.0, 0.85, 0.5]} // Moved inside from [-4.5, -2.5]
-                                rotation={[0, -Math.PI / 4, 0]}
-                                scale={0.6}
-                                receiveShadow
-                            />
+                            {/* Valve 1 & 2 Gltf Removed (Duplicates) */}
 
                             {/* Extra Blue Valve 1 */}
                             {/* Valve 1 - LOD Enabled */}
@@ -873,10 +858,11 @@ export default function VerifiedPavilion({ onBack, user }) {
 
                             {/* Shipment Box Replacements */}
                             {/* Stack 1 */}
+                            {/* Stack 1 - Rearranged */}
                             {/* Extra Valve Scatter - LOD Enabled */}
                             <LODModel
                                 basePath={VALVE_LOD}
-                                position={[-3.0, 0.2, 2.0]}
+                                position={[-1.8, 0.15, 2.5]} // Moved Right
                                 rotation={[Math.PI / 2, 0, Math.PI / 3]}
                                 scale={0.15}
                                 castShadow
@@ -884,8 +870,8 @@ export default function VerifiedPavilion({ onBack, user }) {
                             />
                             <Gltf
                                 src={BOX_PACKAGE_PATH}
-                                position={[-4.0, 1.0, 0.0]}
-                                rotation={[0, -0.4, 0]}
+                                position={[-3.6, 0.85, 1.2]} // Raised from 0.7 to 0.85
+                                rotation={[0, -0.2, 0]}
                                 scale={2.8}
                                 receiveShadow
                             />
@@ -893,7 +879,7 @@ export default function VerifiedPavilion({ onBack, user }) {
                             {/* Valve 2 - LOD Enabled */}
                             <LODModel
                                 basePath={VALVE2_LOD}
-                                position={[-4.5, 0.2, 2.5]}
+                                position={[-5.2, 0.15, 2.0]} // Moved Left
                                 rotation={[0, -Math.PI / 6, 0]}
                                 scale={0.015}
                                 castShadow

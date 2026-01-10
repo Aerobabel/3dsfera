@@ -27,7 +27,7 @@ export function TableWithEquipment({ position = [0, 0, 0], rotation = [0, 0, 0],
             {/* Detailed Valves on Table - LOD Enabled */}
             <LODModel
                 basePath={BALL_VALVE_LOD}
-                position={[-0.3, -1.3, 0.2]}
+                position={[-0.3, -0.35, 0.2]} // Raised from -1.5 (hidden) to -0.35 (visible bottom shelf)
                 rotation={[0, Math.PI / 4, 0]}
                 scale={0.01}
                 castShadow={castShadow}
@@ -52,10 +52,10 @@ export function TableWithEquipment({ position = [0, 0, 0], rotation = [0, 0, 0],
                 castShadow={castShadow}
             />
 
-            {/* High-Temp Valve - LOD Enabled */}
+            {/* High-Temp Valve - LOD Enabled - TARGET FIX */}
             <LODModel
                 basePath={VALVE_LOD}
-                position={[0.5, 0.55, 1.0]}
+                position={[0.5, 0.15, 1.0]} // Lowered aggressively from 0.5 to 0.15
                 rotation={[-Math.PI / 2, 0, 0]}
                 scale={0.15}
                 castShadow={castShadow}

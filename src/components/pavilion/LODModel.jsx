@@ -25,8 +25,8 @@ export function LODModel({ basePath, distances = [10, 30], ...props }) {
 
     // Load geometry
     // const { scene: highScene } = useGLTF(highPath);
-    const { scene: medScene } = useGLTF(medPath);
-    // const { scene: lowScene } = useGLTF(lowPath);
+    // const { scene: medScene } = useGLTF(medPath);
+    const { scene: lowScene } = useGLTF(lowPath);
 
     // Clone descriptions for safe reuse and apply shadows
     const prepareScene = (scene) => {
@@ -41,12 +41,12 @@ export function LODModel({ basePath, distances = [10, 30], ...props }) {
     };
 
     // const high = useMemo(() => prepareScene(highScene), [highScene]);
-    const med = useMemo(() => prepareScene(medScene), [medScene]);
-    // const low = useMemo(() => prepareScene(lowScene), [lowScene]);
+    // const med = useMemo(() => prepareScene(medScene), [medScene]);
+    const low = useMemo(() => prepareScene(lowScene), [lowScene]);
 
     return (
         <group {...props}>
-            <primitive object={med} />
+            <primitive object={low} />
         </group>
     );
 }
