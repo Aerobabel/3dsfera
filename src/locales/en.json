@@ -1,5 +1,10 @@
 {
     "title": "Virtual Pavilions",
+    "sandwich": {
+        "welcome": "Welcome to\n3DSFERA",
+        "verified_only": "Verified\nSuppliers\nOnly",
+        "industrial_zone": "Heavy\nIndustry\nZone"
+    },
     "subtitle": "Step into the cinematic 3Dsfera. Glide between floating product pods, zoom into supplier showcases, and discover your next deal in a convenient neon-lit, luxury environment.",
     "launch_tour": "Launch Tour",
     "learn_more": "Learn More",

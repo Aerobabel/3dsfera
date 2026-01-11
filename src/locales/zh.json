@@ -1,5 +1,10 @@
 {
     "title": "虚拟展馆",
+    "sandwich": {
+        "welcome": "欢迎来到\n3DSFERA",
+        "verified_only": "仅限\n认证供应商",
+        "industrial_zone": "重工业\n区域"
+    },
     "subtitle": "走进电影感的 3Dsfera。在漂浮展台间穿行、放大供应商展柜，在霓虹奢华的空间里发现下一笔交易。",
     "launch_tour": "开始体验",
     "learn_more": "了解更多",
