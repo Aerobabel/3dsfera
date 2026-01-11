@@ -32,7 +32,7 @@ import HologramGuide from './pavilion/HologramGuide';
 import { CameraManager } from './pavilion/CameraManager';
 import { SceneReadyNotifier } from './pavilion/PavilionUtils';
 import { PavilionArchitecture } from './pavilion/PavilionArchitecture';
-import { SandwichBoard } from './pavilion/SandwichBoard';
+
 
 // Assets
 
@@ -739,27 +739,7 @@ export default function VerifiedPavilion({ onBack, user }) {
                             />
                         </Suspense>
 
-                        {/* --- SANDWICH BOARDS --- */}
-                        {/* Entrance Sign - Moved closer to camera start for visibility */}
-                        <SandwichBoard
-                            position={[0, 0, 32]}
-                            rotation={[0, 0, 0]}
-                            text={t('sandwich.welcome')}
-                            scale={1.5}
-                        />
-                        {/* Main Hub Signs - Moved further out to be clearer of the desk */}
-                        <SandwichBoard
-                            position={[8, 0, -2]}
-                            rotation={[0, -Math.PI / 4, 0]}
-                            text={t('sandwich.verified_only')}
-                            scale={1.4}
-                        />
-                        <SandwichBoard
-                            position={[-8, 0, -2]}
-                            rotation={[0, Math.PI / 4, 0]}
-                            text={t('sandwich.industrial_zone')}
-                            scale={1.4}
-                        />
+
 
                         {/* --- BOOTHS / KIOSKS (Default Cyberpunk) --- */}
 
