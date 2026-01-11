@@ -26,7 +26,7 @@ import { TableWithEquipment } from './pavilion/subsystems/TableWithEquipment';
 // Force HMR update
 
 
-import WalkingMan from './pavilion/WalkingMan';
+
 import HologramGuide from './pavilion/HologramGuide';
 
 import { CameraManager } from './pavilion/CameraManager';
@@ -316,6 +316,18 @@ export default function VerifiedPavilion({ onBack, user }) {
     const [sceneReady, setSceneReady] = useState(false);
     const [showLoader, setShowLoader] = useState(true);
     const [showWelcome, setShowWelcome] = useState(true); // New Welcome State
+    const [showHolograms, setShowHolograms] = useState(false); // Deferred loading for heavy assets
+
+    // DEFERRED LOADING LOGIC
+    // Wait until the scene is fully rendered (and loader gone) before hitting the CPU with heavy FBX cloning.
+    useEffect(() => {
+        if (sceneReady) {
+            // Wait 1.5s after scene is visible to start mounting holograms
+            // This ensures 60 FPS scrolling while the user acts first
+            const t = setTimeout(() => setShowHolograms(true), 1500);
+            return () => clearTimeout(t);
+        }
+    }, [sceneReady]);
 
     // Tank Controls don't need pointer lock state for navigation
     const cameraRef = useRef();
@@ -660,84 +672,87 @@ export default function VerifiedPavilion({ onBack, user }) {
                         {/* --- ANIMATED CHARACTERS --- */}
                         {/* Multi-Actor Possession System */}
                         {/* Only one actor is ACTIVE (connected to AI) at a time. Others are passive dummies. */}
-                        <Suspense fallback={null}>
-                            {/* 1. Main Platform Guide (Center) */}
-                            <HologramGuide
-                                id="main"
-                                position={[0, 1.45, -4]} // Adjusted to 1.45
-                                rotation={[0, 0, 0]}
-                                scale={0.013}
-                                showUI={!isShowroomOpen}
-                                isActive={activeActorId === 'main'}
-                                onActivate={() => setActiveActorId('main')}
-                            />
+                        {/* DEFERRED LOADING: Wait for main scene to render before mounting heavy holograms */}
+                        {showHolograms && (
+                            <Suspense fallback={null}>
+                                {/* 1. Main Platform Guide (Center) */}
+                                <HologramGuide
+                                    id="main"
+                                    position={[0, 1.45, -4]} // Adjusted to 1.45
+                                    rotation={[0, 0, 0]}
+                                    scale={0.013}
+                                    showUI={!isShowroomOpen}
+                                    isActive={activeActorId === 'main'}
+                                    onActivate={() => setActiveActorId('main')}
+                                />
 
-                            {/* 2. W&T Engineering (Left - Existing Position) */}
-                            <HologramGuide
-                                id="aero"
-                                position={[-21, 0.75, -1]} // Adjusted to 0.75
-                                rotation={[0, Math.PI / 2, 0]}
-                                scale={0.013}
-                                showUI={!isShowroomOpen}
-                                isActive={activeActorId === 'aero'}
-                                onActivate={() => setActiveActorId('aero')}
-                            />
+                                {/* 2. W&T Engineering (Left - Existing Position) */}
+                                <HologramGuide
+                                    id="aero"
+                                    position={[-21, 0.75, -1]} // Adjusted to 0.75
+                                    rotation={[0, Math.PI / 2, 0]}
+                                    scale={0.013}
+                                    showUI={!isShowroomOpen}
+                                    isActive={activeActorId === 'aero'}
+                                    onActivate={() => setActiveActorId('aero')}
+                                />
 
-                            {/* 3. Titan Heavy (Right) */}
-                            <HologramGuide
-                                id="heavy"
-                                position={[21, 0.75, -1]} // Adjusted to 0.75
-                                rotation={[0, -Math.PI / 2, 0]}
-                                scale={0.013}
-                                showUI={!isShowroomOpen}
-                                isActive={activeActorId === 'heavy'}
-                                onActivate={() => setActiveActorId('heavy')}
-                            />
+                                {/* 3. Titan Heavy (Right) */}
+                                <HologramGuide
+                                    id="heavy"
+                                    position={[21, 0.75, -1]} // Adjusted to 0.75
+                                    rotation={[0, -Math.PI / 2, 0]}
+                                    scale={0.013}
+                                    showUI={!isShowroomOpen}
+                                    isActive={activeActorId === 'heavy'}
+                                    onActivate={() => setActiveActorId('heavy')}
+                                />
 
-                            {/* 4. Genesis Bio (Back Left) */}
-                            <HologramGuide
-                                id="bio"
-                                position={[-21, 0.75, -38]} // Adjusted to 0.75
-                                rotation={[0, Math.PI / 3, 0]}
-                                scale={0.013}
-                                showUI={!isShowroomOpen}
-                                isActive={activeActorId === 'bio'}
-                                onActivate={() => setActiveActorId('bio')}
-                            />
+                                {/* 4. Genesis Bio (Back Left) */}
+                                <HologramGuide
+                                    id="bio"
+                                    position={[-21, 0.75, -38]} // Adjusted to 0.75
+                                    rotation={[0, Math.PI / 3, 0]}
+                                    scale={0.013}
+                                    showUI={!isShowroomOpen}
+                                    isActive={activeActorId === 'bio'}
+                                    onActivate={() => setActiveActorId('bio')}
+                                />
 
-                            {/* 5. Quantum (Back Center) */}
-                            <HologramGuide
-                                id="quantum"
-                                position={[0, 0.75, -50]} // Adjusted to 0.75
-                                rotation={[0, 0, 0]}
-                                scale={0.013}
-                                showUI={!isShowroomOpen}
-                                isActive={activeActorId === 'quantum'}
-                                onActivate={() => setActiveActorId('quantum')}
-                            />
+                                {/* 5. Quantum (Back Center) */}
+                                <HologramGuide
+                                    id="quantum"
+                                    position={[0, 0.75, -50]} // Adjusted to 0.75
+                                    rotation={[0, 0, 0]}
+                                    scale={0.013}
+                                    showUI={!isShowroomOpen}
+                                    isActive={activeActorId === 'quantum'}
+                                    onActivate={() => setActiveActorId('quantum')}
+                                />
 
-                            {/* 6. Buy for $1500 (Entrance Right) */}
-                            <HologramGuide
-                                id="buy1500"
-                                position={[24.5, 0.60, 20.5]} // Raised to 0.60, Moved Right (Z+) to 20.5 per user request
-                                rotation={[0, -Math.PI / 2, 0]}
-                                scale={0.013}
-                                showUI={!isShowroomOpen}
-                                isActive={activeActorId === 'buy1500'}
-                                onActivate={() => setActiveActorId('buy1500')}
-                            />
+                                {/* 6. Buy for $1500 (Entrance Right) */}
+                                <HologramGuide
+                                    id="buy1500"
+                                    position={[24.5, 0.60, 20.5]} // Raised to 0.60, Moved Right (Z+) to 20.5 per user request
+                                    rotation={[0, -Math.PI / 2, 0]}
+                                    scale={0.013}
+                                    showUI={!isShowroomOpen}
+                                    isActive={activeActorId === 'buy1500'}
+                                    onActivate={() => setActiveActorId('buy1500')}
+                                />
 
-                            {/* 7. Buy for $500 (Entrance Left) */}
-                            <HologramGuide
-                                id="buy500"
-                                position={[-12, 0.50, 32]} // Adjusted to 0.50
-                                rotation={[0, Math.PI, 0]}
-                                scale={0.013}
-                                showUI={!isShowroomOpen}
-                                isActive={activeActorId === 'buy500'}
-                                onActivate={() => setActiveActorId('buy500')}
-                            />
-                        </Suspense>
+                                {/* 7. Buy for $500 (Entrance Left) */}
+                                <HologramGuide
+                                    id="buy500"
+                                    position={[-12, 0.50, 32]} // Adjusted to 0.50
+                                    rotation={[0, Math.PI, 0]}
+                                    scale={0.013}
+                                    showUI={!isShowroomOpen}
+                                    isActive={activeActorId === 'buy500'}
+                                    onActivate={() => setActiveActorId('buy500')}
+                                />
+                            </Suspense>
+                        )}
 
 
 
@@ -824,29 +839,7 @@ export default function VerifiedPavilion({ onBack, user }) {
                             {/* Hardcoded Industrial Assets (Pipes Removed) */}
                             {/* <Gltf src={INDUSTRIAL_PIPES_PATH} position={[-5, 7, 0]} rotation={[0, 0, 0]} scale={0} castShadow receiveShadow /> REMOVED */}
 
-                            <LODModel
-                                basePath={INDUSTRIAL_ROBOT_LOD}
-                                position={[3.0, 3.0, 1.5]}
-                                rotation={[0.0, 0.0, 0.0]}
-                                scale={0.1}
-                                receiveShadow
-                            />
 
-                            <LODModel
-                                basePath={INDUSTRIAL_STAMP_LOD}
-                                position={[-4.6, 3.0, 4.1]}
-                                rotation={[0.0, 0.0, 0.0]}
-                                scale={0.3}
-                                receiveShadow
-                            />
-
-                            <LODModel
-                                basePath={INDUSTRIAL_TANK_LOD}
-                                position={[2.3, 3.3, -2.7]}
-                                rotation={[0.0, 4.8, 0.0]}
-                                scale={0.1}
-                                receiveShadow
-                            />
 
                             {/* --- NEW ASSETS REPLACING BOXES (Triplicated) --- */}
 

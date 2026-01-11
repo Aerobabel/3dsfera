@@ -171,17 +171,15 @@ export default function HologramGuide({
             }
         });
 
-        console.log("--- BONE DEBUG ---");
-        console.log("LeftClav:", bones.leftClav?.name);
-        console.log("RightClav:", bones.rightClav?.name);
-        console.log("LeftArm:", bones.leftArm?.name);
-        console.log("RightArm:", bones.rightArm?.name);
-        console.log("------------------");
+
 
         clone.userData.bones = bones;
 
+        // Cache meshes for performance
+        const meshes = [];
         clone.traverse((child) => {
             if (child.isMesh) {
+                meshes.push(child);
                 if (child.morphTargetDictionary) {
                     clone.userData.morphMesh = child;
                 }
@@ -198,6 +196,7 @@ export default function HologramGuide({
                 child.receiveShadow = true;
             }
         });
+        clone.userData.meshes = meshes; // Store in userData for easy access
 
         // Center Pivot
         const box = new THREE.Box3().setFromObject(clone);
@@ -211,16 +210,21 @@ export default function HologramGuide({
     }, [sourceFbx, textureMap, normalMap]);
 
     useFrame((state) => {
-        // Glow effect
-        if (fbx) {
-            fbx.traverse((c) => {
-                if (c.isMesh && c.material) {
-                    const isGlow = isListening || isTalking;
-                    const color = isListening ? 0x00aaff : (isTalking ? 0x222222 : 0x000000);
-                    c.material.emissive.setHex(color);
-                    c.material.emissiveIntensity = isListening ? 0.5 : (isTalking ? 0.2 : 0);
+        // Glow effect - OPTIMIZED: Iterate cached meshes instead of traverse
+        if (fbx && fbx.userData.meshes) {
+            const isGlow = isListening || isTalking;
+            const color = isListening ? 0x00aaff : (isTalking ? 0x222222 : 0x000000);
+            const intensity = isListening ? 0.5 : (isTalking ? 0.2 : 0);
+
+            // Fast iteration
+            const meshes = fbx.userData.meshes;
+            for (let i = 0; i < meshes.length; i++) {
+                const mesh = meshes[i];
+                if (mesh.material) {
+                    mesh.material.emissive.setHex(color);
+                    mesh.material.emissiveIntensity = intensity;
                 }
-            });
+            }
         }
 
         // Animation
